@@ -6,7 +6,7 @@ title = 'Who Owns the Code'
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
-          
+
 [params.hero]
 enabled = true
 title = "Who Owns the Code?"
@@ -30,12 +30,12 @@ title = "Resources"
 url = "/resources/"
 
 [[params.navbar]]
-title = "Workshops"
-url = "/workshops/"
-
-[[params.navbar]]
 title = "Authors"
 url = "/authors/"
+
+[[params.navbar]]
+title = "Workshops"
+url = "/workshops/"
 
 [[params.navbar]]
 title = "Contact"
