@@ -175,11 +175,11 @@ section,
 
   .hero .title {
     font-size: 2rem;
-    margin-top: -1in;
+    margin-top: -1.5in;
   }
 
   .hero .subtitle {
-    font-size: 0.8rem;
+    font-size: 1rem;
     margin-top: 0.5rem;
     font-weight: bold;
    }
