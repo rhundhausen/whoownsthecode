@@ -1,0 +1,30 @@
+# Hugo build output
+/public/
+/resources/_gen/
+/hugo_stats.json
+
+# Build artifacts
+*.bak
+*.tmp
+*.swp
+*.swo
+
+# Node.js dependencies (if using npm/yarn for asset pipelines)
+node_modules/
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# Netlify / deployment folders (if you generate them locally)
+.netlify/
+
+# Hugo environment files (if you have any secrets stored here)
+.env
+.env.*
+
+# Other potential caches
+.cache/

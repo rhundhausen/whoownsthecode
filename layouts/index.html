@@ -1,0 +1,36 @@
+{{ define "main" }}
+
+    {{ if and .Site.Params.hero (.Site.Params.hero.enabled) }}
+    {{ partial "hero.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.section1 (.Site.Params.section1.enabled) }}
+    {{ partial "section1.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.section2 (.Site.Params.section2.enabled) }}
+    {{ partial "section2.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.section3 (.Site.Params.section3.enabled) }}
+
+    {{ partial "section3.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.section4 (.Site.Params.section4.enabled) }}
+    {{ partial "section4.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.section5 (.Site.Params.section5.enabled) }}
+    {{ partial "section5.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.footer (.Site.Params.hero.footer) }}
+    {{ partial "footer.html" . }}
+    {{ end }}
+
+    {{ if and .Site.Params.sidebar (.Site.Params.hero.sidebar) }}
+    {{ partial "sidebar.html" . }}
+    {{ end }}
+    
+{{ end }}

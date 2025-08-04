@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+  <head>
+    {{ partial "meta.html" . }}
+    <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ "/css/bulma.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "/css/icons.css" | relURL }}">
+    <link rel="stylesheet" href="{{ "/css/custom.css" | relURL }}">
+    
+    {{ partial "css.html" . }}
+  </head>
+  <body class="{{ if .IsHome }}home{{ else }}{{ .Section }}{{ end }}">
+    {{ if ne .Site.Params.preloader false }}
+    <!-- Preloader -->
+    <!-- <div id="preloader"><div id="status"></div></div> -->
+    {{ end }}
+
+    {{ block "main" . }}
+    {{ end }}
+
+    <!-- Back To Top Button -->
+    <div id="backtotop"><a href="#"></a></div>
+
+    {{ partial "javascript.html" . }}
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const items = document.querySelectorAll('.carousel-item');
+      let index = 0;
+
+      function showNextImage() {
+        items[index].classList.remove('is-active');
+        index = (index + 1) % items.length;
+        items[index].classList.add('is-active');
+      }
+
+      if (items.length > 0) {
+        items[0].classList.add('is-active');
+        setInterval(showNextImage, 2000); // every 2 seconds
+      }
+    });
+    </script>
+  </body>
+</html>

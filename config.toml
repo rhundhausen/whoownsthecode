@@ -1,0 +1,42 @@
+baseURL = 'https://whoownsthecode.com'
+languageCode = 'en-us'
+title = 'Who Owns the Code'
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+          
+[params.hero]
+enabled = true
+title = "Who Owns the Code?"
+subtitle = "AI code. No author. No copyright."
+
+# Enable footer
+[params.footer]
+enabled = true
+content = "© 2025 Who Owns The Code, Inc. All rights reserved."
+
+# Add navbar links
+
+[params.navbarlogo]
+image = "logo.png"
+link = "/"
+width = 48  
+height = 48
+
+[[params.navbar]]
+title = "Resources"
+url = "/resources/"
+
+[[params.navbar]]
+title = "Workshops"
+url = "/workshops/"
+
+[[params.navbar]]
+title = "Authors"
+url = "/authors/"
+
+[[params.navbar]]
+title = "Contact"
+url = "/contact/"

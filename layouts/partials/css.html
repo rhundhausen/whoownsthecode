@@ -1,0 +1,13 @@
+<link rel="icon" type="image/png" href="{{ "images/favicon.png" | relURL }}" />
+
+{{- $fontName  := .Site.Params.font.name | default "Open Sans" }}
+{{- $fontFace  := replace $fontName " " "+" }}
+{{- $fontSizes := delimit (.Site.Params.font.sizes | default (slice 300 400 600 700)) "," }}
+{{- $fontUrl   := printf "https://fonts.googleapis.com/css?family=%s:%s" $fontFace $fontSizes }}
+
+<link href="{{ $fontUrl }}" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ "css/bulma.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/style.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/icons.css" | relURL }}">
+<link rel="stylesheet" href="{{ "css/custom.css" | relURL }}">
