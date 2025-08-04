@@ -23,3 +23,6 @@ The U.S. Copyright Office’s 2023 report on AI and copyright reaffirmed that co
 
 #### Thomson Reuters v. Ross
 In *Thomson Reuters v. Ross*, the legal publisher sued Ross Intelligence for allegedly scraping and using its copyrighted legal content to train an AI legal research tool. Ross argued that its use was “intermediate” and transformative, not a direct republishing of Westlaw materials. The case highlights the legal tension between data scraping and fair use in AI training—raising important questions about whether using copyrighted text to train models constitutes infringement or innovation.
+
+#### It's All Speculation Until a Federal Court Decides (or the Laws Change)
+Despite reports, opinions, and ongoing lawsuits, the legal landscape around AI and copyright — especially in the context of software — is still unsettled. Until a binding federal court decision is made, or the laws are updated by Congress, much of what we believe about ownership, infringement, and fair use in AI-generated code remains speculative. For now, creators, developers, and companies must navigate a gray area with evolving guidance and substantial legal uncertainty.
