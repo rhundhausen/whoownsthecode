@@ -10,7 +10,7 @@ title = 'Who Owns the Code'
 [params.hero]
 enabled = true
 title = "Who Owns the Code?"
-subtitle = "AI code. No author. No copyright."
+subtitle = "AI code == No author == No copyright"
 
 # Enable footer
 [params.footer]

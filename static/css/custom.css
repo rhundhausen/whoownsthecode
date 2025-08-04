@@ -62,7 +62,7 @@ body.home .content strong {
 }
 
 .hero .title {
-  font-size: 100pt;
+  font-size: 72pt;
   font-weight: bold;
   color: black;
   position: relative;
@@ -72,7 +72,7 @@ body.home .content strong {
   color: black !important;
   font-weight: bold;
   font-size: 38pt;
-  margin-top: 1in;
+  margin-top: 48px;
 }
 
 .landing-caption a.button {
@@ -132,6 +132,18 @@ body.home .content strong {
   border-radius: 8px;
   border: 1px solid black;
   flex-shrink: 0;
+}
+
+.hero,
+.hero-body,
+section,
+.main {
+  margin-top: 20px !important;
+  padding-top: 0 !important;
+}
+
+.content > h1:first-child {
+  margin-top: 1rem !important; /* or 0 if needed */
 }
 
 /* === MOBILE RESPONSIVE STYLES === */

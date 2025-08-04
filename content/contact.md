@@ -7,6 +7,4 @@ We’re passionate about the intersection of AI, code, and the law, and we built
 
 Have feedback? Questions? Want to collaborate or attend a workshop? We’d love to hear from you.
 
-📧 Email us: whoownsthecode@gmail.com
-
-Let’s start the conversation.
+[Email](mailto:whoownsthecode@gmail.com) us and let’s start the conversation.
