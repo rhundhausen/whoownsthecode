@@ -71,8 +71,8 @@ body.home .content strong {
 .hero .subtitle {
   color: black !important;
   font-weight: bold;
-  font-size: 38pt;
-  margin-top: 48px;
+  font-size: 32pt;
+  margin-top: 16px;
 }
 
 .landing-caption a.button {
