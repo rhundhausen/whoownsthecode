@@ -10,3 +10,26 @@ This workshop is designed for technology and business leaders who need to unders
 This workshop is tailored for in-house legal, compliance, and risk management professionals navigating the complexities of AI in software development. It provides a comprehensive overview of copyright law, ownership issues, open source obligations, and recent case law impacting AI-generated content. Special focus is given to practical risk mitigation strategies, including contract language, policy development, documentation practices, and internal review processes. Attendees will leave equipped to advise their organizations on staying compliant while leveraging AI effectively and responsibly.
 
 [Contact us](mailto:whoownsthecode@gmail.com) for more details and pricing.
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <a href="/images/workshop1.jpg" target="_blank">
+    <img src="/images/workshop1.jpg" alt="Workshop Photo 1"
+         style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
+  </a>
+  <a href="/images/workshop2.jpg" target="_blank">
+    <img src="/images/workshop2.jpg" alt="Workshop Photo 2"
+         style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
+  </a>
+  <a href="/images/workshop3.jpg" target="_blank">
+    <img src="/images/workshop3.jpg" alt="Workshop Photo 3"
+         style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
+  </a>
+  <a href="/images/workshop4.jpg" target="_blank">
+    <img src="/images/workshop4.jpg" alt="Workshop Photo 4"
+         style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
+  </a>
+  <a href="/images/workshop5.jpg" target="_blank">
+    <img src="/images/workshop5.jpg" alt="Workshop Photo 4"
+         style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
+  </a>
+</div>
