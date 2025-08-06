@@ -20,7 +20,7 @@ content = "© 2025 Who Owns The Code, Inc. All rights reserved."
 # Add navbar links
 
 [params.navbarlogo]
-image = "logo.png"
+image = "logo48x48.png"
 link = "/"
 width = 48  
 height = 48

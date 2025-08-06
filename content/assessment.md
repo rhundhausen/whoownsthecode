@@ -5,7 +5,8 @@ date: 2025-08-05
 
 We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment and recommendations.
 
-<div style="border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
+<div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
+
 
   <form action="https://formspree.io/f/your-form-id" method="POST" style="max-width: 850px; margin: 0 auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
     <h2>AI in Your Workflow</h2>
@@ -145,9 +146,9 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="checkbox" name="guidance" value="assistance_documentation"> Drafting best practices for AI use</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_due_diligence"> Performing code/IP due diligence for M&A</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_claim_response"> Responding to legal claims involving AI</label><br/>
-        <label><input type="checkbox" name="guidance" value="assistance_training_execs"> Training executives on AI, IP, and risk</label><br/>
-        <label><input type="checkbox" name="guidance" value="assistance_training_legal"> Training legal/compliance teams on AI and IP</label><br/>
-        <label><input type="checkbox" name="guidance" value="assistance_training_devs"> Training developers on responsible AI use</label><br/>
+        <label><input type="checkbox" name="guidance" value="assistance_training_execs"> Training executives</label><br/>
+        <label><input type="checkbox" name="guidance" value="assistance_training_legal"> Training legal/compliance teams</label><br/>
+        <label><input type="checkbox" name="guidance" value="assistance_training_devs"> Training developers</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_other"> Other training or consulting</label>
         <input type="text" name="guidance_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
