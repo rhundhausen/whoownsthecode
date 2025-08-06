@@ -6,9 +6,9 @@ date: 2025-08-05
 We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment and recommendations.
 
 <div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
-
-
-  <form action="https://formspree.io/f/your-form-id" method="POST" style="max-width: 850px; margin: 0 auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
+  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
+    <input type="hidden" name="form_type" value="assessment">
+    <input type="text" name="website" style="display:none;" tabindex="-1" autocomplete="off">
     <h2>AI in Your Workflow</h2>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
@@ -138,13 +138,13 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="checkbox" name="guidance" value="assistance_patent_disclosure"> Advising on AI-related patent disclosure</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_ip_risk"> Assessing AI-related IP risks</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_audit_trails"> Auditing for AI-assisted development</label><br/>
+        <label><input type="checkbox" name="guidance" value="assistance_documentation"> Best practices for AI documentation</label><br/>
+        <label><input type="checkbox" name="guidance" value="assistance_documentation"> Best practices for AI use</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_tool_selection"> Choosing appropriate AI tools</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_policy"> Creating an AI use policy</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_governance"> Developing an AI governance framework</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_usage_agreements"> Drafting AI tool usage agreements</label><br/>
-        <label><input type="checkbox" name="guidance" value="assistance_documentation"> Drafting best practices for AI documentation</label><br/>
-        <label><input type="checkbox" name="guidance" value="assistance_documentation"> Drafting best practices for AI use</label><br/>
-        <label><input type="checkbox" name="guidance" value="assistance_due_diligence"> Performing code/IP due diligence for M&A</label><br/>
+        <label><input type="checkbox" name="guidance" value="assistance_due_diligence"> Performing due diligence for M&A</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_claim_response"> Responding to legal claims involving AI</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_training_execs"> Training executives</label><br/>
         <label><input type="checkbox" name="guidance" value="assistance_training_legal"> Training legal/compliance teams</label><br/>
@@ -156,7 +156,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label for="email" style="flex: 1 1 400px; min-width: 300px;">Where should we send your personalized assessment?</label>
         <div style="flex: 1 1 250px; min-width: 200px;">
-          <input type="email" id="email" name="email" required aria-required="true" placeholder="you@example.com" style="margin-top: 0.25rem; width: 100%;">
+          <input type="email" id="email" name="email" required aria-required="true" placeholder="you@example.com" value="richard@hundhausen.com" style="margin-top: 0.25rem; width: 100%;">
         </div>
     </div>
     <button type="submit" style="background-color: #0057b8; color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem; font-weight: 600; cursor: pointer;">Submit Assessment</button>
@@ -165,3 +165,37 @@ We’re here to help you understand the risks and responsibilities of using AI t
     </p>
   </form>
 </div>
+
+<script src="https://www.google.com/recaptcha/api.js?render=6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX"></script>
+<script>
+  document.querySelector("form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+      if (data[key]) {
+        data[key] = [].concat(data[key], value);
+      } else {
+        data[key] = value;
+      }
+    });
+    grecaptcha.ready(() => {
+      grecaptcha.execute("6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX", { action: "submit" }).then(async (token) => {
+        data.recaptchaToken = token;
+        const response = await fetch("https://ai-assessment-worker.richard-dd5.workers.dev", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (response.ok) {
+          alert("Your AI assessment has been submitted!");
+          form.reset();
+        } else {
+          const err = await response.text();
+          alert("Submission failed: " + err);
+        }
+      });
+    });
+  });
+</script>
