@@ -25,31 +25,36 @@ export default {
         });
       }
 
+      // 🆕 Get client IP from Cloudflare header
+      const clientIP = request.headers.get("CF-Connecting-IP") || "";
+      console.log("🌐 Client IP:", clientIP);
+
+      // 🔐 Verify CAPTCHA with remoteip
       const verifyResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `secret=${env.RECAPTCHA_SECRET}&response=${recaptchaToken}`,
+        body: `secret=${env.RECAPTCHA_SECRET}&response=${recaptchaToken}&remoteip=${clientIP}`,
       });
 
       const verification = await verifyResponse.json();
-			console.log("✅ reCAPTCHA response from Google:", verification);
+      console.log("✅ reCAPTCHA response from Google:", verification);
 
-			if (!verification.success) {
-				return new Response(`CAPTCHA verification failed: ${verification['error-codes']?.join(", ")}`, {
-					status: 403,
-					headers: corsHeaders,
-				});
-			}
+      if (!verification.success) {
+        return new Response(`CAPTCHA verification failed: ${verification['error-codes']?.join(", ")}`, {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
 
-			if (verification.score !== undefined) {
-				console.log(`🧪 score: ${verification.score}, action: ${verification.action}`);
-				if (verification.score < 0.3) {
-					return new Response(`CAPTCHA score too low (${verification.score})`, {
-						status: 403,
-						headers: corsHeaders,
-					});
-			  }
-			}
+      if (verification.score !== undefined) {
+        console.log(`🧪 score: ${verification.score}, action: ${verification.action}`);
+        if (verification.score < 0.3) {
+          return new Response(`CAPTCHA score too low (${verification.score})`, {
+            status: 403,
+            headers: corsHeaders,
+          });
+        }
+      }
 
       const name = formData.name || "Anonymous";
       const email = formData.email || "N/A";
