@@ -166,36 +166,45 @@ We’re here to help you understand the risks and responsibilities of using AI t
   </form>
 </div>
 
+<!-- reCAPTCHA script -->
 <script src="https://www.google.com/recaptcha/api.js?render=6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX"></script>
 <script>
-  document.querySelector("form").addEventListener("submit", async function (e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-      if (data[key]) {
-        data[key] = [].concat(data[key], value);
-      } else {
-        data[key] = value;
-      }
-    });
-    grecaptcha.ready(() => {
-      grecaptcha.execute("6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX", { action: "submit" }).then(async (token) => {
-        data.recaptchaToken = token;
+document.querySelector("form").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((value, key) => {
+    if (data[key]) {
+      data[key] = Array.isArray(data[key]) ? data[key].concat(value) : [data[key], value];
+    } else {
+      data[key] = value;
+    }
+  });
+  grecaptcha.ready(() => {
+    grecaptcha.execute("6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX", { action: "submit" }).then(async (token) => {
+      data.recaptchaToken = token;
+      console.log("🧪 reCAPTCHA token:", token);
+      console.log("📦 Form payload to worker:", data);
+      try {
         const response = await fetch("https://ai-assessment-worker.richard-dd5.workers.dev", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
+        const responseText = await response.text();
+        console.log("📨 Worker response:", responseText);
         if (response.ok) {
           alert("Your AI assessment has been submitted!");
           form.reset();
         } else {
-          const err = await response.text();
-          alert("Submission failed: " + err);
+          alert("Submission failed: " + responseText);
         }
-      });
+      } catch (err) {
+        console.error("🔥 Network or worker error:", err);
+        alert("Submission failed: network or worker error. Check the console for details.");
+      }
     });
   });
+});
 </script>

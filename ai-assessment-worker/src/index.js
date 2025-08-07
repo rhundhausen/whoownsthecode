@@ -1,5 +1,5 @@
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // Change to your domain in production
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
@@ -25,7 +25,6 @@ export default {
         });
       }
 
-      // Verify reCAPTCHA
       const verifyResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -33,20 +32,29 @@ export default {
       });
 
       const verification = await verifyResponse.json();
+			console.log("✅ reCAPTCHA response from Google:", verification);
 
-      if (!verification.success || verification.score < 0.5) {
-        return new Response("CAPTCHA verification failed", {
-          status: 403,
-          headers: corsHeaders,
-        });
-      }
+			if (!verification.success) {
+				return new Response(`CAPTCHA verification failed: ${verification['error-codes']?.join(", ")}`, {
+					status: 403,
+					headers: corsHeaders,
+				});
+			}
 
-      // Extract and sanitize form fields
+			if (verification.score !== undefined) {
+				console.log(`🧪 score: ${verification.score}, action: ${verification.action}`);
+				if (verification.score < 0.3) {
+					return new Response(`CAPTCHA score too low (${verification.score})`, {
+						status: 403,
+						headers: corsHeaders,
+					});
+			  }
+			}
+
       const name = formData.name || "Anonymous";
       const email = formData.email || "N/A";
       const responses = formData.responses || {};
 
-      // Send email via Resend
       const sendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
