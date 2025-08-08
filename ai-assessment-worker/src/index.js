@@ -15,8 +15,19 @@ export default {
     }
 
     try {
-      const formData = await request.json();
+      const rawBody = await request.text();
+      console.log("📥 Raw request body:", rawBody);
+
+      let formData;
+      try {
+        formData = JSON.parse(rawBody);
+      } catch (err) {
+        console.error("❌ Failed to parse JSON:", err);
+        return new Response("Invalid JSON payload", { status: 400, headers: corsHeaders });
+      }
+
       const recaptchaToken = formData["recaptchaToken"];
+      console.log("🔑 reCAPTCHA token received:", recaptchaToken);
 
       if (!recaptchaToken) {
         return new Response("Missing CAPTCHA token", {
@@ -25,22 +36,30 @@ export default {
         });
       }
 
-      // 🆕 Get client IP from Cloudflare header
       const clientIP = request.headers.get("CF-Connecting-IP") || "";
       console.log("🌐 Client IP:", clientIP);
 
-      // 🔐 Verify CAPTCHA with remoteip
+      const verifyBody = `secret=${env.RECAPTCHA_SECRET}&response=${recaptchaToken}&remoteip=${clientIP}`;
+      console.log("📤 Sending to Google:", verifyBody);
+
       const verifyResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `secret=${env.RECAPTCHA_SECRET}&response=${recaptchaToken}&remoteip=${clientIP}`,
+        body: verifyBody,
       });
 
       const verification = await verifyResponse.json();
-      console.log("✅ reCAPTCHA response from Google:", verification);
+      console.log("🧾 Full verification response:", JSON.stringify(verification, null, 2));
 
       if (!verification.success) {
         return new Response(`CAPTCHA verification failed: ${verification['error-codes']?.join(", ")}`, {
+          status: 403,
+          headers: corsHeaders,
+        });
+      }
+
+      if (verification.action !== "submit") {
+        return new Response(`Invalid reCAPTCHA action: expected 'submit', got '${verification.action}'`, {
           status: 403,
           headers: corsHeaders,
         });
@@ -79,7 +98,7 @@ ${JSON.stringify(responses, null, 2)}`,
 
       if (!sendRes.ok) {
         const errorText = await sendRes.text();
-        console.error("Resend error:", errorText);
+        console.error("📛 Resend error:", errorText);
         return new Response("Failed to send email", {
           status: 500,
           headers: corsHeaders,
@@ -90,8 +109,9 @@ ${JSON.stringify(responses, null, 2)}`,
         status: 200,
         headers: corsHeaders,
       });
+
     } catch (err) {
-      console.error("Worker error:", err);
+      console.error("🔥 Uncaught Worker error:", err);
       return new Response("Internal Server Error", {
         status: 500,
         headers: corsHeaders,

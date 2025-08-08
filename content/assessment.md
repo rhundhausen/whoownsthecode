@@ -166,7 +166,6 @@ We’re here to help you understand the risks and responsibilities of using AI t
   </form>
 </div>
 
-<!-- reCAPTCHA script -->
 <script src="https://www.google.com/recaptcha/api.js?render=6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX"></script>
 <script>
 document.querySelector("form").addEventListener("submit", async function (e) {
@@ -181,10 +180,21 @@ document.querySelector("form").addEventListener("submit", async function (e) {
       data[key] = value;
     }
   });
+  console.log("🌍 Page origin:", window.location.origin);
+  let timeoutWarning = setTimeout(() => {
+    console.warn("⏱ reCAPTCHA execute taking unusually long...");
+  }, 2000);
   grecaptcha.ready(() => {
     grecaptcha.execute("6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX", { action: "submit" }).then(async (token) => {
+      clearTimeout(timeoutWarning);
+      if (!token) {
+        console.error("❌ No token returned from reCAPTCHA.");
+        alert("Failed to generate reCAPTCHA token.");
+        return;
+      }
+      console.log("🧪 reCAPTCHA token length:", token.length);
+      console.log("🔑 reCAPTCHA token preview:", token.slice(0, 25) + "...");
       data.recaptchaToken = token;
-      console.log("🧪 reCAPTCHA token:", token);
       console.log("📦 Form payload to worker:", data);
       try {
         const response = await fetch("https://ai-assessment-worker.richard-dd5.workers.dev", {
@@ -204,6 +214,10 @@ document.querySelector("form").addEventListener("submit", async function (e) {
         console.error("🔥 Network or worker error:", err);
         alert("Submission failed: network or worker error. Check the console for details.");
       }
+    }).catch((err) => {
+      clearTimeout(timeoutWarning);
+      console.error("⚠️ reCAPTCHA execution failed:", err);
+      alert("reCAPTCHA failed to execute. Check your browser console.");
     });
   });
 });
