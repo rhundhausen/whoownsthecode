@@ -133,7 +133,14 @@ We’re here to help you understand the risks and responsibilities of using AI t
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">16. What kind of assistance are you looking for?</label>
+      <label style="flex: 1 1 400px; min-width: 300px;">16. Do you assert that you own the code?</label>
+      <div style="flex: 1 1 250px; min-width: 200px;">
+        <label><input type="radio" name="assert_code_ownership" value="Yes"> Yes</label>&nbsp;&nbsp;
+        <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
+      </div>
+    </div>    
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <label style="flex: 1 1 400px; min-width: 300px;">17. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="assistance" value="assistance_patent_disclosure"> Advising on AI-related patent disclosure</label><br/>
         <label><input type="checkbox" name="assistance" value="assistance_ip_risk"> Assessing AI-related IP risks</label><br/>
