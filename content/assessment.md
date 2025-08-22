@@ -3,7 +3,7 @@ title: "Free Online Assessment"
 date: 2025-08-05
 ---
 
-We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment and recommendations.
+We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment.
 
 <div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
   <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
@@ -163,7 +163,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label for="name" style="flex: 1 1 400px; min-width: 300px;">Your name</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
-        <input type="text" id="name" name="name" required aria-required="true" style="margin-top: 0.25rem; width: 100%;">
+        <input type="text" id="name" name="name" required aria-required="true" placeholder="John Doe" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>    
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
@@ -182,151 +182,43 @@ We’re here to help you understand the risks and responsibilities of using AI t
 <script src="https://www.google.com/recaptcha/api.js?render=6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX"></script>
 <script>
   document.querySelector("form").addEventListener("submit", async function (e) {
-  e.preventDefault();
-  const form = e.target;
-  const formData = new FormData(form);
-  const data = {};
-  formData.forEach((value, key) => {
-    if (data[key]) {
-      data[key] = Array.isArray(data[key]) ? data[key].concat(value) : [data[key], value];
-    } else {
-      data[key] = value;
-    }
-  });
-  grecaptcha.ready(() => {
-    grecaptcha.execute("6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX", { action: "submit" }).then(async (token) => {
-      if (!token) {
-        alert("Failed to generate reCAPTCHA token.");
-        return;
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+      if (data[key]) {
+        data[key] = Array.isArray(data[key]) ? data[key].concat(value) : [data[key], value];
+      } else {
+        data[key] = value;
       }
-      data.recaptchaToken = token;
-      try {
-        const response = await fetch("https://ai-assessment-worker.richard-dd5.workers.dev", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        const responseText = await response.text();
-        if (response.ok) {
-          alert("Your assessment has been submitted! Please expect a report soon.");
-          form.reset();
-        } else {
-          alert("Submission failed: " + responseText);
+    });
+    grecaptcha.ready(() => {
+      grecaptcha.execute("6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX", { action: "submit" }).then(async (token) => {
+        if (!token) {
+          alert("Failed to generate reCAPTCHA token.");
+          return;
         }
-      } catch {
-        alert("Submission failed: network or worker error.");
-      }
-    }).catch(() => {
-      alert("reCAPTCHA failed to execute.");
+        data.recaptchaToken = token;
+        try {
+          const response = await fetch("https://ai-assessment-worker.richard-dd5.workers.dev", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const responseText = await response.text();
+          if (response.ok) {
+            alert("Your assessment has been submitted! Please expect a report soon.");
+            form.reset();
+          } else {
+            alert("Submission failed: " + responseText);
+          }
+        } catch {
+          alert("Submission failed: network or worker error.");
+        }
+      }).catch(() => {
+        alert("reCAPTCHA failed to execute.");
+      });
     });
   });
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if (true) { // <-- toggle to false to disable test autofill
-    const level = (prompt("Enter sample data level: 1-Low, 2-Moderate, 3-High, 4-Critical") || "").trim();
-    // Risk bands (final score). We target BASE in these same bands since multiplier is ~1.0 here.
-    const BANDS = {
-      "1": { min: 0,  max: 20 },  // Low
-      "2": { min: 21, max: 50 },  // Moderate
-      "3": { min: 51, max: 80 },  // High
-      "4": { min: 81, max: 100 }, // Critical
-    };
-    const band = BANDS[level] || BANDS["1"];
-    const HIGH_KEYS = [
-      "prompting_policy","content_policy","code_reviewed",
-      "ai_restricted","reviewed_ai_licenses","ai_training","awareness"
-    ];
-    const MED_KEYS = [
-      "code_labeled","mentioned_in_commits","mentioned_in_docs",
-      "ai_in_production","store_prompts","vendor_ai_use"
-    ];
-    // Helpers
-    const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-    const shuffle = (arr) => arr.map(v => [Math.random(), v]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
-    const pickK = (arr, k) => shuffle(arr).slice(0, k);
-    // Find a random base target within band that is achievable by 10*h + 5*m
-    function randomAchievableBase(min, max) {
-      // pick a random value in [min,max], force to multiple of 5
-      for (let tries = 0; tries < 200; tries++) {
-        let target = randInt(min, max);
-        target = target - (target % 5); // multiple of 5
-        if (isAchievable(target)) return target;
-      }
-      // fallback: search outward from the midpoint for a solvable multiple of 5
-      const mid = Math.round((min + max) / 10) * 10;
-      for (let delta = 0; delta <= 20; delta += 5) {
-        for (const sign of [-1, 1]) {
-          const candidate = Math.min(max, Math.max(min, mid + sign * delta));
-          const c5 = candidate - (candidate % 5);
-          if (isAchievable(c5)) return c5;
-        }
-      }
-      return 0; // last resort
-    }
-    function isAchievable(base) {
-      // 10*h + 5*m = base, with 0<=h<=7, 0<=m<=6
-      for (let h = 0; h <= 7; h++) {
-        const rem = base - 10*h;
-        if (rem < 0) break;
-        if (rem % 5 !== 0) continue;
-        const m = rem / 5;
-        if (m >= 0 && m <= 6) return true;
-      }
-      return false;
-    }
-    // Given a base target, pick a random (h,m) that satisfies it
-    function randomCountsForBase(base) {
-      const solutions = [];
-      for (let h = 0; h <= 7; h++) {
-        const rem = base - 10*h;
-        if (rem < 0) break;
-        if (rem % 5 !== 0) continue;
-        const m = rem / 5;
-        if (m >= 0 && m <= 6) solutions.push({ h, m });
-      }
-      return solutions.length ? solutions[randInt(0, solutions.length - 1)] : { h:0, m:0 };
-    }
-    // Compute target base, then choose which questions are "No"
-    const baseTarget = randomAchievableBase(band.min, band.max);
-    const { h: highNoCount, m: medNoCount } = randomCountsForBase(baseTarget);
-    // Set radios for each group based on random subset that matches counts
-    const highNoSet = new Set(pickK(HIGH_KEYS, highNoCount));
-    const medNoSet  = new Set(pickK(MED_KEYS,  medNoCount));
-    const setRadioGroup = (name, yes) => {
-      const y = document.querySelector(`input[type="radio"][name="${name}"][value="Yes"]`);
-      const n = document.querySelector(`input[type="radio"][name="${name}"][value="No"]`);
-      if (yes) { if (y) y.checked = true; } else { if (n) n.checked = true; }
-    };
-    HIGH_KEYS.forEach(key => setRadioGroup(key, !highNoSet.has(key)));
-    MED_KEYS.forEach(key  => setRadioGroup(key,  !medNoSet.has(key)));
-    // Only handle "Other" fields for High (3) and Critical (4)
-    if (level === "3" || level === "4") {
-      const otherTextMatrix = {
-        "3": { tools: "Extra AI tools for coding", usage: "Specialized code generation tasks", assist: "Help with AI code reviews" },
-        "4": { tools: "Many unapproved AI tools",  usage: "Critical production code generation", assist: "Urgent legal/compliance assistance" },
-      };
-      const otherData = otherTextMatrix[level];
-      ["ai_tools","ai_usage","assistance"].forEach(groupName => {
-        document.querySelectorAll(`input[type="checkbox"][name="${groupName}"]`).forEach(cb => {
-          if ((cb.value || "").toLowerCase().includes("other")) cb.checked = true;
-        });
-      });
-      [
-        { name: "ai_tools_other",   value: otherData.tools  },
-        { name: "ai_usage_other",   value: otherData.usage  },
-        { name: "assistance_other", value: otherData.assist }
-      ].forEach(({ name, value }) => {
-        const input = document.querySelector(`input[name="${name}"]`);
-        if (input) input.value = value;
-      });
-    }
-    // Name / Email
-    const nameInput = document.querySelector('input[name="name"]');
-    if (nameInput) nameInput.value = "Richard Hundhausen";
-    const emailInput = document.querySelector('input[name="email"]');
-    if (emailInput) emailInput.value = "richard@hundhausen.com";
-  }
-});
 </script>

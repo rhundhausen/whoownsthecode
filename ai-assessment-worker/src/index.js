@@ -60,7 +60,9 @@ function hasCodeLikeUsage(form) {
 }
 
 /** Compute 0–100 risk score + label/color */
+/** Compute 0–100 risk score + label/color */
 function computeRiskAssessment(form) {
+  const CRITICAL = ["assert_code_ownership"]; // Q16
   const HIGH = [
     "prompting_policy", "content_policy", "code_reviewed",
     "ai_restricted", "reviewed_ai_licenses", "ai_training", "awareness"
@@ -71,9 +73,14 @@ function computeRiskAssessment(form) {
   ];
 
   let base = 0;
+  let criticalNo = 0;
   let highNo = 0;
   let medNo = 0;
 
+  for (const k of CRITICAL) {
+    const yes = isYes(form[k]);
+    if (!yes) { base += 20; criticalNo += 1; }
+  }
   for (const k of HIGH) {
     const yes = isYes(form[k]);
     if (!yes) { base += 10; highNo += 1; }
@@ -90,7 +97,11 @@ function computeRiskAssessment(form) {
   if (hasCodeLikeUsage(form)) multiplier += 0.05;
   if (multiplier > 1.15) multiplier = 1.15;
 
-  const finalScore = Math.min(100, Math.round(base * multiplier));
+  let finalScore = Math.min(100, Math.round(base * multiplier));
+
+  if (isYes(form.assert_code_ownership)) {
+    finalScore = Math.min(finalScore, 80);
+  }
 
   let level = "Low";
   let color = "#16a34a";
@@ -98,7 +109,7 @@ function computeRiskAssessment(form) {
   if (finalScore >= 51 && finalScore <= 80) { level = "High"; color = "#ea580c"; }
   if (finalScore >= 81) { level = "Critical"; color = "#dc2626"; }
 
-  return { score: finalScore, base, multiplier, highNo, medNo, toolsCount, level, color };
+  return { score: finalScore, base, multiplier, criticalNo, highNo, medNo, toolsCount, level, color };
 }
 
 const ASSISTANCE_VALUE_TO_LABEL = {
@@ -140,7 +151,8 @@ const QUESTIONS = [
   { num: 13, key: "ai_training", label: "Developers trained on responsible AI?" },
   { num: 14, key: "vendor_ai_use", label: "Contractors/vendors use AI on codebase?" },
   { num: 15, key: "awareness", label: "Aware of risks of using AI-generated code?" },
-  { num: 16, key: "assistance", label: "What kind of assistance are you looking for?" },
+  { num: 16, key: "assert_code_ownership", label: "Do you assert that you own the code?" },
+  { num: 17, key: "assistance", label: "What kind of assistance are you looking for?" },
 ];
 
 function buildAssessmentText(form) {
@@ -156,7 +168,7 @@ function buildAssessmentText(form) {
     ``,
     "Assessment",
     `Risk Score: ${a.score}/100 (${a.level} Risk)`,
-    `Base: ${a.base}/100  Multiplier: ×${a.multiplier.toFixed(2)}  High-No: ${a.highNo}  Med-No: ${a.medNo}  Tools: ${a.toolsCount}`,
+    `Base: ${a.base}/100  Multiplier: ×${a.multiplier.toFixed(2)}  Critical-No: ${a.criticalNo}  High-No: ${a.highNo}  Med-No: ${a.medNo}  Tools: ${a.toolsCount}`,
     ``,
     "Details",
     ``
@@ -197,9 +209,6 @@ function buildAssessmentHTML(form) {
   const questionCell = `${baseCell} font-weight:600;`;
   const answerCell = `${baseCell}`;
   const a = computeRiskAssessment(form);
-
-  const meterOuter = "height:10px;background:#e5e7eb;border-radius:9999px;overflow:hidden;";
-  const meterInner = `height:10px;width:${a.score}%;background:${a.color};`;
 
   const rowQA = (num, label, value) => `
     <tr>
@@ -242,18 +251,18 @@ function buildAssessmentHTML(form) {
     <h2>Submitted by</h2>
     <div style="padding:0 20px;background:#f3f4f6;">
       <table role="presentation" cellpadding="0" cellspacing="0"
-            style="width:100%;border-collapse:collapse;border-spacing:0;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+            style="width:100%;border-collapse:collapse;">
         <tr>
           <td style="padding:4px 0;vertical-align:middle;
                     font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;
-                    mso-line-height-rule:exactly;color:#111;">
+                    color:#111;">
             ${name || "—"}
           </td>
         </tr>
         <tr>
           <td style="padding:4px 0;vertical-align:middle;
                     font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;
-                    mso-line-height-rule:exactly;color:#111;">
+                    color:#111;">
             ${email !== "N/A"
               ? `<a href="mailto:${email}" style="text-decoration:underline;">${email}</a>`
               : "N/A"}
@@ -274,39 +283,22 @@ function buildAssessmentHTML(form) {
       </table>
     </div>
     <div style="margin-top:10px;font-size:12px;color:#555;line-height:1.4;">
+      <strong>Your calculation details:</strong><br/>
+      &nbsp;&nbsp;• Assessment score: <strong>${a.score}/100</strong><br/>
+      &nbsp;&nbsp;• Base: <strong>${a.base}/100</strong> - points from your “No” answers  
+        (20 pts for each critical question, 10 pts for each high-impact question, 5 pts for each medium-impact question).<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Critical “No” answers: <strong>${a.criticalNo}</strong><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- High-impact “No” answers: <strong>${a.highNo}</strong><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Medium-impact “No” answers: <strong>${a.medNo}</strong><br/>
+      &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Different AI tools in use: <strong>${a.toolsCount}</strong><br/><br/>
+
       <strong>How this score works:</strong><br/>
-      &nbsp;&nbsp;Risk scores range from <strong>0</strong> (lowest risk) to <strong>100</strong> (highest risk). Badges change as follows:<br/>
+      &nbsp;&nbsp;Risk scores range from <strong>0</strong> (lowest risk) to <strong>100</strong> (highest risk).<br/>
       &nbsp;&nbsp;• <span style="color:#16a34a;font-weight:600;">Low</span>: 0–20<br/>
       &nbsp;&nbsp;• <span style="color:#ca8a04;font-weight:600;">Moderate</span>: 21–50<br/>
       &nbsp;&nbsp;• <span style="color:#ea580c;font-weight:600;">High</span>: 51–80<br/>
-      &nbsp;&nbsp;• <span style="color:#dc2626;font-weight:600;">Critical</span>: 81–100<br/><br/>
-      <strong>Your calculation details:</strong><br/>
-      &nbsp;&nbsp;• Assessment score: <strong>${a.score}/100</strong><br/>
-      &nbsp;&nbsp;• Base: <strong>${a.base}/100</strong> - points from your “No” answers to key questions  
-        (10 pts for each high-impact question, 5 pts for each medium-impact question).<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- High-impact “No” answers: <strong>${a.highNo}</strong><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Medium-impact “No” answers: <strong>${a.medNo}</strong><br/>
-      &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong> - adjusts base score for higher AI exposure (more than 5 tools or code/database use can raise it).<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Different AI tools in use: <strong>${a.toolsCount}</strong>
-    </div>
-
-    <div style="margin-top:16px;font-size:12px;color:#555;line-height:1.4;">
-      <strong>High-impact questions</strong> (10 points for "No")<br/>
-      &nbsp;&nbsp;• <em>Policy for AI prompting?</em> — A documented policy ensures all team members provide ethical, non-sensitive, and legally safe input to AI systems. Without it, there is a higher chance of leaking confidential data or producing biased or harmful outputs.<br/>
-      &nbsp;&nbsp;• <em>Policy for AI content use?</em> — Controls how AI-generated content is used, stored, and distributed. Prevents the organization from publishing unverified, plagiarized, or non-compliant content that could result in legal or reputational damage.<br/>
-      &nbsp;&nbsp;• <em>Review AI-generated code?</em> — Requires human review of AI-written code before it’s merged or deployed. This safeguards against security vulnerabilities, licensing issues, and code quality problems that AI may overlook.<br/>
-      &nbsp;&nbsp;• <em>Restrict AI code in certain systems?</em> — Blocks unverified AI-generated code from entering high-security, safety-critical, or compliance-heavy systems where even small defects can have major consequences.<br/>
-      &nbsp;&nbsp;• <em>Reviewed license terms for AI coding tools?</em> — Confirms that the organization understands and accepts the licensing, usage limits, and IP terms of AI tools. Prevents accidental license breaches and downstream legal disputes.<br/>
-      &nbsp;&nbsp;• <em>Developers trained on responsible AI?</em> — Ensures that team members understand AI risks, limitations, and ethical responsibilities. Reduces accidental misuse or over-reliance on AI-generated outputs.<br/>
-      &nbsp;&nbsp;• <em>Awareness of risks?</em> — Demonstrates that decision-makers and developers know the operational, legal, and reputational risks of using AI, enabling informed governance and oversight.<br/><br/>
-
-      <strong>Medium-impact questions</strong> (5 points for "No")<br/>
-      &nbsp;&nbsp;• <em>Label/comment AI-generated code?</em> — Marking code as AI-generated creates an audit trail for future maintainers and auditors, improving transparency and enabling targeted quality reviews.<br/>
-      &nbsp;&nbsp;• <em>Mention AI code in commits?</em> — Including AI-use notes in commit messages documents when and how AI contributed to the codebase, aiding compliance checks and historical research.<br/>
-      &nbsp;&nbsp;• <em>Mention AI code in documentation?</em> — Public or internal documentation that notes AI contributions helps other teams understand potential quality differences and licensing concerns.<br/>
-      &nbsp;&nbsp;• <em>Push AI code to production?</em> — Directly deploying AI-generated code without thorough review can introduce security holes, defects, or compliance violations into live systems.<br/>
-      &nbsp;&nbsp;• <em>Store AI prompts in version control?</em> — Keeping prompts alongside code provides traceability, allowing you to understand the original request that produced specific code or content.<br/>
-      &nbsp;&nbsp;• <em>Contractors/vendors use AI on codebase?</em> — When external partners use AI, it introduces uncontrolled risk. Clear oversight ensures third-party code aligns with internal security, quality, and legal standards.
+      &nbsp;&nbsp;• <span style="color:#dc2626;font-weight:600;">Critical</span>: 81–100<br/>
     </div>
 
     <h2>Survey Details</h2>
@@ -370,7 +362,7 @@ export default {
 
       const payload = {
         from: `${siteName} <no-reply@buildmeasurelearn.com>`,
-        to: ["whoownsthecode@gmail.com"],
+        to: ["whoownsthecode@gmail.com", email],  // 👈 send to both
         subject: `New assessment from ${cleanDisplayName(name)}`,
         text: textBody,
         html: htmlBody,
