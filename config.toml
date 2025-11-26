@@ -15,7 +15,7 @@ subtitle = "AI code == No author == No copyright"
 # Enable footer
 [params.footer]
 enabled = true
-content = "© 2025 Who Owns The Code, Inc. All rights reserved."
+content = "© 2026 Who Owns The Code, Inc. All rights reserved."
 
 # Add navbar links
 
@@ -36,6 +36,10 @@ url = "/authors/"
 [[params.navbar]]
 title = "Assessment"
 url = "/assessment/"
+
+[[params.navbar]]
+title = "Presentations"
+url = "/presentations/"
 
 [[params.navbar]]
 title = "Workshops"

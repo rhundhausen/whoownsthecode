@@ -1,10 +1,21 @@
-html, body {
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;         /* always reserve vertical scrollbar space */
+  scrollbar-gutter: stable;   /* modern browsers keep layout stable */
+}
+
+body {
   background-color: #fff !important;
   color: #000 !important;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-y: scroll;
+}
+
+body {
+  font-family: 'Fira Code', monospace;
 }
 
 body.home {
@@ -135,10 +146,10 @@ body.home .content strong {
   flex-shrink: 0;
 }
 
-.hero,
-.hero-body,
-section,
-.main {
+body:not(.home) .hero,
+body:not(.home) .hero-body,
+body:not(.home) section,
+body:not(.home) .main {
   margin-top: 20px !important;
   padding-top: 0 !important;
 }

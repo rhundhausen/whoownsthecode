@@ -1,15 +1,15 @@
 ---
-title: "Free Online Assessment"
+title: "AI Usage Assessment"
 date: 2025-08-05
 ---
 
-We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment.
+We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment. This is an educational service and not legal advice.
 
 <div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
   <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
     <input type="hidden" name="form_type" value="assessment">
-    <input type="text" name="website" style="display:none;" tabindex="-1" autocomplete="off">
-    <h2>AI in Your Workflow</h2>
+    <input type="hidden" name="website" tabindex="-1" autocomplete="off">
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">AI Tools & Usage</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -41,6 +41,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <input type="text" name="ai_usage_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Policies & Governance</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">3. Do you have a policy for AI prompting?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -111,6 +112,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="reviewed_ai_licenses" value="No"> No</label>
       </div>
     </div>
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">People & Training</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">13. Are developers trained on the responsible use of AI tools?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -125,6 +127,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="vendor_ai_use" value="No"> No</label>
       </div>
     </div>
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Awareness & Ownership</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">15. Are you aware of the risks of using AI-generated code?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -138,26 +141,20 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="assert_code_ownership" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
       </div>
-    </div>    
+    </div> 
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Support Needed</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">17. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
-        <label><input type="checkbox" name="assistance" value="assistance_patent_disclosure"> Advising on AI-related patent disclosure</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_ip_risk"> Assessing AI-related IP risks</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_audit_trails"> Auditing for AI-assisted development</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_documentation"> Best practices for AI documentation</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_documentation"> Best practices for AI use</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_tool_selection"> Choosing appropriate AI tools</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_policy"> Creating an AI use policy</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_governance"> Developing an AI governance framework</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_usage_agreements"> Drafting AI tool usage agreements</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_due_diligence"> Performing due diligence for M&A</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_claim_response"> Responding to legal claims involving AI</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_training_execs"> Training executives</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_training_legal"> Training legal/compliance teams</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_training_devs"> Training developers</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_other"> Other training or consulting</label>
-        <input type="text" name="assistance_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
+        <label><input type="checkbox" name="assistance" value="assistance_ip_patents"> IP & Patents</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_risk"> AI Risk Assessment</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_audit"> Development Audits</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_best_practices"> Best Practices & Policies</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_governance"> Governance & Agreements</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_due_diligence"> M&A Due Diligence</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_training"> Training & Education</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_other"> Other (please specify)</label>
+        <input type="text" name="assistance_other_text" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
