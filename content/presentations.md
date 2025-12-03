@@ -4,7 +4,7 @@ date: 2025-11-25
 ---
 
 #### Boise State University
-April 2025
+April 2025 | Coming soon
 
 Brad Frazer and Richard Hundhausen delivered an insightful session on the legal and business complexities surrounding AI-generated code. They examined questions of copyright ownership, emerging legal challenges, and what these issues mean for developers and organizations moving forward.
 
@@ -22,3 +22,10 @@ In this episode of the *LeSS Talks Podcast*, host Gene Gendel speaks with Brad F
 September 2025 | [Listen](https://azuredevopspodcast.clear-measure.com/richard-hundhausen-and-brad-frazer-who-owns-the-code-episode-366)
 
 Episode 366 of the *Azure DevOps Podcast* features host Jeffrey Palermo in conversation with Brad Frazer and Richard Hundhausen. They unpack the increasingly complex question of code ownership in modern software development, particularly when AI tools contribute to or generate code. The discussion covers legal risks, authorship concerns, and how development teams can navigate ownership in an AI-driven environment.
+
+---
+
+#### Agile Alilance Event
+December 2025 | Coming soon
+
+Brad Frazer and Richard Hundhausen present a one-hour virtual session for the Agile Alliance exploring the evolving question of who owns the code in an AI-driven world. Their conversation examines how AI-assisted development is reshaping intellectual property expectations, the legal uncertainties emerging around code generation, and what these shifts mean for teams striving to build software responsibly and with confidence in an increasingly automated era.
