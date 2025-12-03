@@ -4,7 +4,7 @@ date: 2025-11-25
 ---
 
 #### Boise State University
-April 2025 | Coming soon
+April 2025 | [Watch](https://www.youtube.com/watch?v=k-OyAPM53Tc)
 
 Brad Frazer and Richard Hundhausen delivered an insightful session on the legal and business complexities surrounding AI-generated code. They examined questions of copyright ownership, emerging legal challenges, and what these issues mean for developers and organizations moving forward.
 
