@@ -25,7 +25,7 @@ Episode 366 of the *Azure DevOps Podcast* features host Jeffrey Palermo in conve
 
 ---
 
-#### Agile Alliance Event
+#### Agile Alliance Virtual Meetup
 December 2025 | Coming soon
 
 Brad Frazer and Richard Hundhausen present a one-hour virtual session for the Agile Alliance exploring the evolving question of who owns the code in an AI-driven world. Their conversation examines how AI-assisted development is reshaping intellectual property expectations, the legal uncertainties emerging around code generation, and what these shifts mean for teams striving to build software responsibly and with confidence in an increasingly automated era.
