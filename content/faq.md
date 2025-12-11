@@ -1,5 +1,5 @@
 ---
-title: "AI-Generated Code: Copyright, Ownership & Risk FAQ"
+title: "FAQ"
 date: 2025-12-11
 ---
 
