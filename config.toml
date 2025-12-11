@@ -42,6 +42,10 @@ title = "Presentations"
 url = "/presentations/"
 
 [[params.navbar]]
+title = "FAQ"
+url = "/faq/"
+
+[[params.navbar]]
 title = "Workshops"
 url = "/workshops/"
 
