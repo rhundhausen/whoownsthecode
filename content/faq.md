@@ -38,7 +38,7 @@ date: 2026-01-03
 > Possibly. Meaningful human revision, selection, restructuring, or creative judgment may establish authorship.
 
 > **How much human input is “enough”?**  
-> There is no bright-line rule. Courts look for creative contribution and judgment, not just volume of edits. Importantly, the U.S. Copyright Office does not make this determination, **courts do**, typically only if and when the issue is tested in litigation.
+> There is no bright-line rule. Courts look for creative contribution and judgment, not just volume of edits. Importantly, the U.S. Copyright Office does not make this determination—**courts do**, typically only if and when the issue is tested in litigation. Because this analysis is highly fact-specific, many teams seek guidance in advance; we can help evaluate authorship risk before it is tested in court—[contact us](https://whoownsthecode.com/contact).
 
 > **Does refactoring or rewriting AI code make it mine?**  
 > Not automatically. Deterministic or mechanical changes (such as simple transcription or formatting) are insufficient. Authorship may arise only where refactoring reflects independent creative decisions.
@@ -54,7 +54,7 @@ date: 2026-01-03
 > Applying an open-source license requires copyright ownership. Because pure AI output has no copyright holder, you cannot legally apply an open-source license to that portion.
 
 > **What if AI generates code similar to open-source material?**  
-> Similarity can still trigger licensing obligations or infringement risk, especially with copyleft licenses, and can retroactively undermine your IP position—turning what you believed was proprietary software into an enforceable obligation to share it.
+> Similarity can still trigger licensing obligations or infringement risk, especially with copyleft licenses, and can retroactively undermine your IP position—turning what you believed was proprietary software into an enforceable obligation to share it. Because these issues often surface late and are expensive to unwind, we help teams identify and mitigate open-source exposure before audits or exits—[contact us](https://whoownsthecode.com/contact).
 
 > **Can derivative works based on public code be copyrighted?**  
 > Yes, but only the new, human-created portions qualify for protection. This principle long predates AI, and AI does not change the rule—it only makes violations easier to create and harder to detect.
@@ -70,7 +70,7 @@ date: 2026-01-03
 > The company owns the human-authored portions via work-for-hire, but it cannot assert ownership over purely AI-generated sections. As a result, parts of a company’s core product may be legally unowned and unenforceable, creating ownership gaps that often surface only during litigation, audits, or an attempted exit.
 
 > **What if a contractor uses AI to deliver code?**  
-> Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer them—often discovered only during diligence or dispute. We can help you put the right agreements in place **before these gaps become irreversible**; contact us at https://whoownsthecode.com/contact.
+> Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer them—often discovered only during diligence or dispute. We can help you put the right agreements in place **before these gaps become irreversible**; [contact us](https://whoownsthecode.com/contact).
 
 > **Should contracts address AI usage?**  
 > Yes. Modern agreements should clearly define permitted AI use, authorship expectations, ownership, and documentation requirements.
@@ -89,7 +89,7 @@ date: 2026-01-03
 > AI usage, code provenance, and where demonstrable human authorship exists.
 
 > **How do I prepare for an audit of AI-generated software?**  
-> Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making.
+> Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making. Audit preparation is often where undocumented AI usage is first uncovered; we can help teams prepare defensible documentation before diligence begins—[contact us](https://whoownsthecode.com/contact).
 
 > **If customers are paying us, why does ownership still matter?**  
 > Revenue does not create ownership. Without enforceable rights, competitors may legally copy your software, customers may stop paying, and acquirers may walk away. First-mover advantage is temporary; ownership sustains long-term value.
