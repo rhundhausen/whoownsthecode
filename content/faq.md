@@ -6,16 +6,16 @@ date: 2026-01-03
 ## AI-Generated Code & Ownership
 
 > **Do I own the code an AI tool generates for me?**  
-> Not necessarily. Under current U.S. copyright law, output from purely generative AI lacks a human author and therefore **cannot be copyrighted**.
+> Under current U.S. copyright law, output from purely generative AI lacks a human author and therefore **cannot be copyrighted**.
 
 > **Does writing detailed prompts make me the author?**  
-> Usually not. Prompts guide the system, but typically lack the **determinism and creative specificity** required to establish human authorship under copyright law.
+> Prompts guide the system, but typically lack the **determinism and creative specificity** required to establish human authorship under copyright law.
 
 > **Can I copyright AI-generated code?**  
 > Only the portions created or significantly modified by a human author qualify. Pure AI output cannot be copyrighted.
 
 > **Can I monetize AI-generated code even if I don't own it?**  
-> Yes, but ownership uncertainty significantly increases risk in licensing, fundraising, enforcement, and exits.
+> Yes, but ownership uncertainty significantly increases risk in licensing, fundraising, enforcement, and exits. Without clear ownership, you cannot create or defend a **lawful monopoly** over your software, allowing competitors to copy it with impunity and leaving the company with revenue but no defensible asset to protect or sell.
 
 ---
 
@@ -25,10 +25,10 @@ date: 2026-01-03
 > “Vibe coding” refers to prompting an AI to generate large amounts of functional code with minimal human design, structure, or revision.
 
 > **Why is vibe coding risky from an ownership perspective?**  
-> Because the AI—not the human—is doing the expressive work. Under current law, vibe-coded output is typically **not human-authored** and therefore **not a legally protectable asset**.
+> Because the AI, not the human, is doing the expressive work. Under current law, vibe-coded output is typically **not human-authored** and therefore **not a legally protectable asset**.
 
-> **Is an AI prompt like source code compiled by a compiler?**  
-> No. A compiler deterministically transforms human-authored source code into another form. Generative AI systems do not preserve a one-to-one relationship between human expression and output, which is a key requirement for copyright protection.
+> **Is an AI prompt processed by a large language model equivalent to source code compiled by a traditional compiler?**  
+> No. Compilers deterministically preserve human authorship by transforming source code into another form. Generative AI systems are non-deterministic and generate new expression, severing the one-to-one link required for copyright protection.
 
 ---
 
@@ -38,7 +38,7 @@ date: 2026-01-03
 > Possibly. Meaningful human revision, selection, restructuring, or creative judgment may establish authorship.
 
 > **How much human input is “enough”?**  
-> There is no bright-line rule. Courts look for **creative contribution and judgment**, not just volume of edits.
+> There is no bright-line rule. Courts look for creative contribution and judgment, not just volume of edits. Importantly, the U.S. Copyright Office does not make this determination—**courts do**, typically only if and when the issue is tested in litigation.
 
 > **Does refactoring or rewriting AI code make it mine?**  
 > Not automatically. Deterministic or mechanical changes (such as simple transcription or formatting) are insufficient. Authorship may arise only where refactoring reflects independent creative decisions.
