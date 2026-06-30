@@ -70,7 +70,7 @@ date: 2026-01-03
 > The company owns the human-authored portions via work-for-hire, but it cannot assert ownership over purely AI-generated sections. As a result, parts of a company’s core product may be legally unowned and unenforceable, creating ownership gaps that often surface only during litigation, audits, or an attempted exit.
 
 > **What if a contractor uses AI to deliver code?**  
-> Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer—issues that are often discovered only during diligence or dispute. [We can help you](https://whoownsthecode.com/contact) put the right agreements in place **before these gaps become irreversible**.
+> Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer, issues that are often discovered only during diligence or dispute. [We can help you](https://whoownsthecode.com/contact) put the right agreements in place **before these gaps become irreversible**.
 
 > **Should contracts address AI usage?**  
 > Yes. Modern agreements should clearly define permitted AI use, authorship expectations, ownership, and documentation requirements. These provisions are best developed with an experienced IP attorney who knows which questions to ask, rather than relying on AI-generated contract language that may omit or misallocate critical rights, often discovered only after a dispute arises.
@@ -92,7 +92,7 @@ date: 2026-01-03
 > Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making. Audit preparation is often where undocumented AI usage is first uncovered. [We can help teams](https://whoownsthecode.com/contact) prepare defensible documentation before diligence begins.
 
 > **If customers are paying us, why does ownership still matter?**  
-> Revenue does not create ownership. Without enforceable intellectual property rights, you do not possess a lawful monopoly over your software, meaning competitors may legally copy it without consequence. Customer payments confer no exclusivity, no barrier to entry, and no defense against replication. First-mover advantage is temporary; only ownership creates durable control, defensible value, and an asset that can be enforced, licensed, or sold. Without it, revenue exists—but the company does not own what it is selling.
+> Revenue does not create ownership. Without enforceable intellectual property rights, you do not possess a lawful monopoly over your software, meaning competitors may legally copy it without consequence. Customer payments confer no exclusivity, no barrier to entry, and no defense against replication. First-mover advantage is temporary; only ownership creates durable control, defensible value, and an asset that can be enforced, licensed, or sold. Without it, revenue exists, but the company does not own what it is selling.
 
 ---
 

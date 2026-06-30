@@ -10,10 +10,10 @@ Brad Frazer and Richard Hundhausen delivered an insightful session on the legal 
 
 ---
 
-#### Less Talks
+#### LeSS Talks
 August 2025 | [Watch](https://www.keystepstosuccess.com/2025/08/less-talks-who-owns-the-code-in-an-ai-world-w-brad-frazer-and-ricard-hundhausen/)
 
-In this episode of the *LeSS Talks Podcast*, host Gene Gendel speaks with Brad Frazer and Richard Hundhausen about the shifting landscape of code ownership in an AI-assisted world. The conversation explores the legal, ethical, and business implications of AI-generated and AI-augmented code — raising questions about authorship, rights, and how organizations should approach intellectual property in the age of AI.
+In this episode of the *LeSS Talks Podcast*, host Gene Gendel speaks with Brad Frazer and Richard Hundhausen about the shifting landscape of code ownership in an AI-assisted world. The conversation explores the legal, ethical, and business implications of AI-generated and AI-augmented code, raising questions about authorship, rights, and how organizations should approach intellectual property in the age of AI.
 
 
 ---
