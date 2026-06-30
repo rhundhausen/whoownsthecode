@@ -1,5 +1,0 @@
-{{- /* One collapsible FAQ entry. Usage: {{< faqitem q="Question?" >}}Answer markdown{{< /faqitem >}} */ -}}
-<details class="faq-item">
-  <summary>{{ .Get "q" }}</summary>
-  <div class="faq-answer">{{ .Inner | markdownify }}</div>
-</details>
