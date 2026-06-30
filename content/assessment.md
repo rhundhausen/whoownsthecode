@@ -26,7 +26,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
 </style>
 
 <div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
-  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
+  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
     <input type="hidden" name="form_type" value="assessment">
     <input type="hidden" name="website" tabindex="-1" autocomplete="off">
     <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">AI Tools & Usage</h3>

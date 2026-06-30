@@ -14,8 +14,10 @@ body {
   padding: 0;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
+/* Use Inter throughout to match accentient.com (monospace only for code) */
+body, button, input, select, textarea,
+.title, .subtitle, .navbar-item, .navbar-link, .button {
+  font-family: 'Inter', "SF Pro", "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* Keep a monospace face for actual code only */
@@ -23,40 +25,31 @@ code, pre, kbd, samp {
   font-family: 'Fira Code', monospace;
 }
 
-/* FAQ (IRS-style: auto-generated question index + always-visible answers).
-   Scoped via the #TableOfContents nav so it never affects other pages. */
-.content #TableOfContents { margin: 0 0 6px; }
-.content #TableOfContents ul { list-style: none; margin: 0; padding: 0; }
-.content #TableOfContents > ul > li { margin-top: 16px; }
-.content #TableOfContents > ul > li > a {
-  display: inline-block;
-  margin-bottom: 2px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #0047AB;
-  text-decoration: none;
+/* FAQ accordion: plain +/- toggles, normal type, no color. Scoped to .content. */
+.content details.faq-item { border-bottom: 1px solid #dddddd; }
+.content details.faq-item:first-of-type { border-top: 1px solid #dddddd; }
+.content details.faq-item > summary {
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  padding: 12px 30px 12px 0;
+  font-weight: 600;
 }
-.content #TableOfContents ul ul { margin-top: 2px; border-top: 1px solid #eef0f2; }
-.content #TableOfContents ul ul li { border-bottom: 1px solid #eef0f2; padding: 4px 0; }
-.content #TableOfContents ul ul a { color: #0047AB; text-decoration: none; font-size: 0.85rem; }
-.content #TableOfContents ul ul a:hover { text-decoration: underline; }
-
-/* Answers below the index */
-.content #TableOfContents + h2 { border-top: 2px solid #0047AB; padding-top: 20px; margin-top: 24px; }
-.content #TableOfContents ~ h2 { font-size: 1.15rem; color: #000; margin: 30px 0 2px; }
-.content #TableOfContents ~ h3 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #000;
-  border-top: 1px solid #d9dde2;
-  padding-top: 12px;
-  margin: 12px 0 4px;
+.content details.faq-item > summary::-webkit-details-marker { display: none; }
+.content details.faq-item > summary::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1;
 }
-.content #TableOfContents ~ h2 + h3 { border-top: none; padding-top: 4px; }
-.content #TableOfContents ~ h3 + p { margin-top: 0; font-size: 0.9rem; line-height: 1.6; color: #333; }
-.content #TableOfContents ~ h3 + p::before { content: "Answer: "; color: #0047AB; font-weight: 700; }
+.content details.faq-item[open] > summary::after { content: "\2212"; }
+.content details.faq-item .faq-answer { padding: 0 30px 14px 0; }
+.content details.faq-item .faq-answer p { margin: 0 0 0.6rem; }
+.content details.faq-item .faq-answer p:last-child { margin-bottom: 0; }
 
 body.home {
   background-size: cover;
