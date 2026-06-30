@@ -2,6 +2,7 @@
 /public/
 /resources/_gen/
 /hugo_stats.json
+.hugo_build.lock
 
 # Build artifacts
 *.bak
@@ -28,3 +29,6 @@ Thumbs.db
 
 # Other potential caches
 .cache/
+
+# Claude Code local config (per-machine, not tracked)
+.claude/
