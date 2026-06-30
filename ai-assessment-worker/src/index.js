@@ -56,7 +56,7 @@ function countSelectedTools(form) {
 /** Did Q2 include code-like usage? (matches the form's checkbox values) */
 function hasCodeLikeUsage(form) {
   const usage = asArray(form.ai_usage).map(s => s.toLowerCase());
-  return ["code", "agentic", "refactoring", "schema"].some(v => usage.includes(v));
+  return ["code", "agentic", "refactoring"].some(v => usage.includes(v));
 }
 
 /** Compute 0-100 risk score + label/color */
