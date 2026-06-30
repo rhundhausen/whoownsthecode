@@ -1,5 +1,5 @@
 baseURL = 'https://whoownsthecode.com'
-locale = 'en-US'
+languageCode = 'en-us'
 title = 'Who Owns the Code'
 
 [markup]

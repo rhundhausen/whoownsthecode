@@ -20,6 +20,8 @@ hugo --minify        # production build into ./public (what CI runs)
 
 CI builds with Hugo **extended** v0.147.9 (see `.github/workflows/deploy-to-cloudflare.yml`). Use the extended edition locally since the theme uses SCSS/Sass.
 
+> **Version gotcha:** CI pins 0.147.9, but a local install is often much newer. A build can succeed locally yet fail in CI if it uses template functions or config keys introduced after 0.147.9. (Example that bit us: `.Site.Language.Locale` and the `locale` config key, which replaced the deprecated `.Site.LanguageCode` / `languageCode` only in Hugo 0.158.0, so they error on 0.147.9.) Stay within 0.147.9-era syntax, or bump the pinned CI version deliberately, before relying on newer features. Deprecation warnings you see locally may not apply to the pinned CI version at all.
+
 ### Assessment worker (run from `ai-assessment-worker/`)
 
 ```bash
