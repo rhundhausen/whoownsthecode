@@ -6,7 +6,7 @@ date: 2025-08-05
 We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment. This is an educational service and not legal advice.
 
 <style>
-  .info-tip { position: relative; display: inline-block; margin-left: 6px; cursor: help; vertical-align: middle; }
+  .info-tip { position: relative; display: inline-block; margin-left: 6px; cursor: help; vertical-align: middle; top: -3px; }
   .info-tip .info-icon {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%;
@@ -39,7 +39,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="checkbox" name="ai_tools" value="Claude / Claude Code"> Claude / Claude Code</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Google Gemini / Gemini Code Assist"> Google Gemini / Gemini Code Assist</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Windsurf"> Windsurf (formerly Codeium)</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Amazon Q Developer"> Amazon Q Developer (formerly CodeWhisperer)</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Amazon Q Developer"> Amazon Q Developer</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Other"> Other:</label>
         <input type="text" name="ai_tools_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
@@ -170,13 +170,13 @@ We’re here to help you understand the risks and responsibilities of using AI t
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">18. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
-        <label><input type="checkbox" name="assistance" value="assistance_ip_patents"> IP & Patents</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_risk"> AI Risk Assessment</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_audit"> Development Audits</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_best_practices"> Best Practices & Policies</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_governance"> Governance & Agreements</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_due_diligence"> M&A Due Diligence</label><br/>
-        <label><input type="checkbox" name="assistance" value="assistance_training"> Training & Education</label><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_ip_patents"> IP & Patents</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Help protecting your code and inventions through copyrights, patents, and trade secrets.</span></span><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_risk"> AI Risk Assessment</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A deeper review of how you use AI and the ownership and compliance risks it creates.</span></span><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_audit"> Development Audits</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A review of your codebase and process to find AI-generated code and document how it was made.</span></span><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_best_practices"> Best Practices & Policies</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Written guidance for using AI tools safely and consistently across your team.</span></span><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_governance"> Governance & Agreements</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Frameworks and contract language defining permitted AI use and who owns the output.</span></span><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_due_diligence"> M&A Due Diligence</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Assessing AI-related IP risk before an acquisition, investment, or sale.</span></span><br/>
+        <label><input type="checkbox" name="assistance" value="assistance_training"> Training & Education</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Sessions for developers, executives, or legal teams on AI, IP, and ownership.</span></span><br/>
         <label><input type="checkbox" name="assistance" value="assistance_other"> Other (please specify)</label>
         <input type="text" name="assistance_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
