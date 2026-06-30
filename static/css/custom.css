@@ -23,6 +23,49 @@ code, pre, kbd, samp {
   font-family: 'Fira Code', monospace;
 }
 
+/* FAQ accordion (content/faq.md via the faqitem shortcode) */
+.content details.faq-item {
+  border-bottom: 1px solid #e5e7eb;
+}
+.content details.faq-item:first-of-type {
+  border-top: 1px solid #e5e7eb;
+}
+.content details.faq-item > summary {
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  padding: 14px 36px 14px 2px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: #000;
+}
+.content details.faq-item > summary::-webkit-details-marker { display: none; }
+.content details.faq-item > summary::after {
+  content: "+";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #0047AB;
+}
+.content details.faq-item[open] > summary::after { content: "\2212"; }
+.content details.faq-item[open] > summary,
+.content details.faq-item > summary:hover {
+  color: #0047AB;
+}
+.content details.faq-item .faq-answer {
+  padding: 0 36px 16px 2px;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.content details.faq-item .faq-answer p { margin: 0 0 0.6rem; }
+.content details.faq-item .faq-answer p:last-child { margin-bottom: 0; }
+
 body.home {
   background-size: cover;
   background-attachment: fixed;
