@@ -53,41 +53,48 @@ function countSelectedTools(form) {
   return asArray(form.ai_tools).length;
 }
 
-/** Did Q2 include code-like usage? */
+/** Did Q2 include code-like usage? (matches the form's checkbox values) */
 function hasCodeLikeUsage(form) {
   const usage = asArray(form.ai_usage).map(s => s.toLowerCase());
-  return usage.includes("code") || usage.includes("database schema");
+  return ["code", "agentic", "refactoring", "schema"].some(v => usage.includes(v));
 }
 
-/** Compute 0–100 risk score + label/color */
-/** Compute 0–100 risk score + label/color */
+/** Compute 0-100 risk score + label/color */
 function computeRiskAssessment(form) {
-  const CRITICAL = ["assert_code_ownership"]; // Q16
-  const HIGH = [
-    "prompting_policy", "content_policy", "code_reviewed",
-    "ai_restricted", "reviewed_ai_licenses", "ai_training", "awareness"
-  ];
-  const MED = [
-    "code_labeled", "mentioned_in_commits", "mentioned_in_docs",
-    "ai_in_production", "store_prompts", "vendor_ai_use"
+  // weight = points added when the answer is the risky one.
+  // riskWhen "no": good-practice questions where "No" is the risk.
+  // riskWhen "yes": questions where doing the thing is the risk (inverted).
+  const SCORED = [
+    { key: "assert_code_ownership", weight: 20, riskWhen: "no" },  // critical
+    { key: "prompting_policy",      weight: 10, riskWhen: "no" },
+    { key: "content_policy",        weight: 10, riskWhen: "no" },
+    { key: "code_reviewed",         weight: 10, riskWhen: "no" },
+    { key: "ai_restricted",         weight: 10, riskWhen: "no" },
+    { key: "reviewed_ai_licenses",  weight: 10, riskWhen: "no" },
+    { key: "ai_training",           weight: 10, riskWhen: "no" },
+    { key: "awareness",             weight: 10, riskWhen: "no" },
+    { key: "contracts_address_ai",  weight: 10, riskWhen: "no" },
+    { key: "code_labeled",          weight: 5,  riskWhen: "no" },
+    { key: "mentioned_in_commits",  weight: 5,  riskWhen: "no" },
+    { key: "mentioned_in_docs",     weight: 5,  riskWhen: "no" },
+    { key: "store_prompts",         weight: 5,  riskWhen: "no" },
+    { key: "ai_in_production",      weight: 10, riskWhen: "yes" }, // inverted: shipping AI code is the risk
+    { key: "vendor_ai_use",         weight: 5,  riskWhen: "yes" }, // inverted: third-party AI use is the exposure
   ];
 
   let base = 0;
-  let criticalNo = 0;
-  let highNo = 0;
-  let medNo = 0;
+  let criticalFlags = 0;
+  let highFlags = 0;
+  let medFlags = 0;
 
-  for (const k of CRITICAL) {
-    const yes = isYes(form[k]);
-    if (!yes) { base += 20; criticalNo += 1; }
-  }
-  for (const k of HIGH) {
-    const yes = isYes(form[k]);
-    if (!yes) { base += 10; highNo += 1; }
-  }
-  for (const k of MED) {
-    const yes = isYes(form[k]);
-    if (!yes) { base += 5; medNo += 1; }
+  for (const q of SCORED) {
+    const yes = isYes(form[q.key]);
+    const risky = q.riskWhen === "yes" ? yes : !yes;
+    if (!risky) continue;
+    base += q.weight;
+    if (q.weight >= 20) criticalFlags += 1;
+    else if (q.weight >= 10) highFlags += 1;
+    else medFlags += 1;
   }
   if (base > 100) base = 100;
 
@@ -109,24 +116,19 @@ function computeRiskAssessment(form) {
   if (finalScore >= 51 && finalScore <= 80) { level = "High"; color = "#ea580c"; }
   if (finalScore >= 81) { level = "Critical"; color = "#dc2626"; }
 
-  return { score: finalScore, base, multiplier, criticalNo, highNo, medNo, toolsCount, level, color };
+  return { score: finalScore, base, multiplier, criticalFlags, highFlags, medFlags, toolsCount, level, color };
 }
 
+// Keys must match the assistance checkbox values in content/assessment.md (Q18)
 const ASSISTANCE_VALUE_TO_LABEL = {
-  assistance_patent_disclosure: "Advising on AI-related patent disclosure",
-  assistance_ip_risk: "Assessing AI-related IP risks",
-  assistance_audit_trails: "Auditing for AI-assisted development",
-  assistance_documentation: "Best practices for AI documentation/use",
-  assistance_tool_selection: "Choosing appropriate AI tools",
-  assistance_policy: "Creating an AI use policy",
-  assistance_governance: "Developing an AI governance framework",
-  assistance_usage_agreements: "Drafting AI tool usage agreements",
-  assistance_due_diligence: "Performing due diligence for M&A",
-  assistance_claim_response: "Responding to legal claims involving AI",
-  assistance_training_execs: "Training executives",
-  assistance_training_legal: "Training legal/compliance teams",
-  assistance_training_devs: "Training developers",
-  assistance_other: "Other training or consulting",
+  assistance_ip_patents: "IP & Patents",
+  assistance_risk: "AI Risk Assessment",
+  assistance_audit: "Development Audits",
+  assistance_best_practices: "Best Practices & Policies",
+  assistance_governance: "Governance & Agreements",
+  assistance_due_diligence: "M&A Due Diligence",
+  assistance_training: "Training & Education",
+  assistance_other: "Other",
 };
 
 function mapAssistanceValuesToLabels(values) {
@@ -150,9 +152,10 @@ const QUESTIONS = [
   { num: 12, key: "reviewed_ai_licenses", label: "Reviewed license terms for AI coding tools?" },
   { num: 13, key: "ai_training", label: "Developers trained on responsible AI?" },
   { num: 14, key: "vendor_ai_use", label: "Contractors/vendors use AI on codebase?" },
-  { num: 15, key: "awareness", label: "Aware of risks of using AI-generated code?" },
-  { num: 16, key: "assert_code_ownership", label: "Do you assert that you own the code?" },
-  { num: 17, key: "assistance", label: "What kind of assistance are you looking for?" },
+  { num: 15, key: "contracts_address_ai", label: "Agreements address AI use and IP ownership?" },
+  { num: 16, key: "awareness", label: "Aware of risks of using AI-generated code?" },
+  { num: 17, key: "assert_code_ownership", label: "Do you assert that you own the code?" },
+  { num: 18, key: "assistance", label: "What kind of assistance are you looking for?" },
 ];
 
 function buildAssessmentText(form) {
@@ -168,7 +171,7 @@ function buildAssessmentText(form) {
     ``,
     "Assessment",
     `Risk Score: ${a.score}/100 (${a.level} Risk)`,
-    `Base: ${a.base}/100  Multiplier: ×${a.multiplier.toFixed(2)}  Critical-No: ${a.criticalNo}  High-No: ${a.highNo}  Med-No: ${a.medNo}  Tools: ${a.toolsCount}`,
+    `Base: ${a.base}/100  Multiplier: x${a.multiplier.toFixed(2)}  Critical: ${a.criticalFlags}  High: ${a.highFlags}  Med: ${a.medFlags}  Tools: ${a.toolsCount}`,
     ``,
     "Details",
     ``
@@ -285,11 +288,11 @@ function buildAssessmentHTML(form) {
     <div style="margin-top:10px;font-size:12px;color:#555;line-height:1.4;">
       <strong>Your calculation details:</strong><br/>
       &nbsp;&nbsp;• Assessment score: <strong>${a.score}/100</strong><br/>
-      &nbsp;&nbsp;• Base: <strong>${a.base}/100</strong> - points from your “No” answers  
-        (20 pts for each critical question, 10 pts for each high-impact question, 5 pts for each medium-impact question).<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Critical “No” answers: <strong>${a.criticalNo}</strong><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- High-impact “No” answers: <strong>${a.highNo}</strong><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Medium-impact “No” answers: <strong>${a.medNo}</strong><br/>
+      &nbsp;&nbsp;• Base: <strong>${a.base}/100</strong> - points from your risk-flagged answers
+        (20 pts per critical item, 10 pts per high-impact item, 5 pts per medium-impact item).<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Critical risks flagged: <strong>${a.criticalFlags}</strong><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- High-impact risks flagged: <strong>${a.highFlags}</strong><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Medium-impact risks flagged: <strong>${a.medFlags}</strong><br/>
       &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong><br/>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Different AI tools in use: <strong>${a.toolsCount}</strong><br/><br/>
 

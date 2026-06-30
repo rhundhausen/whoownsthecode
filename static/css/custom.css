@@ -15,6 +15,11 @@ body {
 }
 
 body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Keep a monospace face for actual code only */
+code, pre, kbd, samp {
   font-family: 'Fira Code', monospace;
 }
 

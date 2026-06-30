@@ -62,12 +62,12 @@ Single-file Worker, default `fetch` export, no framework. Request flow:
 1. Accepts `POST` of a JSON body (the form on the assessment page serializes itself to JSON and POSTs here). `OPTIONS` returns CORS preflight; other methods 405.
 2. Honeypot: if the `website` field is present, returns `200 OK` without doing anything (bot trap).
 3. Verifies the Google reCAPTCHA v3 token against `siteverify`, requiring `action === "submit"` and `score >= 0.3`.
-4. `computeRiskAssessment()` produces the 0-100 risk score. This is the core domain logic: questions are weighted CRITICAL (20 pts) / HIGH (10) / MED (5) per "No" answer, then a multiplier (more tools, code-like usage) is applied and capped, then bucketed into Low/Moderate/High/Critical bands. Changing the question set means updating the `CRITICAL`/`HIGH`/`MED` key lists, the `QUESTIONS` array, and the form fields in `content/assessment.md` together.
+4. `computeRiskAssessment()` produces the 0-100 risk score. This is the core domain logic: a single `SCORED` array lists each scored question with a `weight` (20 = critical, 10 = high, 5 = medium) and a `riskWhen` flag. Most questions are `riskWhen: "no"` (a "No" to a good-practice question adds the weight); two are inverted with `riskWhen: "yes"` (`ai_in_production` and `vendor_ai_use`, where doing the thing is the risk). The base sum is capped at 100, then a multiplier (more than 5 tools, code-like usage) is applied and capped at 1.15, asserting ownership caps the result at 80, and the score is bucketed into Low/Moderate/High/Critical bands. Changing the question set means updating the `SCORED` array, the `QUESTIONS` array, and the form fields in `content/assessment.md` together.
 5. Builds both a plain-text and an HTML email of the answers + score and sends via the **Resend** API to `whoownsthecode@gmail.com` and the submitter.
 
 Secrets the worker expects (set via `wrangler secret`, never committed): `RECAPTCHA_SECRET`, `RESEND_API_KEY`. The reCAPTCHA **site** key is public and hardcoded in `content/assessment.md`.
 
-When editing the assessment, keep three things in sync: the form fields in `content/assessment.md`, the `QUESTIONS` array in `src/index.js`, and the scoring key lists. A field added to one but not the others will silently be unscored or unreported.
+When editing the assessment, keep these in sync between `content/assessment.md` and `src/index.js`: the form field `name`s vs the `SCORED` and `QUESTIONS` arrays; the Q2 usage checkbox `value`s vs `hasCodeLikeUsage()`; the Q18 assistance checkbox `value`s vs `ASSISTANCE_VALUE_TO_LABEL`; and the `*_other` free-text field names (`ai_tools_other`, `ai_usage_other`, `assistance_other`) vs what the worker reads. A field added or renamed on one side but not the other is silently unscored or unreported.
 
 ## Conventions
 

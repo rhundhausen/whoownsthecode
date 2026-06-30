@@ -181,7 +181,7 @@ Section Styles
   height: 75vh !important; }
 
 .section .title, .section .subtitle {
-  font-family: 'Open Sans', sans-serif; }
+  font-family: 'Inter', sans-serif; }
 
 .section .subtitle.is-muted {
   color: #999; }
@@ -190,7 +190,7 @@ Section Styles
   max-width: 500px;
   margin: 0 auto; }
   .title-wrapper .title, .title-wrapper .subtitle {
-    font-family: 'Open Sans', sans-serif; }
+    font-family: 'Inter', sans-serif; }
   .title-wrapper .subtitle.is-muted {
     color: #999; }
 
@@ -228,7 +228,7 @@ Hero styles
   padding-top: 6rem;
   padding-bottom: 6rem; }
   .hero-body .title, .hero-body .subtitle {
-    font-family: 'Open Sans', sans-serif; }
+    font-family: 'Inter', sans-serif; }
   .hero-body .title.is-bold {
     font-weight: 700; }
   .hero-body .subtitle.is-muted {
@@ -275,7 +275,7 @@ Classes to change the feel of bulma buttons
   cursor: pointer;
   transition: all 0.5s; }
   .button.cta {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 1rem;
     font-weight: 600;
     padding: 26px 40px 26px 40px; }
@@ -291,7 +291,7 @@ Classes to change the feel of bulma buttons
   .button.signup-button {
     font-size: .9rem;
     font-weight: 600;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     padding: 24px 26px;
     width: 130px; }
 
@@ -363,7 +363,7 @@ Cards and Card content styles
   border-radius: 3px;
   margin: 0 auto; }
   .feature-card .card-title h4 {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     padding-top: 25px;
     font-size: 1.2rem;
     font-weight: 600;
@@ -633,7 +633,7 @@ Sidebar Styles
       max-width: 400px;
       list-style: none;
       list-style-type: none;
-      font-family: 'Open Sans', sans-serif !important; }
+      font-family: 'Inter', sans-serif !important; }
       .sidebar .inner .sidebar-menu li a {
         padding: 20px 25px;
         display: block;

@@ -2,6 +2,11 @@ baseURL = 'https://whoownsthecode.com'
 languageCode = 'en-us'
 title = 'Who Owns the Code'
 
+# Match the Accentient site: load Inter (feeds the Google Fonts link in layouts/partials/css.html)
+[params.font]
+name = "Inter"
+sizes = [400, 500, 600, 700, 800]
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]

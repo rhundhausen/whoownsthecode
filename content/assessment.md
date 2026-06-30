@@ -14,15 +14,18 @@ We’re here to help you understand the risks and responsibilities of using AI t
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="ai_tools" value="GitHub Copilot"> GitHub Copilot</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="ChatGPT"> ChatGPT</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Amazon CodeWhisperer"> Amazon CodeWhisperer</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Tabnine"> Tabnine</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Cursor"> Cursor</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Codeium"> Codeium</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Phind"> Phind</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Mutable AI"> Mutable AI</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Claude / Claude Code"> Claude / Claude Code</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="ChatGPT"> ChatGPT</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Google Gemini / Gemini Code Assist"> Google Gemini / Gemini Code Assist</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Windsurf"> Windsurf (formerly Codeium)</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Amazon Q Developer"> Amazon Q Developer (formerly CodeWhisperer)</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Replit Agent"> Replit Agent</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Devin"> Devin</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Cline"> Cline</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Tabnine"> Tabnine</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Sourcegraph Cody"> Sourcegraph Cody</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="OpenDevin"> OpenDevin</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="OpenHands"> OpenHands (formerly OpenDevin)</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Other"> Other:</label>
         <input type="text" name="ai_tools_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
@@ -32,6 +35,9 @@ We’re here to help you understand the risks and responsibilities of using AI t
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="ai_usage" value="UI Design"> UI Design/Content</label><br/>
         <label><input type="checkbox" name="ai_usage" value="Code"> Code</label><br/>
+        <label><input type="checkbox" name="ai_usage" value="Agentic"> Agentic / autonomous coding (&quot;vibe coding&quot;)</label><br/>
+        <label><input type="checkbox" name="ai_usage" value="Refactoring"> Refactoring / migration</label><br/>
+        <label><input type="checkbox" name="ai_usage" value="Code Review"> Code review</label><br/>
         <label><input type="checkbox" name="ai_usage" value="Tests"> Unit Tests</label><br/>
         <label><input type="checkbox" name="ai_usage" value="Acceptance Tests"> Acceptance Tests</label><br/>
         <label><input type="checkbox" name="ai_usage" value="Docs"> Documentation</label><br/>
@@ -127,16 +133,23 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="vendor_ai_use" value="No"> No</label>
       </div>
     </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <label style="flex: 1 1 400px; min-width: 300px;">15. Do your employee and contractor agreements address AI use and IP ownership?</label>
+      <div style="flex: 1 1 250px; min-width: 200px;">
+        <label><input type="radio" name="contracts_address_ai" value="Yes"> Yes</label>&nbsp;&nbsp;
+        <label><input type="radio" name="contracts_address_ai" value="No"> No</label>
+      </div>
+    </div>
     <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Awareness & Ownership</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">15. Are you aware of the risks of using AI-generated code?</label>
+      <label style="flex: 1 1 400px; min-width: 300px;">16. Are you aware of the risks of using AI-generated code?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="awareness" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="awareness" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">16. Do you assert that you own the code?</label>
+      <label style="flex: 1 1 400px; min-width: 300px;">17. Do you assert that you own the code?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="assert_code_ownership" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
@@ -144,7 +157,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
     </div> 
     <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Support Needed</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">17. What kind of assistance are you looking for?</label>
+      <label style="flex: 1 1 400px; min-width: 300px;">18. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="assistance" value="assistance_ip_patents"> IP & Patents</label><br/>
         <label><input type="checkbox" name="assistance" value="assistance_risk"> AI Risk Assessment</label><br/>
@@ -154,7 +167,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="checkbox" name="assistance" value="assistance_due_diligence"> M&A Due Diligence</label><br/>
         <label><input type="checkbox" name="assistance" value="assistance_training"> Training & Education</label><br/>
         <label><input type="checkbox" name="assistance" value="assistance_other"> Other (please specify)</label>
-        <input type="text" name="assistance_other_text" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
+        <input type="text" name="assistance_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
