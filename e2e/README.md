@@ -1,96 +1,109 @@
 # End-to-end checks (Playwright)
 
-Playwright specs for the assessment, in two groups.
+Three named test groups (Playwright projects):
 
-Page specs (no secrets, no submission, reCAPTCHA never involved):
+| Group | What it checks | Sends email? | Needs |
+| --- | --- | --- | --- |
+| **UI** | The assessment page / persona wizard | No | nothing |
+| **Results** | The worker's scoring + rendered email (via test mode) | No | `WOTC_TEST_SECRET` |
+| **Emails** | Actually sends ~20 real emails to eyeball | **Yes** | `WOTC_TEST_SECRET` + `TEST_EMAIL_TO` |
 
-- `tests/wizard.spec.js` drives the persona wizard: short-circuits, promise-check
-  stacking, the Acquirer question hiding, the Renter mitigation, reset, and the
-  blog link.
-- `tests/persona-matrix.spec.js` is the exhaustive persona check: every persona
-  resolves to its correct inbound/outbound rating (source of truth = the blog
-  risk matrix), and all 64 promise-check stacking combinations produce the right
-  stacked set and critical-outbound count.
+Run one group by name with `--project`, or use the npm scripts below.
 
-Worker specs (need `WOTC_TEST_SECRET`; they skip themselves when it is unset):
+## UI
 
-- `tests/worker-email.spec.js` verifies the worker's scoring and the rendered
-  email for a few representative personas.
-- `tests/scoring-matrix.spec.js` is the exhaustive scoring check: each of the 15
-  scored questions moves the correct axis by the correct amount and leaves the
-  other at 0, plus band thresholds (Low/Moderate/High/Critical) and the outbound
-  cap.
+Drives the deployed page and the persona wizard. No submission, so reCAPTCHA is
+never involved; no secrets needed.
 
-Both worker specs use the worker's secret-gated test mode, which returns the
-computed scores and rendered email without sending anything.
+- `tests/wizard.spec.js` - short-circuits, promise-check stacking, the Acquirer
+  question hiding, the Renter mitigation, reset, the blog link.
+- `tests/persona-matrix.spec.js` - every persona resolves to its correct
+  inbound/outbound rating (source of truth = the blog risk matrix), and all 64
+  promise-check stacking combinations produce the right stacked set and
+  critical-outbound count.
 
-## Why there is no full "submit the real form" test
+```bat
+npm run test:ui
+:: against a local `hugo server` instead of production:
+set SITE_URL=http://localhost:1313
+npm run test:ui
+```
+
+## Results
+
+Verifies the worker's scoring and the rendered email through its secret-gated
+test mode. The worker returns the computed scores and email but **sends nothing**.
+
+- `tests/worker-email.spec.js` - scoring and email content for representative
+  personas.
+- `tests/scoring-matrix.spec.js` - each of the 15 scored questions moves the
+  correct axis by the correct amount and leaves the other at 0, plus band
+  thresholds and the outbound cap.
+- `tests/results-matrix.spec.js` - backend parity with the UI persona matrix:
+  the same persona and stacking scenarios run through the worker, asserting the
+  returned persona, the inbound/outbound scores and levels, and the rendered
+  persona profile (stacked names, critical-outbound count, Renter mitigation).
+
+```bat
+set WOTC_TEST_SECRET=your-secret
+npm run test:results
+:: against a local `wrangler dev`:
+set WORKER_URL=http://localhost:8787
+npm run test:results
+```
+
+`WOTC_TEST_SECRET` must match what you set with `wrangler secret put TEST_SECRET`
+(or `TEST_SECRET` in `ai-assessment-worker/.dev.vars` for local dev). Without it,
+this group skips itself.
+
+## Emails (sends real email)
+
+Sends ~20 curated scenarios (every persona, the key stacks, a range of scores)
+as real emails so you can eyeball the reports. Uses the test mode with
+`testSend: true`, which delivers **only** to `TEST_EMAIL_TO`, not the production
+inbox. Skips unless BOTH `WOTC_TEST_SECRET` and `TEST_EMAIL_TO` are set, so it
+never sends by accident.
+
+```bat
+set WOTC_TEST_SECRET=your-secret
+set TEST_EMAIL_TO=you@example.com
+npm run test:emails
+```
+
+Requires the worker deployed with `TEST_SECRET` and `RESEND_API_KEY` set. This
+delivers 20 emails to `TEST_EMAIL_TO`.
+
+## Why there is no "submit the real form" test
 
 The live form uses reCAPTCHA v3 and the worker rejects any token scoring below
 0.3. An automated browser generally scores as a bot, so a real end-to-end submit
-through the UI is unreliable to keep green. Instead, Script A checks the page
-behavior without submitting, and Script B checks the worker's scoring and email
-rendering directly via test mode. Neither sends an actual email.
+through the UI is unreliable. UI checks page behavior without submitting; Results
+and Emails go through the worker's test mode.
 
 ## Setup
 
-```bash
+```bat
 cd e2e
 npm install
-npm run install-browsers   # downloads Chromium
+npm run install-browsers
 ```
 
-## Script A: the assessment page
+## Run
 
-```bash
-# Against production (once the current changes are deployed):
-npm run test:ui
-
-# Against a local Hugo server (from the repo root: `hugo server`):
-SITE_URL=http://localhost:1313 npm run test:ui
+```bat
+npm test              :: UI + Results (never sends)
+npm run test:ui       :: UI only
+npm run test:results  :: Results only  (needs WOTC_TEST_SECRET)
+npm run test:emails   :: Emails only   (needs WOTC_TEST_SECRET + TEST_EMAIL_TO)
 ```
 
-Script A asserts the new persona wizard, so it only passes against a build that
-includes it. Test a local `hugo server` before deploying, or production after.
-
-## Script B: worker scoring + email
-
-1. Set a shared secret on the worker (once):
-
-   ```bash
-   cd ../ai-assessment-worker
-   npx wrangler secret put TEST_SECRET
-   # paste a random value, e.g. output of: openssl rand -hex 24
-   ```
-
-   For a local `wrangler dev` run, put `TEST_SECRET = "..."` in
-   `ai-assessment-worker/.dev.vars` instead.
-
-2. Run the tests with the same secret in `WOTC_TEST_SECRET`:
-
-   ```bash
-   cd ../e2e
-   WOTC_TEST_SECRET=your-secret npm run test:email
-
-   # Against a local worker (`npx wrangler dev` in ai-assessment-worker):
-   WOTC_TEST_SECRET=your-secret WORKER_URL=http://localhost:8787 npm run test:email
-   ```
-
-The test mode returns the computed inbound/outbound scores, the persona, and the
-rendered text + HTML email in the response body. It does **not** send anything
-through Resend, so it verifies rendering and scoring, not actual delivery. To
-confirm real delivery, submit the live form once by hand and check the inbox.
-
-## Run everything
-
-```bash
-WOTC_TEST_SECRET=your-secret npm test
-```
+`npm test` deliberately excludes the Emails group so a plain run can never send.
 
 ## Environment variables
 
 | Variable | Used by | Default |
 | --- | --- | --- |
-| `SITE_URL` | Script A | `https://whoownsthecode.com` |
-| `WORKER_URL` | Script B | `https://ai-assessment-worker.richard-dd5.workers.dev` |
-| `WOTC_TEST_SECRET` | Script B | unset (tests skip) |
+| `SITE_URL` | UI | `https://whoownsthecode.com` |
+| `WORKER_URL` | Results, Emails | `https://ai-assessment-worker.richard-dd5.workers.dev` |
+| `WOTC_TEST_SECRET` | Results, Emails | unset (groups skip) |
+| `TEST_EMAIL_TO` | Emails | unset (group skips) |

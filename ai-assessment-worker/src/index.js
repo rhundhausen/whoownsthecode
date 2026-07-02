@@ -467,6 +467,11 @@ export default {
       // unless the TEST_SECRET secret is set (wrangler secret put TEST_SECRET).
       const testSecret = request.headers.get("X-Test-Secret");
       if (env.TEST_SECRET && testSecret && testSecret === env.TEST_SECRET) {
+        const testName = formData.name ? String(formData.name).trim() : "Anonymous";
+        const testEmail = formData.email && String(formData.email).trim() ? String(formData.email).trim() : null;
+        const subject = `New assessment from ${cleanDisplayName(testName)}`;
+        const text = buildAssessmentText(formData);
+        const html = buildAssessmentHTML(formData);
         const preview = {
           testMode: true,
           assessment: computeRiskAssessment(formData),
@@ -475,12 +480,24 @@ export default {
             stacked: formData.persona_stacked || "",
             path: formData.persona_path || "",
           },
-          email: {
-            subject: `New assessment from ${cleanDisplayName(formData.name ? String(formData.name).trim() : "Anonymous")}`,
-            text: buildAssessmentText(formData),
-            html: buildAssessmentHTML(formData),
-          },
+          email: { subject, text, html },
+          sent: null,
         };
+        // Opt-in real send, still secret-gated. Delivers only to the submitter
+        // address (not the production inbox) so automated runs don't pile up
+        // test data in whoownsthecode@gmail.com.
+        if (isYes(formData.testSend) && testEmail) {
+          const siteName = cleanDisplayName("Who Owns The Code");
+          const result = await sendWithResend(env, {
+            from: `${siteName} <no-reply@buildmeasurelearn.com>`,
+            to: [testEmail],
+            subject,
+            text,
+            html,
+            reply_to: testEmail,
+          });
+          preview.sent = { ok: result.ok, status: result.status, statusText: result.statusText };
+        }
         return new Response(JSON.stringify(preview), {
           status: 200,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
