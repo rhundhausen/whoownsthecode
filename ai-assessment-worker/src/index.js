@@ -466,7 +466,12 @@ export default {
       if (env.TEST_SECRET && testSecret && testSecret === env.TEST_SECRET) {
         const testName = formData.name ? String(formData.name).trim() : "Anonymous";
         const testEmail = formData.email && String(formData.email).trim() ? String(formData.email).trim() : null;
-        const subject = `New assessment from ${cleanDisplayName(testName)}`;
+        // Test runs may pass an explicit subject so a batch of emails is easy to
+        // scan (e.g. "Test assessment from E2E Host with no policies"). Test-mode
+        // only; production always uses the default subject below.
+        const subject = formData.testSubject
+          ? cleanDisplayName(formData.testSubject)
+          : `New assessment from ${cleanDisplayName(testName)}`;
         const text = buildAssessmentText(formData);
         const html = buildAssessmentHTML(formData);
         const preview = {

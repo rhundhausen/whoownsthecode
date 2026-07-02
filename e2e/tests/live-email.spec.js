@@ -72,11 +72,20 @@ function personaFields(primary, stacked) {
   };
 }
 
+// Short modifier that explains the score band from the maturity preset, so the
+// subject line hints why a report is high vs low risk.
+const MATURITY_LABEL = { poor: "no policies", mixed: "few policies", good: "many policies" };
+
+function subjectFor(s) {
+  return `Test assessment from E2E ${s.name} with ${MATURITY_LABEL[s.maturity]}`;
+}
+
 function payloadFor(s) {
   return {
     name: `E2E ${s.name}`,
     email: TEST_EMAIL_TO,
     testSend: true,
+    testSubject: subjectFor(s),
     ...MATURITY[s.maturity],
     ...(s.excluded ? { scored_excluded: s.excluded.join(",") } : {}),
     ...personaFields(s.primary, s.stacked || []),
@@ -122,6 +131,7 @@ test.describe("live email delivery (sends real emails)", () => {
       const j = await res.json();
       await ctx.dispose();
       expect(j.persona.primary).toBe(s.primary);
+      expect(j.email.subject).toBe(subjectFor(s));
       expect(j.sent, "worker should have attempted a send").toBeTruthy();
       expect(j.sent.ok, `Resend send failed: ${JSON.stringify(j.sent)}`).toBe(true);
     });
