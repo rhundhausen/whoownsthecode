@@ -23,13 +23,112 @@ We’re here to help you understand the risks and responsibilities of using AI t
     box-shadow: 0 2px 8px rgba(0,0,0,0.25);
   }
   .info-tip:hover .info-bubble, .info-tip:focus-within .info-bubble { visibility: visible; opacity: 1; }
+
+  .persona-wizard { display: flex; flex-direction: column; gap: 1.1rem; }
+  .persona-q { display: flex; flex-direction: column; gap: 0.4rem; }
+  .persona-q.hidden, .persona-result.hidden { display: none; }
+  .persona-q .pq-text { font-weight: 600; }
+  .persona-q .pq-options { display: flex; flex-direction: column; gap: 0.25rem; }
+  .persona-q .pq-options.inline { flex-direction: row; gap: 1.5rem; }
+  .persona-q .pq-options label { font-weight: 400; }
+  .persona-result { margin-top: 0.4rem; border: 1px solid #d1d5db; border-radius: 8px; padding: 1rem 1.25rem; background: #f9fafb; }
+  .persona-result h4 { margin: 0 0 0.25rem; font-size: 1.1rem; color: #0047AB; }
+  .persona-card { padding: 0.5rem 0; }
+  .persona-card + .persona-card { border-top: 1px solid #e5e7eb; }
+  .persona-name { font-weight: 700; }
+  .persona-desc { font-size: 0.9em; color: #555; margin: 0.1rem 0 0.35rem; }
+  .persona-flags-label { font-weight: 600; margin-top: 0.6rem; font-size: 0.9em; color: #374151; }
+  .persona-mitigation { margin-top: 0.5rem; font-size: 0.85em; color: #166534; }
+  .persona-more { margin-top: 0.75rem; font-size: 0.9em; }
 </style>
 
 <div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
   <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
     <input type="hidden" name="form_type" value="assessment">
     <input type="hidden" name="website" tabindex="-1" autocomplete="off">
-    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">AI Tools & Usage</h3>
+    <input type="hidden" name="persona_primary" value="">
+    <input type="hidden" name="persona_stacked" value="">
+    <input type="hidden" name="persona_result" value="">
+    <input type="hidden" name="persona_path" value="">
+    <input type="hidden" name="scored_excluded" value="">
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">AI-Code Risk Persona</h3>
+    <p style="margin:0; font-size:0.95rem; color:#444;">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
+    <div class="persona-wizard" id="personaWizard">
+      <div class="persona-q" data-step="p0">
+        <span class="pq-text">Are you assessing code your organization built or owns, or code it is evaluating to acquire?</span>
+        <div class="pq-options">
+          <label><input type="radio" name="persona_scope" value="own"> Code your organization built or owns</label>
+          <label><input type="radio" name="persona_scope" value="acquire"> Code your organization is evaluating to acquire</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p1">
+        <span class="pq-text">Does your organization train or ship an AI model that others build on?</span>
+        <div class="pq-options inline">
+          <label><input type="radio" name="persona_model_maker" value="yes"> Yes</label>
+          <label><input type="radio" name="persona_model_maker" value="no"> No</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p2">
+        <span class="pq-text">Is all of your organization's code free and open source, with no paid tier and nothing sold?</span>
+        <div class="pq-options inline">
+          <label><input type="radio" name="persona_giver" value="yes"> Yes</label>
+          <label><input type="radio" name="persona_giver" value="no"> No</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p3">
+        <span class="pq-text">Is the code written by government employees, not contractors?</span>
+        <div class="pq-options inline">
+          <label><input type="radio" name="persona_civic" value="yes"> Yes</label>
+          <label><input type="radio" name="persona_civic" value="no"> No</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p4">
+        <span class="pq-text">Does the code only ever run on servers your organization controls, and never gets delivered or distributed to anyone else?</span>
+        <div class="pq-options inline">
+          <label><input type="radio" name="persona_host" value="yes"> Yes</label>
+          <label><input type="radio" name="persona_host" value="no"> No</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p5">
+        <span class="pq-text">Who writes the code being assessed?</span>
+        <div class="pq-options">
+          <label><input type="radio" name="persona_authorship" value="employees"> Your organization's own employees</label>
+          <label><input type="radio" name="persona_authorship" value="hired_shop"> A contractor or shop your organization hired</label>
+          <label><input type="radio" name="persona_authorship" value="we_are_shop"> Your organization is the contractor or shop, building for clients</label>
+          <label><input type="radio" name="persona_authorship" value="inherited"> Your organization inherited it through an acquisition</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p6">
+        <span class="pq-text">What does your organization do with that code?</span>
+        <div class="pq-options">
+          <label><input type="radio" name="persona_employee_usage" value="internal"> Internal only; it never leaves your organization</label>
+          <label><input type="radio" name="persona_employee_usage" value="walled"> It feeds an internal LLM trained on your organization's own data</label>
+          <label><input type="radio" name="persona_employee_usage" value="sell_license"> Your organization sells or licenses it to customers</label>
+          <label><input type="radio" name="persona_employee_usage" value="raise_sell"> Your organization is building it to raise money and sell the company</label>
+          <label><input type="radio" name="persona_employee_usage" value="bootstrap"> A bootstrapped paid product, no investors, not for sale</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p7">
+        <span class="pq-text">Is that shop US-based or offshore?</span>
+        <div class="pq-options">
+          <label><input type="radio" name="persona_shop" value="us"> US-based</label>
+          <label><input type="radio" name="persona_shop" value="offshore"> Offshore</label>
+        </div>
+      </div>
+      <div class="persona-q hidden" data-step="p8">
+        <span class="pq-text">Which of these promises does your organization make about its codebase? Check all that apply.</span>
+        <div class="pq-options">
+          <label><input type="checkbox" name="persona_promise" value="warrant_title"> Your organization warrants clear title to customers in its licenses</label>
+          <label><input type="checkbox" name="persona_promise" value="fed"> Your organization delivers to the federal government under contract</label>
+          <label><input type="checkbox" name="persona_promise" value="regulated"> Your organization operates under HIPAA, SEC, or FDA regulation</label>
+          <label><input type="checkbox" name="persona_promise" value="two_tier"> Your organization has an open-source core plus a proprietary paid tier</label>
+          <label><input type="checkbox" name="persona_promise" value="exit"> Your organization is raising or selling, and will warrant title at exit</label>
+          <label><input type="checkbox" name="persona_promise" value="renter"> A vendor contractually indemnifies your organization's AI output</label>
+        </div>
+      </div>
+    </div>
+    <div class="persona-result hidden" id="personaResult" aria-live="polite"></div>
+    <h3 id="sec-tools" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">AI Tools & Usage</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -58,7 +157,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <input type="text" name="ai_usage_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
-    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Policies & Governance</h3>
+    <h3 id="sec-policies" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Policies & Governance</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">3. Do you have a policy for AI prompting?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A documented standard for how your team writes prompts. For example, what information may or may not be pasted into an AI tool.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -129,7 +228,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="reviewed_ai_licenses" value="No"> No</label>
       </div>
     </div>
-    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">People & Training</h3>
+    <h3 id="sec-people" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">People & Training</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">13. Are developers trained on the responsible use of AI tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether developers have been taught to use AI tools responsibly and understand the IP risks.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -151,7 +250,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="contracts_address_ai" value="No"> No</label>
       </div>
     </div>
-    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Awareness & Ownership</h3>
+    <h3 id="sec-awareness" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Awareness & Ownership</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">16. Are you aware of the risks of using AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you understand that AI-generated code may not be copyrightable or fully owned by you.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -166,7 +265,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
       </div>
     </div> 
-    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Support Needed</h3>
+    <h3 id="sec-support" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:#0047AB;">Support Needed</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">18. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -242,4 +341,279 @@ We’re here to help you understand the risks and responsibilities of using AI t
       });
     });
   });
+</script>
+
+<script>
+  // AI-code risk persona wizard. Branching logic and ratings mirror the blog
+  // post risk-matrix table (the source of truth). Runs entirely client-side;
+  // the computed result is written into hidden fields and posted with the form.
+  (function () {
+    var PERSONAS = {
+      "Model Maker":     { inbound: "Critical", outbound: "Low",      desc: "Your organization trains or ships an AI model that others build on, which puts it at the center of the unresolved fair-use fight over training data." },
+      "Giver":           { inbound: "Low",      outbound: "None",     desc: "Your organization gives all of its code away for free and never monetizes it, so ownership of the AI output is moot by choice." },
+      "Civic Coder":     { inbound: "Moderate", outbound: "None",     desc: "Government employees write the code, which is uncopyrightable by statute and open by default, so there is nothing to own or sell." },
+      "Acquirer":        { inbound: "Low",      outbound: "Moderate", desc: "Your organization buys companies and asks who owns their code, inheriting any ownership gap that diligence misses." },
+      "Host":            { inbound: "Low",      outbound: "Moderate", desc: "Your organization runs its code as pure SaaS on its own servers and never distributes it, so copyright is a weak moat, though exit diligence still asks what it actually owns." },
+      "Hired Gun":       { inbound: "Low",      outbound: "Critical", desc: "Your organization is the dev shop on the hook for the title warranty it signs, bearing the breach and misrepresentation exposure when AI code cannot transfer title." },
+      "Inheritor":       { inbound: "Low",      outbound: "High",     desc: "Your organization bought a codebase and the ownership gap surfaces later, leaving it to remediate the code or pursue the seller on a broken warranty." },
+      "Internal Tooler": { inbound: "Low",      outbound: "Low",      desc: "Your organization builds the code, runs it, and never sells it, so unowned AI code rarely matters in practice." },
+      "Walled Garden":   { inbound: "Low",      outbound: "Low",      desc: "Your organization trains its own model on its own data and keeps the output in-house, which holds both inbound and outbound risk down." },
+      "Bootstrapper":    { inbound: "Moderate", outbound: "High",     desc: "Your organization runs a bootstrapped paid product with no investors and no plan to sell, but the unowned code can be copied freely, so there is no lawful monopoly protecting the revenue." },
+      "Exiter":          { inbound: "Moderate", outbound: "Critical", desc: "Your organization is building an AI-heavy product to raise money and sell the company, where the acquisition warranty of title can't be made and a vibe-coded core leaves little a buyer can own." },
+      "Onshorer":        { inbound: "Low",      outbound: "High",     desc: "Your organization hires a US-based shop that may quietly use AI; the shop is reachable and easy to audit, but it can still warrant title it cannot actually give." },
+      "Offshorer":       { inbound: "Low",      outbound: "High",     desc: "Your organization hires an offshore shop that is hard to audit, so it cannot easily verify how much of the delivered code is AI-generated or whether the title warranty holds." },
+      "Licensor":        { inbound: "Moderate", outbound: "Critical", desc: "Your organization ships licensed software to customers and keeps the company, and every customer license demands a warranty of title that unowned AI code cannot support." },
+      "Fed Supplier":    { inbound: "Moderate", outbound: "Critical", desc: "Your organization delivers to the federal government under contract, where title and accuracy warranties can be breached by AI code and trigger debarment." },
+      "Regulated":       { inbound: "Moderate", outbound: "Critical", desc: "Your organization operates under HIPAA, SEC, or FDA rules that demand an auditability and provenance trail that vibe-coded code cannot satisfy." },
+      "Two-Tier":        { inbound: "Moderate", outbound: "Critical", desc: "Your organization runs an open-source core plus a proprietary paid tier, where one unowned or copyleft module can force disclosure of the proprietary code." },
+      "Renter":          { inbound: "Moderate", outbound: "Moderate", desc: "Your organization builds on a vendor platform that contractually indemnifies its AI output, transferring much of the risk to a solvent vendor." }
+    };
+
+    var PROMISE_MAP = {
+      warrant_title: "Licensor",
+      fed: "Fed Supplier",
+      regulated: "Regulated",
+      two_tier: "Two-Tier",
+      exit: "Exiter",
+      renter: "Renter"
+    };
+
+    // The follow-on maturity questions, grouped by their section header id.
+    // Used to hide questions (and empty section headers) that do not apply to
+    // the identified persona, and to tell the worker which keys to skip when
+    // scoring. Order and keys mirror the form fields and the worker's SCORED array.
+    var MATURITY_SECTIONS = {
+      "sec-tools":     ["ai_tools", "ai_usage"],
+      "sec-policies":  ["prompting_policy", "content_policy", "code_reviewed", "code_labeled", "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts", "reviewed_ai_licenses"],
+      "sec-people":    ["ai_training", "vendor_ai_use", "contracts_address_ai"],
+      "sec-awareness": ["awareness", "assert_code_ownership"],
+      "sec-support":   ["assistance"]
+    };
+
+    // Questions that do not apply to a given primary persona. Hidden in the form
+    // and excluded from the risk score.
+    //  - Acquirer evaluates code it did not build, so the whole build-process
+    //    block (and the "do you own it" question) does not apply.
+    //  - Civic Coder output is uncopyrightable by statute and Giver ownership is
+    //    moot by choice, so a "No" to asserting ownership is correct, not a risk.
+    var PERSONA_EXCLUDED = {
+      "Acquirer": ["ai_tools", "ai_usage", "prompting_policy", "content_policy", "code_reviewed", "code_labeled", "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts", "reviewed_ai_licenses", "ai_training", "assert_code_ownership"],
+      "Civic Coder": ["assert_code_ownership"],
+      "Giver": ["assert_code_ownership"]
+    };
+
+    var wizard = document.getElementById("personaWizard");
+    var resultBox = document.getElementById("personaResult");
+    if (!wizard || !resultBox) return;
+
+    function radioVal(name) {
+      var el = wizard.querySelector('input[name="' + name + '"]:checked');
+      return el ? el.value : "";
+    }
+    function checkedVals(name) {
+      var out = [];
+      var els = wizard.querySelectorAll('input[name="' + name + '"]:checked');
+      for (var i = 0; i < els.length; i++) out.push(els[i].value);
+      return out;
+    }
+    function setHidden(name, value) {
+      var el = document.querySelector('input[type="hidden"][name="' + name + '"]');
+      if (el) el.value = value;
+    }
+    function show(step, on) {
+      var el = wizard.querySelector('[data-step="' + step + '"]');
+      if (el) el.classList.toggle("hidden", !on);
+    }
+
+    function answers() {
+      return {
+        scope: radioVal("persona_scope"),
+        model: radioVal("persona_model_maker"),
+        giver: radioVal("persona_giver"),
+        civic: radioVal("persona_civic"),
+        host: radioVal("persona_host"),
+        authorship: radioVal("persona_authorship"),
+        usage: radioVal("persona_employee_usage"),
+        shop: radioVal("persona_shop"),
+        promise: checkedVals("persona_promise")
+      };
+    }
+
+    function updateVisibility(a) {
+      var own = a.scope === "own";
+      var afterModel = own && a.model === "no";
+      var afterGiver = afterModel && a.giver === "no";
+      var afterCivic = afterGiver && a.civic === "no";
+      show("p1", own);
+      show("p2", afterModel);
+      show("p3", afterGiver);
+      show("p4", afterCivic);
+      var atP5 = afterCivic && a.host === "no";
+      show("p5", atP5);
+      show("p6", atP5 && a.authorship === "employees");
+      show("p7", atP5 && a.authorship === "hired_shop");
+      // Gate the promise check on the full active path so a stale answer from a
+      // previously explored branch (e.g. switching back to "acquire") can't
+      // leave it showing.
+      var hostReached = afterCivic && a.host === "yes";
+      var promiseVisible = hostReached
+        || (atP5 && (a.authorship === "we_are_shop" || a.authorship === "inherited"))
+        || (atP5 && a.authorship === "employees" && (a.usage === "sell_license" || a.usage === "raise_sell"));
+      show("p8", promiseVisible);
+    }
+
+    function withPromise(primary, a) {
+      var stacked = [];
+      for (var i = 0; i < a.promise.length; i++) {
+        var name = PROMISE_MAP[a.promise[i]];
+        if (name && name !== primary && stacked.indexOf(name) === -1) stacked.push(name);
+      }
+      return { primary: primary, stacked: stacked };
+    }
+
+    function computeResult(a) {
+      if (a.scope === "acquire") return { primary: "Acquirer", stacked: [] };
+      if (a.scope !== "own") return null;
+      if (a.model === "yes") return { primary: "Model Maker", stacked: [] };
+      if (a.model !== "no") return null;
+      if (a.giver === "yes") return { primary: "Giver", stacked: [] };
+      if (a.giver !== "no") return null;
+      if (a.civic === "yes") return { primary: "Civic Coder", stacked: [] };
+      if (a.civic !== "no") return null;
+      if (a.host === "yes") return withPromise("Host", a);
+      if (a.host !== "no") return null;
+      if (a.authorship === "we_are_shop") return withPromise("Hired Gun", a);
+      if (a.authorship === "inherited") return withPromise("Inheritor", a);
+      if (a.authorship === "hired_shop") {
+        if (a.shop === "us") return { primary: "Onshorer", stacked: [] };
+        if (a.shop === "offshore") return { primary: "Offshorer", stacked: [] };
+        return null;
+      }
+      if (a.authorship === "employees") {
+        if (a.usage === "internal") return { primary: "Internal Tooler", stacked: [] };
+        if (a.usage === "walled") return { primary: "Walled Garden", stacked: [] };
+        if (a.usage === "sell_license") return withPromise("Licensor", a);
+        if (a.usage === "raise_sell") return withPromise("Exiter", a);
+        if (a.usage === "bootstrap") return { primary: "Bootstrapper", stacked: [] };
+        return null;
+      }
+      return null;
+    }
+
+    function cardHTML(name, note) {
+      var p = PERSONAS[name];
+      return '<div class="persona-card">' +
+        '<div class="persona-name">' + name + '</div>' +
+        '<div class="persona-desc">' + p.desc + '</div>' +
+        (note ? '<div class="persona-mitigation">' + note + '</div>' : '') +
+        '</div>';
+    }
+
+    function pathSummary(a, stacked) {
+      if (a.scope === "acquire") return "Evaluating code to acquire";
+      var parts = [];
+      if (a.scope === "own") parts.push("Own code");
+      if (a.authorship === "employees") parts.push("Employees write it");
+      else if (a.authorship === "hired_shop") parts.push("Hired a shop");
+      else if (a.authorship === "we_are_shop") parts.push("We are the shop");
+      else if (a.authorship === "inherited") parts.push("Inherited via acquisition");
+      var um = { internal: "Internal only", walled: "Internal LLM", sell_license: "Sold/licensed", raise_sell: "Raise and sell", bootstrap: "Bootstrapped" };
+      if (a.usage && um[a.usage]) parts.push(um[a.usage]);
+      if (a.shop) parts.push(a.shop === "us" ? "US shop" : "Offshore shop");
+      if (stacked && stacked.length) parts.push("Promises: " + stacked.join(", "));
+      return parts.join(" > ");
+    }
+
+    // Show or hide the follow-on maturity questions based on the primary persona,
+    // and record the excluded keys so the worker scores only what is shown.
+    function applyMaturity(primary) {
+      var excluded = (primary && PERSONA_EXCLUDED[primary]) ? PERSONA_EXCLUDED[primary] : [];
+      for (var sec in MATURITY_SECTIONS) {
+        var keys = MATURITY_SECTIONS[sec];
+        var anyShown = false;
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          var input = document.querySelector('[name="' + key + '"]');
+          var hide = excluded.indexOf(key) !== -1;
+          if (!hide) anyShown = true;
+          if (!input) continue;
+          // Match on "flex-wrap" only: the CSSOM re-serializes the style
+          // attribute without the space after the colon once .style is touched,
+          // so a selector containing "flex-wrap: wrap" would stop matching.
+          var wrap = input.closest('div[style*="flex-wrap"]');
+          if (wrap) wrap.style.display = hide ? "none" : "flex";
+        }
+        var header = document.getElementById(sec);
+        if (header) header.style.display = anyShown ? "" : "none";
+      }
+      setHidden("scored_excluded", excluded.join(","));
+    }
+
+    function render() {
+      var a = answers();
+      updateVisibility(a);
+      var r = computeResult(a);
+
+      if (!r) {
+        resultBox.classList.add("hidden");
+        resultBox.innerHTML = "";
+        setHidden("persona_primary", "");
+        setHidden("persona_stacked", "");
+        setHidden("persona_result", "");
+        setHidden("persona_path", "");
+        applyMaturity(null);
+        return;
+      }
+
+      var stacked = r.stacked.slice();
+      var hasRenter = stacked.indexOf("Renter") !== -1;
+      var triggers = stacked.filter(function (n) { return n !== "Renter"; });
+
+      var set = [r.primary].concat(triggers);
+      var critCount = 0;
+      for (var i = 0; i < set.length; i++) {
+        if (PERSONAS[set[i]] && PERSONAS[set[i]].outbound === "Critical") critCount++;
+      }
+
+      var html = '<h4>Your primary persona: ' + r.primary + '</h4>';
+      html += '<div class="persona-desc">' + PERSONAS[r.primary].desc + '</div>';
+
+      if (triggers.length) {
+        html += '<div class="persona-flags-label">Also flagged on this codebase:</div>';
+        for (var j = 0; j < triggers.length; j++) html += cardHTML(triggers[j]);
+      }
+      if (hasRenter) {
+        html += cardHTML("Renter", "A vendor contractually indemnifies your AI output, which offsets much of the risk.");
+      }
+      html += '<div class="persona-more"><a href="https://accentient.com/blog/ai-code-ownership-by-persona/" target="_blank" rel="noopener">Learn more about AI-code risk personas</a> | <a href="#" id="personaReset">Start over</a></div>';
+
+      resultBox.innerHTML = html;
+      resultBox.classList.remove("hidden");
+
+      setHidden("persona_primary", r.primary);
+      setHidden("persona_stacked", stacked.join(", "));
+      setHidden("persona_path", pathSummary(a, stacked));
+      var payload = {
+        primary: { name: r.primary, inbound: PERSONAS[r.primary].inbound, outbound: PERSONAS[r.primary].outbound },
+        stacked: stacked.map(function (n) {
+          return { name: n, inbound: PERSONAS[n].inbound, outbound: PERSONAS[n].outbound, mitigating: n === "Renter" };
+        }),
+        criticalOutboundCount: critCount
+      };
+      setHidden("persona_result", JSON.stringify(payload));
+      applyMaturity(r.primary);
+    }
+
+    wizard.addEventListener("change", render);
+    resultBox.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t && t.id === "personaReset") {
+        e.preventDefault();
+        var inputs = wizard.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+        for (var i = 0; i < inputs.length; i++) inputs[i].checked = false;
+        render();
+      }
+    });
+    render();
+  })();
 </script>

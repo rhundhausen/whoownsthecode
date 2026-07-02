@@ -59,44 +59,57 @@ function hasCodeLikeUsage(form) {
   return ["code", "agentic", "refactoring"].some(v => usage.includes(v));
 }
 
-/** Compute 0-100 risk score + label/color */
+/** Keys the client hid for the identified persona; excluded from scoring and
+ * the emailed survey detail. Mirrors PERSONA_EXCLUDED in content/assessment.md. */
+function getExcluded(form) {
+  const raw = form.scored_excluded;
+  if (!raw) return new Set();
+  return new Set(String(raw).split(",").map(s => s.trim()).filter(Boolean));
+}
+
+/** Compute inbound and outbound risk (each 0-100) + band/color per axis */
 function computeRiskAssessment(form) {
-  // weight = points added when the answer is the risky one.
+  // weight = points that a risky answer adds on that question's axis.
   // riskWhen "no": good-practice questions where "No" is the risk.
   // riskWhen "yes": questions where doing the thing is the risk (inverted).
+  // axis: which of the two risk directions the question speaks to.
+  //   inbound  = what the AI ingested into your build (infringing/copyleft
+  //              fragments, tool training data): catching and tracing it.
+  //   outbound = what you ship (can you own, license, warrant, and sell it).
   const SCORED = [
-    { key: "assert_code_ownership", weight: 20, riskWhen: "no" },  // critical
-    { key: "prompting_policy",      weight: 10, riskWhen: "no" },
-    { key: "content_policy",        weight: 10, riskWhen: "no" },
-    { key: "code_reviewed",         weight: 10, riskWhen: "no" },
-    { key: "ai_restricted",         weight: 10, riskWhen: "no" },
-    { key: "reviewed_ai_licenses",  weight: 10, riskWhen: "no" },
-    { key: "ai_training",           weight: 10, riskWhen: "no" },
-    { key: "awareness",             weight: 10, riskWhen: "no" },
-    { key: "contracts_address_ai",  weight: 10, riskWhen: "no" },
-    { key: "code_labeled",          weight: 5,  riskWhen: "no" },
-    { key: "mentioned_in_commits",  weight: 5,  riskWhen: "no" },
-    { key: "mentioned_in_docs",     weight: 5,  riskWhen: "no" },
-    { key: "store_prompts",         weight: 5,  riskWhen: "no" },
-    { key: "ai_in_production",      weight: 10, riskWhen: "yes" }, // inverted: shipping AI code is the risk
-    { key: "vendor_ai_use",         weight: 5,  riskWhen: "yes" }, // inverted: third-party AI use is the exposure
+    // Outbound: ownership, title, authorship record, what reaches customers.
+    { key: "assert_code_ownership", weight: 20, riskWhen: "no",  axis: "outbound" },
+    { key: "content_policy",        weight: 10, riskWhen: "no",  axis: "outbound" },
+    { key: "awareness",             weight: 10, riskWhen: "no",  axis: "outbound" },
+    { key: "contracts_address_ai",  weight: 10, riskWhen: "no",  axis: "outbound" },
+    { key: "ai_training",           weight: 10, riskWhen: "no",  axis: "outbound" },
+    { key: "mentioned_in_commits",  weight: 5,  riskWhen: "no",  axis: "outbound" },
+    { key: "mentioned_in_docs",     weight: 5,  riskWhen: "no",  axis: "outbound" },
+    { key: "ai_in_production",      weight: 10, riskWhen: "yes", axis: "outbound" }, // shipping AI code is the risk
+    { key: "vendor_ai_use",         weight: 5,  riskWhen: "yes", axis: "outbound" }, // third-party AI use is the exposure
+    // Inbound: vetting and tracing what the model put into the codebase.
+    { key: "prompting_policy",      weight: 10, riskWhen: "no",  axis: "inbound" },
+    { key: "code_reviewed",         weight: 10, riskWhen: "no",  axis: "inbound" },
+    { key: "ai_restricted",         weight: 10, riskWhen: "no",  axis: "inbound" },
+    { key: "reviewed_ai_licenses",  weight: 10, riskWhen: "no",  axis: "inbound" },
+    { key: "code_labeled",          weight: 5,  riskWhen: "no",  axis: "inbound" },
+    { key: "store_prompts",         weight: 5,  riskWhen: "no",  axis: "inbound" },
   ];
 
-  let base = 0;
-  let criticalFlags = 0;
-  let highFlags = 0;
-  let medFlags = 0;
+  const excluded = getExcluded(form);
+  const axes = {
+    inbound:  { possible: 0, risky: 0, flagged: 0 },
+    outbound: { possible: 0, risky: 0, flagged: 0 },
+  };
 
   for (const q of SCORED) {
+    if (excluded.has(q.key)) continue;
+    const ax = axes[q.axis];
+    ax.possible += q.weight;
     const yes = isYes(form[q.key]);
     const risky = q.riskWhen === "yes" ? yes : !yes;
-    if (!risky) continue;
-    base += q.weight;
-    if (q.weight >= 20) criticalFlags += 1;
-    else if (q.weight >= 10) highFlags += 1;
-    else medFlags += 1;
+    if (risky) { ax.risky += q.weight; ax.flagged += 1; }
   }
-  if (base > 100) base = 100;
 
   let multiplier = 1.0;
   const toolsCount = countSelectedTools(form);
@@ -104,19 +117,31 @@ function computeRiskAssessment(form) {
   if (hasCodeLikeUsage(form)) multiplier += 0.05;
   if (multiplier > 1.15) multiplier = 1.15;
 
-  let finalScore = Math.min(100, Math.round(base * multiplier));
+  const ownershipAsserted = !excluded.has("assert_code_ownership") && isYes(form.assert_code_ownership);
 
-  if (isYes(form.assert_code_ownership)) {
-    finalScore = Math.min(finalScore, 80);
+  function band(score) {
+    if (score >= 81) return { level: "Critical", color: "#dc2626" };
+    if (score >= 51) return { level: "High",     color: "#ea580c" };
+    if (score >= 21) return { level: "Moderate", color: "#ca8a04" };
+    return { level: "Low", color: "#16a34a" };
   }
 
-  let level = "Low";
-  let color = "#16a34a";
-  if (finalScore >= 21 && finalScore <= 50) { level = "Moderate"; color = "#ca8a04"; }
-  if (finalScore >= 51 && finalScore <= 80) { level = "High"; color = "#ea580c"; }
-  if (finalScore >= 81) { level = "Critical"; color = "#dc2626"; }
+  // Normalize each axis to 0-100 over the questions actually shown, so the two
+  // scores are comparable and persona exclusions do not skew the scale.
+  function finalize(ax, capWhenOwned) {
+    let score = ax.possible > 0 ? Math.round((ax.risky / ax.possible) * 100 * multiplier) : 0;
+    if (score > 100) score = 100;
+    if (capWhenOwned && ownershipAsserted) score = Math.min(score, 80);
+    return { score, ...band(score), flagged: ax.flagged, possible: ax.possible, risky: ax.risky };
+  }
 
-  return { score: finalScore, base, multiplier, criticalFlags, highFlags, medFlags, toolsCount, level, color };
+  return {
+    inbound: finalize(axes.inbound, false),
+    outbound: finalize(axes.outbound, true),
+    multiplier,
+    toolsCount,
+    ownershipAsserted,
+  };
 }
 
 // Keys must match the assistance checkbox values in content/assessment.md (Q18)
@@ -158,6 +183,76 @@ const QUESTIONS = [
   { num: 18, key: "assistance", label: "What kind of assistance are you looking for?" },
 ];
 
+// Persona profile is computed client-side (see content/assessment.md) and
+// posted in hidden fields. The worker only renders it. persona_result is a JSON
+// string: { primary:{name,inbound,outbound}, stacked:[{name,inbound,outbound,mitigating}], criticalOutboundCount }.
+function parsePersonaResult(form) {
+  if (!form.persona_result) return null;
+  try {
+    const r = JSON.parse(form.persona_result);
+    return r && r.primary && r.primary.name ? r : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function buildPersonaLines(form) {
+  const primaryName = form.persona_primary ? String(form.persona_primary).trim() : "";
+  if (!primaryName) return [];
+  const r = parsePersonaResult(form);
+  const lines = ["Persona Profile"];
+  if (form.persona_path) lines.push(`Path: ${String(form.persona_path).trim()}`);
+  if (r) {
+    lines.push(`Primary: ${r.primary.name} (Inbound ${r.primary.inbound}, Outbound ${r.primary.outbound})`);
+    if (Array.isArray(r.stacked) && r.stacked.length) {
+      lines.push("Also flagged:");
+      for (const s of r.stacked) {
+        const tag = s.mitigating ? " [mitigating]" : "";
+        lines.push(`  - ${s.name} (Inbound ${s.inbound}, Outbound ${s.outbound})${tag}`);
+      }
+    }
+    if (r.criticalOutboundCount >= 2) {
+      lines.push(`>> ${r.criticalOutboundCount} critical-outbound triggers on one codebase.`);
+    }
+  } else {
+    lines.push(`Primary: ${primaryName}`);
+    if (form.persona_stacked) lines.push(`Also flagged: ${String(form.persona_stacked).trim()}`);
+  }
+  lines.push("");
+  return lines;
+}
+
+function buildPersonaHTML(form) {
+  const primaryName = form.persona_primary ? String(form.persona_primary).trim() : "";
+  if (!primaryName) return "";
+  const r = parsePersonaResult(form);
+  const levelColor = { None: "#9ca3af", Low: "#16a34a", Moderate: "#ca8a04", High: "#ea580c", Critical: "#dc2626" };
+  const chip = (label, level) =>
+    `<span style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;margin-right:14px;"><span style="color:#666;">${label}:</span> <strong style="color:${levelColor[level] || "#666"};">${escapeHtml(level)}</strong></span>`;
+
+  let inner = "";
+  if (r) {
+    inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;margin-bottom:6px;"><strong>Primary:</strong> ${escapeHtml(r.primary.name)} &nbsp; ${chip("Inbound", r.primary.inbound)} ${chip("Outbound", r.primary.outbound)}</div>`;
+    if (Array.isArray(r.stacked) && r.stacked.length) {
+      inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:600;margin:6px 0 2px;">Also flagged on this codebase:</div>`;
+      for (const s of r.stacked) {
+        const tag = s.mitigating ? ` <em style="color:#166534;">(mitigating)</em>` : "";
+        inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin:2px 0;">${escapeHtml(s.name)}${tag} &nbsp; ${chip("Inbound", s.inbound)} ${chip("Outbound", s.outbound)}</div>`;
+      }
+    }
+    if (r.criticalOutboundCount >= 2) {
+      inner += `<div style="margin-top:8px;padding:6px 10px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;border-radius:4px;">${r.criticalOutboundCount} critical-outbound triggers on one codebase.</div>`;
+    }
+  } else {
+    inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;"><strong>Primary:</strong> ${escapeHtml(primaryName)}</div>`;
+    if (form.persona_stacked) inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;">Also flagged: ${escapeHtml(String(form.persona_stacked).trim())}</div>`;
+  }
+  const pathLine = form.persona_path
+    ? `<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555;margin-top:6px;">Path: ${escapeHtml(String(form.persona_path).trim())}</div>`
+    : "";
+  return `<h2>Persona Profile</h2><div style="padding:4px 0;">${inner}${pathLine}</div>`;
+}
+
 function buildAssessmentText(form) {
   const site = "whoownsthecode.com";
   const name = form.name ? String(form.name).trim() : "Anonymous";
@@ -170,14 +265,18 @@ function buildAssessmentText(form) {
     `Email: ${email}`,
     ``,
     "Assessment",
-    `Risk Score: ${a.score}/100 (${a.level} Risk)`,
-    `Base: ${a.base}/100  Multiplier: x${a.multiplier.toFixed(2)}  Critical: ${a.criticalFlags}  High: ${a.highFlags}  Med: ${a.medFlags}  Tools: ${a.toolsCount}`,
+    `Inbound Risk: ${a.inbound.score}/100 (${a.inbound.level}) - what the AI ingested into your build`,
+    `Outbound Risk: ${a.outbound.score}/100 (${a.outbound.level}) - whether you can own, license, and warrant what you ship`,
+    `Multiplier: x${a.multiplier.toFixed(2)}  Tools: ${a.toolsCount}`,
     ``,
+    ...buildPersonaLines(form),
     "Details",
     ``
   ];
 
+  const excluded = getExcluded(form);
   for (const q of QUESTIONS) {
+    if (excluded.has(q.key)) continue;
     if (q.key === "ai_tools") {
       const main = asList(form.ai_tools) || "No AI tools selected";
       const other = asList(form.ai_tools_other);
@@ -220,8 +319,10 @@ function buildAssessmentHTML(form) {
       <td style="${answerCell}">${value}</td>
     </tr>`;
 
+  const excluded = getExcluded(form);
   const rows = [];
   for (const q of QUESTIONS) {
+    if (excluded.has(q.key)) continue;
     if (q.key === "ai_tools") {
       const main = asList(form.ai_tools) || "No AI tools selected";
       const other = asList(form.ai_tools_other);
@@ -279,30 +380,47 @@ function buildAssessmentHTML(form) {
     <div style="margin-top:6px;">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;">
         <tr>
-          <td align="center" style="background:${a.color};color:#fff;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;padding:6px 14px;border:1px solid #00000033;">
-            ${a.level} Risk
+          <td style="padding:0 8px 6px 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555;vertical-align:middle;">Inbound risk</td>
+          <td style="padding-bottom:6px;">
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;"><tr>
+              <td align="center" style="background:${a.inbound.color};color:#fff;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;padding:6px 14px;border:1px solid #00000033;">
+                ${a.inbound.level} &nbsp; ${a.inbound.score}/100
+              </td>
+            </tr></table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:0 8px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555;vertical-align:middle;">Outbound risk</td>
+          <td>
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse;"><tr>
+              <td align="center" style="background:${a.outbound.color};color:#fff;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;padding:6px 14px;border:1px solid #00000033;">
+                ${a.outbound.level} &nbsp; ${a.outbound.score}/100
+              </td>
+            </tr></table>
           </td>
         </tr>
       </table>
     </div>
     <div style="margin-top:10px;font-size:12px;color:#555;line-height:1.4;">
-      <strong>Your calculation details:</strong><br/>
-      &nbsp;&nbsp;• Assessment score: <strong>${a.score}/100</strong><br/>
-      &nbsp;&nbsp;• Base: <strong>${a.base}/100</strong> - points from your risk-flagged answers
-        (20 pts per critical item, 10 pts per high-impact item, 5 pts per medium-impact item).<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Critical risks flagged: <strong>${a.criticalFlags}</strong><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- High-impact risks flagged: <strong>${a.highFlags}</strong><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Medium-impact risks flagged: <strong>${a.medFlags}</strong><br/>
-      &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong><br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Different AI tools in use: <strong>${a.toolsCount}</strong><br/><br/>
+      <strong>What these two scores mean:</strong><br/>
+      &nbsp;&nbsp;• <strong>Inbound risk</strong> is about what the AI ingested into your build: infringing or copyleft fragments from training data, and whether you catch and trace them.<br/>
+      &nbsp;&nbsp;• <strong>Outbound risk</strong> is about what you ship: whether you can actually own, license, warrant, and sell the result.<br/><br/>
 
-      <strong>How this score works:</strong><br/>
-      &nbsp;&nbsp;Risk scores range from <strong>0</strong> (lowest risk) to <strong>100</strong> (highest risk).<br/>
-      &nbsp;&nbsp;• <span style="color:#16a34a;font-weight:600;">Low</span>: 0–20<br/>
-      &nbsp;&nbsp;• <span style="color:#ca8a04;font-weight:600;">Moderate</span>: 21–50<br/>
-      &nbsp;&nbsp;• <span style="color:#ea580c;font-weight:600;">High</span>: 51–80<br/>
-      &nbsp;&nbsp;• <span style="color:#dc2626;font-weight:600;">Critical</span>: 81–100<br/>
+      <strong>Your calculation details:</strong><br/>
+      &nbsp;&nbsp;• Inbound: <strong>${a.inbound.score}/100</strong> (${a.inbound.flagged} risk-flagged answer${a.inbound.flagged === 1 ? "" : "s"}).<br/>
+      &nbsp;&nbsp;• Outbound: <strong>${a.outbound.score}/100</strong> (${a.outbound.flagged} risk-flagged answer${a.outbound.flagged === 1 ? "" : "s"}).<br/>
+      &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong> (from ${a.toolsCount} AI tool${a.toolsCount === 1 ? "" : "s"} in use and how AI is applied).<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each axis is scored over only the questions shown for your persona, then normalized to 0-100.<br/><br/>
+
+      <strong>How the bands work:</strong><br/>
+      &nbsp;&nbsp;Each risk axis ranges from <strong>0</strong> (lowest risk) to <strong>100</strong> (highest risk).<br/>
+      &nbsp;&nbsp;• <span style="color:#16a34a;font-weight:600;">Low</span>: 0-20<br/>
+      &nbsp;&nbsp;• <span style="color:#ca8a04;font-weight:600;">Moderate</span>: 21-50<br/>
+      &nbsp;&nbsp;• <span style="color:#ea580c;font-weight:600;">High</span>: 51-80<br/>
+      &nbsp;&nbsp;• <span style="color:#dc2626;font-weight:600;">Critical</span>: 81-100<br/>
     </div>
+
+    ${buildPersonaHTML(form)}
 
     <h2>Survey Details</h2>
     <table style="margin-top:20px;width:100%;border-collapse:collapse;">
@@ -383,3 +501,7 @@ export default {
     }
   },
 };
+
+// Named exports for unit testing. The Worker runtime only uses the default
+// export above; these do not affect deployment.
+export { computeRiskAssessment, getExcluded, buildAssessmentText, buildAssessmentHTML };
