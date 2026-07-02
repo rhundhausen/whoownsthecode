@@ -1,15 +1,28 @@
 # End-to-end checks (Playwright)
 
-Two independent Playwright specs for the assessment:
+Playwright specs for the assessment, in two groups.
 
-- `tests/wizard.spec.js` (**Script A**) drives the assessment page and verifies the
-  persona wizard: short-circuits, promise-check stacking, the Acquirer question
-  hiding, the Renter mitigation, reset, and the blog link. It never submits the
-  form, so reCAPTCHA is never involved. Runs against any deployment with no
-  secrets.
-- `tests/worker-email.spec.js` (**Script B**) verifies the worker's scoring and
-  the rendered email through the worker's secret-gated test mode. It skips
-  itself unless `WOTC_TEST_SECRET` is set.
+Page specs (no secrets, no submission, reCAPTCHA never involved):
+
+- `tests/wizard.spec.js` drives the persona wizard: short-circuits, promise-check
+  stacking, the Acquirer question hiding, the Renter mitigation, reset, and the
+  blog link.
+- `tests/persona-matrix.spec.js` is the exhaustive persona check: every persona
+  resolves to its correct inbound/outbound rating (source of truth = the blog
+  risk matrix), and all 64 promise-check stacking combinations produce the right
+  stacked set and critical-outbound count.
+
+Worker specs (need `WOTC_TEST_SECRET`; they skip themselves when it is unset):
+
+- `tests/worker-email.spec.js` verifies the worker's scoring and the rendered
+  email for a few representative personas.
+- `tests/scoring-matrix.spec.js` is the exhaustive scoring check: each of the 15
+  scored questions moves the correct axis by the correct amount and leaves the
+  other at 0, plus band thresholds (Low/Moderate/High/Critical) and the outbound
+  cap.
+
+Both worker specs use the worker's secret-gated test mode, which returns the
+computed scores and rendered email without sending anything.
 
 ## Why there is no full "submit the real form" test
 

@@ -5,8 +5,8 @@
   "description": "Playwright end-to-end checks for the whoownsthecode.com assessment page and the assessment worker.",
   "scripts": {
     "test": "playwright test",
-    "test:ui": "playwright test tests/wizard.spec.js",
-    "test:email": "playwright test tests/worker-email.spec.js",
+    "test:ui": "playwright test tests/wizard.spec.js tests/persona-matrix.spec.js",
+    "test:email": "playwright test tests/worker-email.spec.js tests/scoring-matrix.spec.js",
     "install-browsers": "playwright install chromium"
   },
   "devDependencies": {
