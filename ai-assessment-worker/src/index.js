@@ -203,12 +203,12 @@ function buildPersonaLines(form) {
   const lines = ["Persona Profile"];
   if (form.persona_path) lines.push(`Path: ${String(form.persona_path).trim()}`);
   if (r) {
-    lines.push(`Primary: ${r.primary.name} (Inbound ${r.primary.inbound}, Outbound ${r.primary.outbound})`);
+    lines.push(`Primary: ${r.primary.name}`);
     if (Array.isArray(r.stacked) && r.stacked.length) {
       lines.push("Also flagged:");
       for (const s of r.stacked) {
         const tag = s.mitigating ? " [mitigating]" : "";
-        lines.push(`  - ${s.name} (Inbound ${s.inbound}, Outbound ${s.outbound})${tag}`);
+        lines.push(`  - ${s.name}${tag}`);
       }
     }
     if (r.criticalOutboundCount >= 2) {
@@ -226,18 +226,15 @@ function buildPersonaHTML(form) {
   const primaryName = form.persona_primary ? String(form.persona_primary).trim() : "";
   if (!primaryName) return "";
   const r = parsePersonaResult(form);
-  const levelColor = { None: "#9ca3af", Low: "#16a34a", Moderate: "#ca8a04", High: "#ea580c", Critical: "#dc2626" };
-  const chip = (label, level) =>
-    `<span style="display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:12px;margin-right:14px;"><span style="color:#666;">${label}:</span> <strong style="color:${levelColor[level] || "#666"};">${escapeHtml(level)}</strong></span>`;
 
   let inner = "";
   if (r) {
-    inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;margin-bottom:6px;"><strong>Primary:</strong> ${escapeHtml(r.primary.name)} &nbsp; ${chip("Inbound", r.primary.inbound)} ${chip("Outbound", r.primary.outbound)}</div>`;
+    inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;margin-bottom:6px;"><strong>Primary:</strong> ${escapeHtml(r.primary.name)}</div>`;
     if (Array.isArray(r.stacked) && r.stacked.length) {
       inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:600;margin:6px 0 2px;">Also flagged on this codebase:</div>`;
       for (const s of r.stacked) {
         const tag = s.mitigating ? ` <em style="color:#166534;">(mitigating)</em>` : "";
-        inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin:2px 0;">${escapeHtml(s.name)}${tag} &nbsp; ${chip("Inbound", s.inbound)} ${chip("Outbound", s.outbound)}</div>`;
+        inner += `<div style="font-family:Arial,Helvetica,sans-serif;font-size:13px;margin:2px 0;">${escapeHtml(s.name)}${tag}</div>`;
       }
     }
     if (r.criticalOutboundCount >= 2) {
