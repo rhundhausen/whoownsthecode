@@ -7,9 +7,9 @@ on:
       - main
     paths-ignore:
       - '.github/workflows/**'
-      
+
 jobs:
-  deploy:
+  deploy-site:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,7 +44,7 @@ jobs:
       - name: List built files
         run: find public -type f
 
-      - name: Deploy to Cloudflare
+      - name: Deploy site to Cloudflare Pages
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -52,3 +52,33 @@ jobs:
           npx wrangler pages deploy public \
             --project-name=whoownsthecode \
             --branch=main
+
+  deploy-worker:
+    runs-on: ubuntu-latest
+    # Deploys the AI assessment worker. Requires CLOUDFLARE_API_TOKEN to have the
+    # "Workers Scripts: Edit" permission (in addition to Pages). Worker secrets
+    # (RECAPTCHA_SECRET, RESEND_API_KEY, TEST_SECRET) live on the worker via
+    # `wrangler secret` and persist across deploys, so they are not needed here.
+    defaults:
+      run:
+        working-directory: ai-assessment-worker
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: ai-assessment-worker/package-lock.json
+
+      - name: Install worker dependencies
+        run: npm ci
+
+      - name: Deploy worker to Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run deploy
