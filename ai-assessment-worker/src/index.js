@@ -461,6 +461,32 @@ export default {
 
       if (formData.website) return new Response("OK", { status: 200, headers: corsHeaders });
 
+      // Secret-gated test mode: with a valid X-Test-Secret header, skip
+      // reCAPTCHA and Resend and return the computed scores plus the rendered
+      // email so automated tests can assert on them. Nothing is sent. Inactive
+      // unless the TEST_SECRET secret is set (wrangler secret put TEST_SECRET).
+      const testSecret = request.headers.get("X-Test-Secret");
+      if (env.TEST_SECRET && testSecret && testSecret === env.TEST_SECRET) {
+        const preview = {
+          testMode: true,
+          assessment: computeRiskAssessment(formData),
+          persona: {
+            primary: formData.persona_primary || "",
+            stacked: formData.persona_stacked || "",
+            path: formData.persona_path || "",
+          },
+          email: {
+            subject: `New assessment from ${cleanDisplayName(formData.name ? String(formData.name).trim() : "Anonymous")}`,
+            text: buildAssessmentText(formData),
+            html: buildAssessmentHTML(formData),
+          },
+        };
+        return new Response(JSON.stringify(preview), {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
       const recaptchaToken = formData.recaptchaToken;
       if (!recaptchaToken) return new Response("Missing CAPTCHA token", { status: 400, headers: corsHeaders });
 
