@@ -100,4 +100,60 @@ test.describe("assessment scoring matrix (worker test mode)", () => {
     expect(p.assessment.multiplier).toBeCloseTo(1.1, 5);
     expect(p.assessment.outbound.score).toBe(80);
   });
+
+  // Multiplier: the >5-tools (+0.05) and code-like-usage (+0.05) bumps scale an
+  // UN-capped score and re-band it. Base config keeps ownership "No" (so the
+  // 80-cap never fires) with outbound risky = 40 (ownership 20 + content_policy
+  // 10 + awareness 10) and inbound all-good (0). Base score 40/85 = 47, chosen so
+  // the 1.10 bump crosses the Moderate -> High boundary.
+  const MULT_BASE = {
+    ...ALL_GOOD,
+    assert_code_ownership: "No", content_policy: "No", awareness: "No",
+  };
+  const multCases = [
+    { name: "multiplier 1.00 (<=5 tools, no code usage)", tools: ["a", "b"], usage: ["Tests"], mult: 1.0, outbound: 47, level: "Moderate" },
+    { name: "multiplier 1.05 (>5 tools only)", tools: ["a", "b", "c", "d", "e", "f"], usage: ["Tests"], mult: 1.05, outbound: 49, level: "Moderate" },
+    { name: "multiplier 1.05 (code-like usage only)", tools: ["a"], usage: ["Code"], mult: 1.05, outbound: 49, level: "Moderate" },
+    { name: "multiplier 1.10 (both) pushes Moderate -> High", tools: ["a", "b", "c", "d", "e", "f"], usage: ["Code"], mult: 1.1, outbound: 52, level: "High" },
+  ];
+  for (const mc of multCases) {
+    test(mc.name, async () => {
+      const p = await preview({ name: "mult", ...MULT_BASE, ai_tools: mc.tools, ai_usage: mc.usage });
+      expect(p.assessment.multiplier).toBeCloseTo(mc.mult, 5);
+      expect(p.assessment.inbound.score, "multiplier must not manufacture score from 0").toBe(0);
+      expect(p.assessment.outbound.score).toBe(mc.outbound);
+      expect(p.assessment.outbound.level).toBe(mc.level);
+    });
+  }
+
+  test("multiplier cannot push a maxed axis past 100", async () => {
+    const p = await preview({
+      name: "mult-cap", ...ALL_GOOD,
+      assert_code_ownership: "No", content_policy: "No", awareness: "No", contracts_address_ai: "No",
+      ai_training: "No", mentioned_in_commits: "No", mentioned_in_docs: "No",
+      ai_in_production: "Yes", vendor_ai_use: "Yes",
+      ai_tools: ["a", "b", "c", "d", "e", "f"], ai_usage: ["Code"], // multiplier 1.10, outbound risky = 85
+    });
+    expect(p.assessment.multiplier).toBeCloseTo(1.1, 5);
+    expect(p.assessment.outbound.score).toBe(100);
+    expect(p.assessment.outbound.level).toBe("Critical");
+  });
+
+  // Band thresholds on the OUTBOUND axis (possible = 85, so the rounding differs
+  // from the inbound band cases above). Multiplier 1.0; ownership "No" so no cap.
+  const outboundBandCases = [
+    { flip: [], score: 24, level: "Moderate" }, // ownership only: 20/85
+    { flip: ["content_policy", "awareness", "ai_in_production"], score: 59, level: "High" }, // 50/85
+    { flip: ["content_policy", "awareness", "contracts_address_ai", "ai_training", "ai_in_production"], score: 82, level: "Critical" }, // 70/85
+  ];
+  for (const bc of outboundBandCases) {
+    test(`outbound ${bc.score} -> ${bc.level}`, async () => {
+      const form = { ...ALL_GOOD, assert_code_ownership: "No" };
+      for (const k of bc.flip) form[k] = k === "ai_in_production" ? "Yes" : "No";
+      const p = await preview({ name: "outband", ...form });
+      expect(p.assessment.multiplier).toBeCloseTo(1.0, 5);
+      expect(p.assessment.outbound.score).toBe(bc.score);
+      expect(p.assessment.outbound.level).toBe(bc.level);
+    });
+  }
 });
