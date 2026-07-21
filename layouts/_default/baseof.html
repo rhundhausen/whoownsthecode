@@ -9,7 +9,9 @@
       (function () {
         try {
           var t = localStorage.getItem('woc-theme');
+          var dark = t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
           if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+          document.documentElement.style.backgroundColor = dark ? '#0b0e14' : '#f6f7f9';
         } catch (e) {}
       })();
     </script>
@@ -36,6 +38,7 @@
           toggle.addEventListener('click', function () {
             var next = current() === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', next);
+            root.style.backgroundColor = next === 'dark' ? '#0b0e14' : '#f6f7f9';
             try { localStorage.setItem(KEY, next); } catch (e) {}
           });
         }

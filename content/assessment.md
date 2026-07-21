@@ -1,8 +1,9 @@
 ---
-title: "AI Usage Assessment"
+title: "Assessment"
 date: 2025-08-05
-hidetitle: true
 ---
+
+Answer a few questions about how your team uses AI to write code, and we’ll email you a personalized risk assessment. It shows where AI-generated code puts your ownership and compliance at risk.
 
 <style>
   .info-tip { position: relative; display: inline-block; margin-left: 6px; cursor: help; vertical-align: middle; top: -3px; }
@@ -31,7 +32,7 @@ hidetitle: true
   .persona-q .pq-options.inline { flex-direction: row; gap: 1.5rem; }
   .persona-q .pq-options label { font-weight: 400; }
   .persona-result { margin-top: 0.4rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; background: var(--panel-2); }
-  .persona-result h4 { margin: 0 0 0.25rem; font-size: 1.1rem; color: var(--accent); }
+  .persona-result h4 { margin: 0 0 0.25rem; font-size: 1.1rem; color: var(--fg); }
   .persona-card { padding: 0.5rem 0; }
   .persona-card + .persona-card { border-top: 1px solid var(--border); }
   .persona-name { font-weight: 700; }
@@ -41,7 +42,7 @@ hidetitle: true
   .persona-more { margin-top: 0.75rem; font-size: 0.9em; }
 </style>
 
-  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: var(--sans); display: flex; flex-direction: column; gap: 1.2rem;">
+  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="font-family: var(--sans); display: flex; flex-direction: column; gap: 1.2rem;">
     <input type="hidden" name="form_type" value="assessment">
     <input type="hidden" name="website" tabindex="-1" autocomplete="off">
     <input type="hidden" name="persona_primary" value="">
@@ -49,7 +50,7 @@ hidetitle: true
     <input type="hidden" name="persona_result" value="">
     <input type="hidden" name="persona_path" value="">
     <input type="hidden" name="scored_excluded" value="">
-    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">AI-Code Risk Persona</h3>
+    <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">AI-Code Risk Persona</h3>
     <p style="margin:0; font-size:0.95rem; color:var(--fg-muted);">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
     <div class="persona-wizard" id="personaWizard">
       <div class="persona-q" data-step="p0">
@@ -126,7 +127,7 @@ hidetitle: true
       </div>
     </div>
     <div class="persona-result hidden" id="personaResult" aria-live="polite"></div>
-    <h3 id="sec-tools" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">AI Tools & Usage</h3>
+    <h3 id="sec-tools" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">AI Tools & Usage</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -155,7 +156,7 @@ hidetitle: true
         <input type="text" name="ai_usage_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
-    <h3 id="sec-policies" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">Policies & Governance</h3>
+    <h3 id="sec-policies" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Policies & Governance</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">3. Do you have a policy for AI prompting?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A documented standard for how your team writes prompts. For example, what information may or may not be pasted into an AI tool.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -226,7 +227,7 @@ hidetitle: true
         <label><input type="radio" name="reviewed_ai_licenses" value="No"> No</label>
       </div>
     </div>
-    <h3 id="sec-people" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">People & Training</h3>
+    <h3 id="sec-people" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">People & Training</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">13. Are developers trained on the responsible use of AI tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether developers have been taught to use AI tools responsibly and understand the IP risks.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -248,7 +249,7 @@ hidetitle: true
         <label><input type="radio" name="contracts_address_ai" value="No"> No</label>
       </div>
     </div>
-    <h3 id="sec-awareness" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">Awareness & Ownership</h3>
+    <h3 id="sec-awareness" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Awareness & Ownership</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">16. Are you aware of the risks of using AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you understand that AI-generated code may not be copyrightable or fully owned by you.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -263,7 +264,7 @@ hidetitle: true
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
       </div>
     </div> 
-    <h3 id="sec-support" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">Support Needed</h3>
+    <h3 id="sec-support" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Support Needed</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">18. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
