@@ -9,7 +9,7 @@
         <span class="path"><a href="{{ "/" | relURL }}">~/whoownsthecode</a></span>
       </div>
       <div class="page-inner">
-        <h1 class="page-title">{{ .Title }}</h1>
+        {{ if not .Params.hidetitle }}<h1 class="page-title">{{ .Title }}</h1>{{ end }}
         {{ with .Params.subtitle }}<p class="page-subtitle">{{ . }}</p>{{ end }}
         <div class="content">
           {{ .Content }}

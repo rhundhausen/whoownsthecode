@@ -1,23 +1,22 @@
 ---
 title: "AI Usage Assessment"
 date: 2025-08-05
+hidetitle: true
 ---
-
-We’re here to help you understand the risks and responsibilities of using AI tools in software development. Answer a few quick questions below and we’ll follow up with a personalized risk assessment. This is an educational service and not legal advice.
 
 <style>
   .info-tip { position: relative; display: inline-block; margin-left: 6px; cursor: help; vertical-align: middle; top: -3px; }
   .info-tip .info-icon {
     display: inline-flex; align-items: center; justify-content: center;
     width: 16px; height: 16px; border-radius: 50%;
-    background: var(--accent); color: #fff; font-size: 11px; font-weight: 700;
+    background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 700;
     font-style: normal; line-height: 1;
   }
   .info-tip .info-bubble {
     visibility: hidden; opacity: 0; transition: opacity .15s ease;
     position: absolute; left: 50%; transform: translateX(-50%);
     bottom: 150%; width: 240px; max-width: 70vw;
-    background: #111; color: #fff; text-align: left;
+    background: var(--fg); color: var(--bg); text-align: left;
     padding: 8px 10px; border-radius: 6px;
     font-size: 12px; font-weight: 400; line-height: 1.4; z-index: 20;
     box-shadow: 0 2px 8px rgba(0,0,0,0.25);
@@ -31,19 +30,18 @@ We’re here to help you understand the risks and responsibilities of using AI t
   .persona-q .pq-options { display: flex; flex-direction: column; gap: 0.25rem; }
   .persona-q .pq-options.inline { flex-direction: row; gap: 1.5rem; }
   .persona-q .pq-options label { font-weight: 400; }
-  .persona-result { margin-top: 0.4rem; border: 1px solid #d1d5db; border-radius: 8px; padding: 1rem 1.25rem; background: #f9fafb; }
+  .persona-result { margin-top: 0.4rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; background: var(--panel-2); }
   .persona-result h4 { margin: 0 0 0.25rem; font-size: 1.1rem; color: var(--accent); }
   .persona-card { padding: 0.5rem 0; }
-  .persona-card + .persona-card { border-top: 1px solid #e5e7eb; }
+  .persona-card + .persona-card { border-top: 1px solid var(--border); }
   .persona-name { font-weight: 700; }
-  .persona-desc { font-size: 0.9em; color: #555; margin: 0.1rem 0 0.35rem; }
-  .persona-flags-label { font-weight: 600; margin-top: 0.6rem; font-size: 0.9em; color: #374151; }
-  .persona-mitigation { margin-top: 0.5rem; font-size: 0.85em; color: #166534; }
+  .persona-desc { font-size: 0.9em; color: var(--fg-muted); margin: 0.1rem 0 0.35rem; }
+  .persona-flags-label { font-weight: 600; margin-top: 0.6rem; font-size: 0.9em; color: var(--fg); }
+  .persona-mitigation { margin-top: 0.5rem; font-size: 0.85em; color: var(--tok-string); }
   .persona-more { margin-top: 0.75rem; font-size: 0.9em; }
 </style>
 
-<div style="max-width: 900px; margin: 0 auto; border: 1px solid #ccc; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background-color: #fff;">
-  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; gap: 1.2rem;">
+  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="max-width: 850px; margin: 0 auto; font-family: var(--sans); display: flex; flex-direction: column; gap: 1.2rem;">
     <input type="hidden" name="form_type" value="assessment">
     <input type="hidden" name="website" tabindex="-1" autocomplete="off">
     <input type="hidden" name="persona_primary" value="">
@@ -52,7 +50,7 @@ We’re here to help you understand the risks and responsibilities of using AI t
     <input type="hidden" name="persona_path" value="">
     <input type="hidden" name="scored_excluded" value="">
     <h3 style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--accent);">AI-Code Risk Persona</h3>
-    <p style="margin:0; font-size:0.95rem; color:#444;">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
+    <p style="margin:0; font-size:0.95rem; color:var(--fg-muted);">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
     <div class="persona-wizard" id="personaWizard">
       <div class="persona-q" data-step="p0">
         <span class="pq-text">Are you assessing code your organization built or owns, or code it is evaluating to acquire?</span>
@@ -292,12 +290,11 @@ We’re here to help you understand the risks and responsibilities of using AI t
           <input type="email" id="email" name="email" required aria-required="true" placeholder="you@example.com" style="margin-top: 0.25rem; width: 100%;">
         </div>
     </div>
-    <button type="submit" style="background-color: #0057b8; color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem; font-weight: 600; cursor: pointer;">Submit Assessment</button>
-    <p style="font-size: 0.9em; color: #555;">
+    <button type="submit">Submit Assessment</button>
+    <p style="font-size: 0.9em; color: var(--fg-muted);">
       We’ll review your answers and send you a free personalized assessment. This is an educational service and not legal advice.
     </p>
   </form>
-</div>
 
 <script src="https://www.google.com/recaptcha/api.js?render=6Lf_I5wrAAAAAKATl51T-YdiY00ZjOVdmuk-M2GX"></script>
 <script>
