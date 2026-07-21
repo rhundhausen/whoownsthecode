@@ -1,57 +1,25 @@
-{{- $footer      := .Site.Params.footer }}
-{{- $logo        := index $footer "logo" }}
-{{- $quickLinks  := index $footer "quicklinks" }}
-{{- $socialMedia := index $footer "socialmedia" }}
-{{- $bulmaLogo   := index $footer "bulmalogo" }}
-{{- $socialMediaTitle    := index $footer "socialmediatitle" }}
-<footer class="footer footer-dark">
-  <div class="container">
-    <div class="columns">
-      <div class="column">
-        <div class="footer-logo">
-          <img src="{{ printf "images/logos/%s" $logo | relURL }}">
-        </div>
-      </div>
-      {{- range $quickLinks }}
-        <div class="column">
-          <div class="footer-column">
-            <div class="footer-header">
-                <h3>{{ .title }}</h3>
-            </div>
-            <ul class="link-list">
-              {{- range .links }}
-              <li>
-                <a href="{{ .link }}">
-                  {{ .text }}
-                </a>
-              </li>
-              {{- end }}
-            </ul>
-          </div>
-        </div>
+{{- $footerText := .Site.Params.footer.content | default "(c) 2026 Who Owns The Code, Inc. All rights reserved." }}
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <a class="brand" href="{{ "/" | relURL }}" aria-label="Who Owns the Code, home">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1.5" y="1.5" width="29" height="29" rx="7" fill="var(--panel)" stroke="var(--accent)" stroke-width="1.5"/>
+        <path d="M12 10 L7 16 L12 22" stroke="var(--tok-var)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 10 L25 16 L20 22" stroke="var(--tok-string)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M17.5 8 L14.5 24" stroke="var(--tok-op)" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span>whoownsthecode<span class="paren">()</span></span>
+    </a>
+    <nav class="footer-nav" aria-label="Footer">
+      {{- range .Site.Params.navbar }}
+      <a href="{{ .url }}">{{ .title }}</a>
       {{- end }}
-      <div class="column">
-        <div class="footer-column">
-          <div class="footer-header">
-            <h3>{{ $socialMediaTitle }}</h3>
-            <nav class="level is-mobile">
-              <div class="level-left">
-                {{- range $socialMedia }}
-                <a class="level-item" href="{{ .link }}">
-                  <span class="icon"><i class="fa fa-{{ .icon }}"></i></span>
-                </a>
-                {{- end }}
-              </div>
-            </nav>
-
-            {{- if $bulmaLogo }}
-            <a href="https://bulma.io" target="_blank">
-              <img src="{{ "images/logos/made-with-bulma.png" | relURL }}" alt="Made with Bulma" width="128" height="24">
-            </a>
-            {{- end }}
-          </div>
-        </div>
-      </div>
-    </div>
+    </nav>
+  </div>
+  <div class="wrap" style="margin-top:1.4rem;">
+    <span class="footer-legal">
+      <span class="c">// {{ $footerText }}</span>
+      <span class="c">// Educational service, not legal advice.</span>
+    </span>
   </div>
 </footer>

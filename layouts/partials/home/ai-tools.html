@@ -1,0 +1,56 @@
+{{/* AI-tools marquee, framed as an import bar. Full-color SVGs in
+     static/images/ai-tools/<slug>.svg shown grayscale, color on hover.
+     The list is rendered twice (second copy aria-hidden) so the -50%
+     translate loops seamlessly. See .marquee in static/css/custom.css. */}}
+{{ $aitools := .Site.Params.aitools }}
+{{ $caption := $aitools.eyebrow | default "Our guidance applies to code from every major AI tool." }}
+{{ $tools := slice
+  (dict "f" "chatgpt"           "n" "ChatGPT")
+  (dict "f" "github-copilot"    "n" "GitHub Copilot")
+  (dict "f" "claude"            "n" "Claude")
+  (dict "f" "gemini"            "n" "Google Gemini")
+  (dict "f" "microsoft-copilot" "n" "Microsoft Copilot")
+  (dict "f" "cursor"            "n" "Cursor")
+  (dict "f" "codex"             "n" "OpenAI Codex")
+  (dict "f" "perplexity"        "n" "Perplexity")
+  (dict "f" "deepseek"          "n" "DeepSeek")
+  (dict "f" "grok"              "n" "Grok")
+  (dict "f" "meta"              "n" "Meta Llama")
+  (dict "f" "mistral"           "n" "Mistral AI")
+  (dict "f" "amazon-q"          "n" "Amazon Q Developer")
+  (dict "f" "replit"            "n" "Replit")
+  (dict "f" "v0"                "n" "v0 by Vercel")
+  (dict "f" "bolt"              "n" "Bolt")
+  (dict "f" "lovable"           "n" "Lovable")
+  (dict "f" "windsurf"          "n" "Windsurf")
+  (dict "f" "cody"              "n" "Sourcegraph Cody")
+  (dict "f" "jetbrains"         "n" "JetBrains AI")
+  (dict "f" "warp"              "n" "Warp")
+  (dict "f" "zed"               "n" "Zed")
+  (dict "f" "cline"             "n" "Cline")
+  (dict "f" "qodo"              "n" "Qodo")
+}}
+<section class="imports" aria-labelledby="tools-heading">
+  <div class="wrap">
+    <div class="import-card">
+      <div class="import-head">
+        <span class="mono"><span class="k">import</span> { <span class="s">*</span> } <span class="k">from</span> <span class="s">"ai-tools"</span></span>
+        <span class="import-caption" id="tools-heading">{{ $caption }}</span>
+      </div>
+      <div class="band">
+        <div class="marquee">
+          <ul>
+            {{- range $tools }}
+            <li><img src="{{ printf "images/ai-tools/%s.svg" .f | relURL }}" alt="{{ .n }}" loading="lazy"></li>
+            {{- end }}
+          </ul>
+          <ul aria-hidden="true">
+            {{- range $tools }}
+            <li><img src="{{ printf "images/ai-tools/%s.svg" .f | relURL }}" alt="" loading="lazy"></li>
+            {{- end }}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

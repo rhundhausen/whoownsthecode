@@ -1,15 +1,20 @@
-<section class="section is-medium">
-  <div class="container">
-    <div class="columns">
-      <div class="column is-centered-tablet-portrait">
-        <h1 class="title section-title">{{ .Title }}</h1>
-        <h5 class="subtitle is-5 is-muted">{{ .Params.Subtitle }}</h5>
-        <div class="divider"></div>
+{{/* Interior page shell: the markdown content sits inside an editor panel,
+     with the page rendered as a file tab (e.g. faq.md). */}}
+<main class="page-main">
+  <div class="wrap">
+    <article class="editor page-editor">
+      <div class="editor-bar">
+        <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+        <span class="tabs"><span class="tab active">{{ with .File }}{{ .ContentBaseName }}.md{{ else }}{{ $.Type }}.md{{ end }}</span></span>
+        <span class="path">~/whoownsthecode</span>
       </div>
-    </div>
-
-    <div class="content">
-      {{ .Content }}
-    </div>
+      <div class="page-inner">
+        <h1 class="page-title">{{ .Title }}</h1>
+        {{ with .Params.subtitle }}<p class="page-subtitle">{{ . }}</p>{{ end }}
+        <div class="content">
+          {{ .Content }}
+        </div>
+      </div>
+    </article>
   </div>
-</section>
+</main>

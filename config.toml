@@ -17,6 +17,11 @@ enabled = true
 title = "Who Owns the Code?"
 subtitle = "AI code == No author == No copyright"
 
+# Scrolling strip of AI coding tools on the homepage (layouts/partials/home/ai-tools.html)
+[params.aitools]
+enabled = true
+eyebrow = "Our guidance applies to code from every major AI tool"
+
 # Enable footer
 [params.footer]
 enabled = true

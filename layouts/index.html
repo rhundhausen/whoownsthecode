@@ -1,36 +1,204 @@
 {{ define "main" }}
+{{ partial "navbar.html" . }}
 
-    {{ if and .Site.Params.hero (.Site.Params.hero.enabled) }}
-    {{ partial "hero.html" . }}
-    {{ end }}
+<main>
 
-    {{ if and .Site.Params.section1 (.Site.Params.section1.enabled) }}
-    {{ partial "section1.html" . }}
-    {{ end }}
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">for founders, engineering leaders, and counsel shipping AI-generated code</p>
+        <h1>Who owns<br />the code<span class="q">?</span></h1>
+        <div class="hero-motif">
+          <span class="chip s">AI code</span>
+          <span class="op">==</span>
+          <span class="chip">no author</span>
+          <span class="op">==</span>
+          <span class="chip">no copyright</span>
+        </div>
+        <p class="hero-lead">Under current U.S. copyright law, purely AI-generated code has no human author, so it cannot be copyrighted and cannot be defended as an asset you truly own.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="/assessment">Take the risk assessment <span class="arrow" aria-hidden="true">-&gt;</span></a>
+          <a class="btn btn-ghost" href="/faq">Read the FAQ</a>
+        </div>
+      </div>
 
-    {{ if and .Site.Params.section2 (.Site.Params.section2.enabled) }}
-    {{ partial "section2.html" . }}
-    {{ end }}
+      <div class="hero-visual">
+        <div class="editor term" role="img" aria-label="Terminal session asking whether AI-generated code can be owned">
+          <div class="editor-bar">
+            <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+            <span class="tabs"><span class="tab active">ownership.sh</span></span>
+            <span class="path">zsh</span>
+          </div>
+          <div class="codebody">
+            <div class="gutter" aria-hidden="true">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+            </div>
+            <div class="code">
+<span class="ln"><span class="prompt">~/startup</span> <span class="path2">git:(main)</span> <span class="o">$</span> whoami --code</span>
+<span class="ln out">checking authorship of ./generated ...</span>
+<span class="ln"><span class="c"># purely AI output, no human authorship on record</span></span>
+<span class="ln"><span class="err">author:   none</span></span>
+<span class="ln"><span class="err">copyright: not eligible</span></span>
+<span class="ln"><span class="warn">status:   unowned, undefendable</span></span>
+<span class="ln"><span class="prompt">~/startup</span> <span class="path2">git:(main)</span> <span class="o">$</span> assess --my-risk<span class="cursor" aria-hidden="true"></span></span>
+<span class="ln out">&nbsp;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    {{ if and .Site.Params.section3 (.Site.Params.section3.enabled) }}
+  <!-- ===================== IMPORT BAR / MARQUEE ===================== -->
+  {{ partial "home/ai-tools.html" . }}
 
-    {{ partial "section3.html" . }}
-    {{ end }}
+  <!-- ===================== RISK POINTS ===================== -->
+  <section class="section" id="risks">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">the four things teams miss</p>
+        <h2>Four ways AI code puts ownership at risk</h2>
+        <p>Ownership is not a formality you fix later. It is decided by who authored the expressive work, line by line.</p>
+      </div>
 
-    {{ if and .Site.Params.section4 (.Site.Params.section4.enabled) }}
-    {{ partial "section4.html" . }}
-    {{ end }}
+      <div class="risk-grid">
 
-    {{ if and .Site.Params.section5 (.Site.Params.section5.enabled) }}
-    {{ partial "section5.html" . }}
-    {{ end }}
+        <article class="risk">
+          <div class="risk-top"><span class="idx">01</span><span class="fname">own_the_output.ts</span></div>
+          <div class="risk-body">
+            <div class="gut" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+            <div>
+              <h3>doYouOwnTheOutput</h3>
+              <p><span class="c">// return value: no</span>Output from purely generative AI lacks a human author and therefore cannot be copyrighted.</p>
+            </div>
+          </div>
+        </article>
 
-    {{ if and .Site.Params.footer (.Site.Params.hero.footer) }}
-    {{ partial "footer.html" . }}
-    {{ end }}
+        <article class="risk">
+          <div class="risk-top"><span class="idx">02</span><span class="fname">vibe_coding.ts</span></div>
+          <div class="risk-body">
+            <div class="gut" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+            <div>
+              <h3>vibeCodingRealExposure</h3>
+              <p><span class="c">// when the AI does the expressive work</span>The result is not human-authored, and not a legally protectable asset.</p>
+            </div>
+          </div>
+        </article>
 
-    {{ if and .Site.Params.sidebar (.Site.Params.hero.sidebar) }}
-    {{ partial "sidebar.html" . }}
-    {{ end }}
-    
+        <article class="risk">
+          <div class="risk-top"><span class="idx">03</span><span class="fname">mixed_codebase.ts</span></div>
+          <div class="risk-body">
+            <div class="gut" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+            <div>
+              <h3>mixedCodebases</h3>
+              <p><span class="c">// you own what you create</span>AI-generated portions stay unowned unless transformed by meaningful human authorship.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="risk">
+          <div class="risk-top"><span class="idx">04</span><span class="fname">open_source.ts</span></div>
+          <div class="risk-body">
+            <div class="gut" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div>
+            <div>
+              <h3>openSourceIsNotNoCopyright</h3>
+              <p><span class="c">// a license needs a rights holder</span>An open-source license needs a copyright holder; applied to pure AI output it is unenforceable.</p>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GIT LOG / LEGAL ANCHORS ===================== -->
+  <section class="section gitlog" id="cases">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">the case law, as a commit history</p>
+        <h2>Three anchors already merged into the record</h2>
+        <p>These are not predictions. Each is a 2025 decision or report that hardened the rule: no human author, no protection.</p>
+      </div>
+
+      <div class="editor">
+        <div class="editor-bar">
+          <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+          <span class="tabs"><span class="tab active">git log --precedent</span></span>
+          <span class="path">branch: us-copyright-law</span>
+        </div>
+        <div style="padding: 1.2rem clamp(1rem, 3vw, 1.6rem);">
+          <div class="commits">
+
+            <article class="commit">
+              <div class="graph" aria-hidden="true"><span class="node">*</span><span class="line">|</span></div>
+              <div>
+                <div class="meta">
+                  <span class="hash">commit a1f0b7c</span>
+                  <span class="author">Author: Thaler v. Perlmutter</span>
+                  <span class="date">Date: 2025</span>
+                </div>
+                <h3>Works created entirely by AI are not eligible for copyright</h3>
+                <p>The court confirmed that only humans can hold copyright protection; a work generated wholly by a machine has no author the law will recognize.</p>
+                <div class="diff"><span class="del">- machine-authored work: protected</span><br /><span class="add">+ machine-authored work: not eligible</span></div>
+              </div>
+            </article>
+
+            <article class="commit">
+              <div class="graph" aria-hidden="true"><span class="node">*</span><span class="line">|</span></div>
+              <div>
+                <div class="meta">
+                  <span class="hash">commit 6d24e9a</span>
+                  <span class="author">Author: Thomson Reuters v. Ross</span>
+                  <span class="date">Date: 2025</span>
+                </div>
+                <h3>First decision to reject a fair-use defense for AI training</h3>
+                <p>The first ruling to reject a fair-use defense for using copyrighted material to train an AI, narrowing a shield many teams assumed they had.</p>
+                <div class="diff"><span class="del">- training on copyrighted data: fair use</span><br /><span class="add">+ training on copyrighted data: defense rejected</span></div>
+              </div>
+            </article>
+
+            <article class="commit">
+              <div class="graph" aria-hidden="true"><span class="node">*</span><span class="line">&nbsp;</span></div>
+              <div>
+                <div class="meta">
+                  <span class="hash">commit 0c3ab55</span>
+                  <span class="author">Author: U.S. Copyright Office report</span>
+                  <span class="date">Date: 2025</span>
+                </div>
+                <h3>Only meaningful human creative input is eligible for protection</h3>
+                <p>The Office stated that only portions of a work carrying meaningful human creative input are eligible for protection. The AI-generated remainder is not.</p>
+                <div class="diff"><span class="add">+ human-authored portions: protected</span><br /><span class="del">- AI-generated portions: unprotected</span></div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CLOSING CTA ===================== -->
+  <section class="section closing">
+    <div class="wrap">
+      <div class="editor">
+        <div class="editor-bar">
+          <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+          <span class="tabs"><span class="tab active">next_steps.md</span></span>
+          <span class="path">unsaved</span>
+        </div>
+        <div class="closing-inner">
+          <p class="eyebrow">run the check before your next release</p>
+          <h2>Find out what you actually own</h2>
+          <p>A short assessment maps where AI-generated code sits in your stack and where your ownership quietly breaks down.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="/assessment">Take the risk assessment <span class="arrow" aria-hidden="true">-&gt;</span></a>
+            <a class="btn btn-ghost" href="/faq">Read the FAQ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
 {{ end }}

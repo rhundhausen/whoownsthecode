@@ -4,50 +4,56 @@
     {{ partial "meta.html" . }}
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
 
-    <!-- Google Fonts (preload + swap) -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" as="style" onload="this.rel='stylesheet'">
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap">
-    </noscript>
+    {{/* Set the saved theme before first paint to avoid a flash of the wrong theme. */}}
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('woc-theme');
+          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
 
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ "/css/bulma.css" | relURL }}">
-    <link rel="stylesheet" href="{{ "/css/style.css" | relURL }}">
-    <link rel="stylesheet" href="{{ "/css/icons.css" | relURL }}">
-    <link rel="stylesheet" href="{{ "/css/custom.css" | relURL }}">
-    
     {{ partial "css.html" . }}
   </head>
   <body class="{{ if .IsHome }}home{{ else }}{{ .Section }}{{ end }}">
-    {{ if ne .Site.Params.preloader false }}
-    <!-- Preloader -->
-    <!-- <div id="preloader"><div id="status"></div></div> -->
-    {{ end }}
 
-    {{ block "main" . }}
-    {{ end }}
+    {{ block "main" . }}{{ end }}
 
-    <!-- Back To Top Button -->
-    <div id="backtotop"><a href="#"></a></div>
-
-    {{ partial "javascript.html" . }}
+    {{ partial "footer.html" . }}
 
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const items = document.querySelectorAll('.carousel-item');
-      let index = 0;
-
-      function showNextImage() {
-        items[index].classList.remove('is-active');
-        index = (index + 1) % items.length;
-        items[index].classList.add('is-active');
-      }
-
-      if (items.length > 0) {
-        items[0].classList.add('is-active');
-        setInterval(showNextImage, 2000); // every 2 seconds
-      }
-    });
+      (function () {
+        var root = document.documentElement;
+        var KEY = 'woc-theme';
+        function current() {
+          var a = root.getAttribute('data-theme');
+          if (a === 'light' || a === 'dark') return a;
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        var toggle = document.getElementById('themeToggle');
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            var next = current() === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            try { localStorage.setItem(KEY, next); } catch (e) {}
+          });
+        }
+        var menuBtn = document.getElementById('menuBtn');
+        var nav = document.getElementById('nav');
+        if (menuBtn && nav) {
+          menuBtn.addEventListener('click', function () {
+            var open = nav.classList.toggle('open');
+            menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
+          nav.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A') {
+              nav.classList.remove('open');
+              menuBtn.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+      })();
     </script>
   </body>
 </html>
