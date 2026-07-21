@@ -429,6 +429,39 @@ function buildAssessmentHTML(form) {
 </html>`;
 }
 
+// Contact form (content/contact.md posts form_type "contact"): a plain
+// name/email/subject/message message, no scoring.
+function buildContactText(c) {
+  return [
+    "Contact form submitted on whoownsthecode.com",
+    "",
+    `Name: ${c.name || "—"}`,
+    `Email: ${c.email || "—"}`,
+    `Subject: ${c.subject || "—"}`,
+    "",
+    "Message:",
+    c.message || "—",
+  ].join("\n");
+}
+
+function buildContactHTML(c) {
+  const cell = "font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;";
+  return `<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>WhoOwnsTheCode Contact</title></head>
+  <body>
+    <h2>New contact message</h2>
+    <p style="${cell}">
+      <strong>Name:</strong> ${escapeHtml(c.name || "—")}<br/>
+      <strong>Email:</strong> ${c.email ? `<a href="mailto:${escapeHtml(c.email)}">${escapeHtml(c.email)}</a>` : "—"}<br/>
+      <strong>Subject:</strong> ${escapeHtml(c.subject || "—")}
+    </p>
+    <h3 style="${cell}">Message</h3>
+    <p style="${cell}white-space:pre-wrap;">${escapeHtml(c.message || "—")}</p>
+  </body>
+</html>`;
+}
+
 async function sendWithResend(env, payload) {
   const url = "https://api.resend.com/emails";
   if (!env.RESEND_API_KEY) throw new Error("Missing RESEND_API_KEY");
@@ -518,6 +551,32 @@ export default {
       if (!verification.success) return new Response(`CAPTCHA verification failed: ${verification["error-codes"]?.join(", ")}`, { status: 403, headers: corsHeaders });
       if (verification.action !== "submit") return new Response(`Invalid reCAPTCHA action: expected 'submit', got '${verification.action}'`, { status: 403, headers: corsHeaders });
       if (verification.score !== undefined && verification.score < 0.3) return new Response(`CAPTCHA score too low (${verification.score})`, { status: 403, headers: corsHeaders });
+
+      // Contact form: email the message, no scoring or persona logic.
+      if (formData.form_type === "contact") {
+        const cName = formData.name ? String(formData.name).trim() : "Anonymous";
+        const cEmail = formData.email && String(formData.email).trim() ? String(formData.email).trim() : null;
+        const cSubject = formData.subject ? String(formData.subject).trim() : "";
+        const cMessage = formData.message ? String(formData.message).trim() : "";
+        if (!cMessage) return new Response("Message is required", { status: 400, headers: corsHeaders });
+
+        const contact = { name: cName, email: cEmail, subject: cSubject, message: cMessage };
+        const contactPayload = {
+          from: `${cleanDisplayName("Who Owns The Code")} <no-reply@buildmeasurelearn.com>`,
+          to: ["whoownsthecode@gmail.com"],
+          subject: cSubject ? `Contact: ${cleanDisplayName(cSubject)}` : `New contact from ${cleanDisplayName(cName)}`,
+          text: buildContactText(contact),
+          html: buildContactHTML(contact),
+        };
+        if (cEmail) contactPayload.reply_to = cEmail;
+
+        const contactResult = await sendWithResend(env, contactPayload);
+        if (!contactResult.ok) {
+          const bodyStr = typeof contactResult.body === "string" ? contactResult.body : JSON.stringify(contactResult.body);
+          return new Response(`Failed to send email via Resend: ${contactResult.status} ${contactResult.statusText}\n${bodyStr}`, { status: 500, headers: corsHeaders });
+        }
+        return new Response("Message sent!", { status: 200, headers: corsHeaders });
+      }
 
       const siteName = cleanDisplayName("Who Owns The Code");
       const name = formData.name ? String(formData.name).trim() : "Anonymous";

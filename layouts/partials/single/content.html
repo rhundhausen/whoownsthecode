@@ -6,7 +6,7 @@
       <div class="editor-bar">
         <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
         <span class="tabs"><span class="tab active">{{ with .File }}{{ .ContentBaseName }}.md{{ else }}{{ $.Type }}.md{{ end }}</span></span>
-        <span class="path">~/whoownsthecode</span>
+        <span class="path"><a href="{{ "/" | relURL }}">~/whoownsthecode</a></span>
       </div>
       <div class="page-inner">
         <h1 class="page-title">{{ .Title }}</h1>

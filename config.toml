@@ -20,7 +20,7 @@ subtitle = "AI code == No author == No copyright"
 # Scrolling strip of AI coding tools on the homepage (layouts/partials/home/ai-tools.html)
 [params.aitools]
 enabled = true
-eyebrow = "Our guidance applies to code from every major AI tool"
+eyebrow = "Our guidance applies to code generated from every major AI tool"
 
 # Enable footer
 [params.footer]
@@ -44,10 +44,6 @@ title = "Authors"
 url = "/authors/"
 
 [[params.navbar]]
-title = "Assessment"
-url = "/assessment/"
-
-[[params.navbar]]
 title = "Presentations"
 url = "/presentations/"
 
@@ -58,6 +54,10 @@ url = "/faq/"
 [[params.navbar]]
 title = "Workshops"
 url = "/workshops/"
+
+[[params.navbar]]
+title = "Assessment"
+url = "/assessment/"
 
 [[params.navbar]]
 title = "Contact"
