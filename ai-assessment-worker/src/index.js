@@ -48,12 +48,19 @@ function isYes(v) {
   return s === "yes" || s === "y" || s === "true" || s === "on" || s === "1";
 }
 
+/** Lowercased single string from a possibly-array form value */
+function normVal(v) {
+  if (v == null) return "";
+  const raw = Array.isArray(v) ? v[0] : v;
+  return String(raw ?? "").trim().toLowerCase();
+}
+
 /** Count selected tools in Q1 (ignore "other" free text for safety) */
 function countSelectedTools(form) {
   return asArray(form.ai_tools).length;
 }
 
-/** Did Q2 include code-like usage? (matches the form's checkbox values) */
+/** Did the usage question include code-like usage? (matches the form's checkbox values) */
 function hasCodeLikeUsage(form) {
   const usage = asArray(form.ai_usage).map(s => s.toLowerCase());
   return ["code", "agentic", "refactoring"].some(v => usage.includes(v));
@@ -70,8 +77,15 @@ function getExcluded(form) {
 /** Compute inbound and outbound risk (each 0-100) + band/color per axis */
 function computeRiskAssessment(form) {
   // weight = points that a risky answer adds on that question's axis.
-  // riskWhen "no": good-practice questions where "No" is the risk.
-  // riskWhen "yes": questions where doing the thing is the risk (inverted).
+  // riskWhen "no": good-practice questions where the safe answer is "Yes".
+  // riskWhen "yes": questions where the safe answer is "No" (inverted).
+  // graded: Always/Sometimes/Never questions; Sometimes scores half weight.
+  //
+  // Answer scoring rule (consistent in both directions): only the safe answer
+  // scores zero. "Don't know" and unanswered both score full risk, because not
+  // knowing your posture IS the risk, and because scoring blanks as safe would
+  // reward skipping questions.
+  //
   // axis: which of the two risk directions the question speaks to.
   //   inbound  = what the AI ingested into your build (infringing/copyleft
   //              fragments, tool training data): catching and tracing it.
@@ -85,16 +99,30 @@ function computeRiskAssessment(form) {
     { key: "ai_training",           weight: 10, riskWhen: "no",  axis: "outbound" },
     { key: "mentioned_in_commits",  weight: 5,  riskWhen: "no",  axis: "outbound" },
     { key: "mentioned_in_docs",     weight: 5,  riskWhen: "no",  axis: "outbound" },
-    { key: "ai_in_production",      weight: 10, riskWhen: "yes", axis: "outbound" }, // shipping AI code is the risk
-    { key: "vendor_ai_use",         weight: 5,  riskWhen: "yes", axis: "outbound" }, // third-party AI use is the exposure
+    { key: "ai_in_production",      weight: 10, riskWhen: "yes", axis: "outbound" }, // UNREVIEWED AI code reaching production is the risk
+    { key: "vendor_ai_use",         weight: 5,  riskWhen: "yes", axis: "outbound" }, // third-party AI use is the exposure; "Don't know" is too
     // Inbound: vetting and tracing what the model put into the codebase.
     { key: "prompting_policy",      weight: 10, riskWhen: "no",  axis: "inbound" },
-    { key: "code_reviewed",         weight: 10, riskWhen: "no",  axis: "inbound" },
+    { key: "code_reviewed",         weight: 10, riskWhen: "no",  axis: "inbound", graded: true },
     { key: "ai_restricted",         weight: 10, riskWhen: "no",  axis: "inbound" },
     { key: "reviewed_ai_licenses",  weight: 10, riskWhen: "no",  axis: "inbound" },
-    { key: "code_labeled",          weight: 5,  riskWhen: "no",  axis: "inbound" },
+    { key: "code_labeled",          weight: 5,  riskWhen: "no",  axis: "inbound", graded: true },
     { key: "store_prompts",         weight: 5,  riskWhen: "no",  axis: "inbound" },
   ];
+
+  // Fraction of the question's weight that counts as risk for the given answer.
+  function riskFraction(q, value) {
+    const s = normVal(value);
+    if (q.graded) {
+      if (s === "always") return 0;
+      if (s === "sometimes") return 0.5;
+      return 1; // "never", "don't know", unanswered
+    }
+    if (q.riskWhen === "yes") {
+      return s === "no" ? 0 : 1; // "yes", "don't know", unanswered all risky
+    }
+    return isYes(s) ? 0 : 1; // "no", "don't know", unanswered all risky
+  }
 
   const excluded = getExcluded(form);
   const axes = {
@@ -106,16 +134,22 @@ function computeRiskAssessment(form) {
     if (excluded.has(q.key)) continue;
     const ax = axes[q.axis];
     ax.possible += q.weight;
-    const yes = isYes(form[q.key]);
-    const risky = q.riskWhen === "yes" ? yes : !yes;
-    if (risky) { ax.risky += q.weight; ax.flagged += 1; }
+    const frac = riskFraction(q, form[q.key]);
+    if (frac > 0) { ax.risky += q.weight * frac; ax.flagged += 1; }
   }
 
+  // Context multiplier: tool sprawl, code-like usage, unindemnified tool
+  // accounts, and how much of the codebase is AI-generated.
   let multiplier = 1.0;
   const toolsCount = countSelectedTools(form);
   if (toolsCount > 5) multiplier += 0.05;
   if (hasCodeLikeUsage(form)) multiplier += 0.05;
-  if (multiplier > 1.15) multiplier = 1.15;
+  const tier = normVal(form.ai_tool_tier);
+  if (tier === "individual" || tier.startsWith("don")) multiplier += 0.05;
+  const share = normVal(form.ai_code_share);
+  if (share.startsWith("over")) multiplier += 0.10;
+  else if (share.startsWith("don")) multiplier += 0.05;
+  if (multiplier > 1.25) multiplier = 1.25;
 
   const ownershipAsserted = !excluded.has("assert_code_ownership") && isYes(form.assert_code_ownership);
 
@@ -131,6 +165,9 @@ function computeRiskAssessment(form) {
   function finalize(ax, capWhenOwned) {
     let score = ax.possible > 0 ? Math.round((ax.risky / ax.possible) * 100 * multiplier) : 0;
     if (score > 100) score = 100;
+    // NOTE: asserting ownership currently reduces outbound risk (20-pt question
+    // plus this cap). Open design question: an unsubstantiated assertion may
+    // itself be the exposure. Revisit with Brad before treating this as final.
     if (capWhenOwned && ownershipAsserted) score = Math.min(score, 80);
     return { score, ...band(score), flagged: ax.flagged, possible: ax.possible, risky: ax.risky };
   }
@@ -144,7 +181,7 @@ function computeRiskAssessment(form) {
   };
 }
 
-// Keys must match the assistance checkbox values in content/assessment.md (Q18)
+// Keys must match the assistance checkbox values in content/assessment.md
 const ASSISTANCE_VALUE_TO_LABEL = {
   assistance_ip_patents: "IP & Patents",
   assistance_risk: "AI Risk Assessment",
@@ -162,25 +199,28 @@ function mapAssistanceValuesToLabels(values) {
   return arr.map(v => ASSISTANCE_VALUE_TO_LABEL[v] || v).join(", ");
 }
 
+// Numbering and labels mirror content/assessment.md exactly (Q1-Q20).
 const QUESTIONS = [
-  { num: 1, key: "ai_tools", label: "Which AI tools are you using?" },
-  { num: 2, key: "ai_usage", label: "How are you using AI?" },
-  { num: 3, key: "prompting_policy", label: "Policy for AI prompting?" },
-  { num: 4, key: "content_policy", label: "Policy for AI content use?" },
-  { num: 5, key: "code_reviewed", label: "Review AI-generated code?" },
-  { num: 6, key: "code_labeled", label: "Label/comment AI-generated code?" },
-  { num: 7, key: "mentioned_in_commits", label: "Mention AI code in commits?" },
-  { num: 8, key: "mentioned_in_docs", label: "Mention AI code in documentation?" },
-  { num: 9, key: "ai_in_production", label: "Push AI code to production?" },
-  { num: 10, key: "ai_restricted", label: "Restrict AI code in certain systems?" },
-  { num: 11, key: "store_prompts", label: "Store AI prompts in version control?" },
-  { num: 12, key: "reviewed_ai_licenses", label: "Reviewed license terms for AI coding tools?" },
-  { num: 13, key: "ai_training", label: "Developers trained on responsible AI?" },
-  { num: 14, key: "vendor_ai_use", label: "Contractors/vendors use AI on codebase?" },
-  { num: 15, key: "contracts_address_ai", label: "Agreements address AI use and IP ownership?" },
-  { num: 16, key: "awareness", label: "Aware of risks of using AI-generated code?" },
-  { num: 17, key: "assert_code_ownership", label: "Do you assert that you own the code?" },
-  { num: 18, key: "assistance", label: "What kind of assistance are you looking for?" },
+  { num: 1,  key: "ai_tools", label: "Which AI tools are you using?" },
+  { num: 2,  key: "ai_tool_tier", label: "Under what kind of agreements are these tools used?" },
+  { num: 3,  key: "ai_usage", label: "How are you using AI?" },
+  { num: 4,  key: "ai_code_share", label: "Share of codebase AI-generated or AI-assisted?" },
+  { num: 5,  key: "prompting_policy", label: "Policy for AI prompting?" },
+  { num: 6,  key: "content_policy", label: "Policy for AI content use?" },
+  { num: 7,  key: "code_reviewed", label: "AI code reviewed by a person before merge?" },
+  { num: 8,  key: "code_labeled", label: "Label/comment AI-generated code?" },
+  { num: 9,  key: "mentioned_in_commits", label: "Mention AI code in commits?" },
+  { num: 10, key: "mentioned_in_docs", label: "Mention AI code in documentation?" },
+  { num: 11, key: "ai_in_production", label: "AI code reaches production without human review?" },
+  { num: 12, key: "ai_restricted", label: "Restrict AI code in certain systems?" },
+  { num: 13, key: "store_prompts", label: "Store AI prompts in version control?" },
+  { num: 14, key: "reviewed_ai_licenses", label: "Reviewed license terms for AI coding tools?" },
+  { num: 15, key: "ai_training", label: "Developers trained on responsible AI?" },
+  { num: 16, key: "vendor_ai_use", label: "Contractors/vendors use AI on codebase?" },
+  { num: 17, key: "contracts_address_ai", label: "Agreements address AI use and IP ownership?" },
+  { num: 18, key: "awareness", label: "Aware of risks of using AI-generated code?" },
+  { num: 19, key: "assert_code_ownership", label: "Do you assert that you own the code?" },
+  { num: 20, key: "assistance", label: "What kind of assistance are you looking for?" },
 ];
 
 // Persona profile is computed client-side (see content/assessment.md) and
@@ -250,17 +290,68 @@ function buildPersonaHTML(form) {
   return `<h2>Persona Profile</h2><div style="padding:4px 0;">${inner}${pathLine}</div>`;
 }
 
-function buildAssessmentText(form) {
+/** Shared per-question detail rows. render(num, label, valueHtmlOrText) */
+function buildDetailRows(form, render, escaper) {
+  const esc = escaper || (v => v);
+  const excluded = getExcluded(form);
+  const out = [];
+  for (const q of QUESTIONS) {
+    if (excluded.has(q.key)) continue;
+    if (q.key === "ai_tools") {
+      const main = asList(form.ai_tools) || "No AI tools selected";
+      const other = asList(form.ai_tools_other);
+      const val = other ? `${esc(main)}${main.includes("No AI") ? "" : ", "}Other: ${esc(other)}` : esc(main);
+      out.push(render(q.num, q.label, val));
+      continue;
+    }
+    if (q.key === "ai_usage") {
+      const main = asList(form.ai_usage) || "No AI practices selected";
+      const other = asList(form.ai_usage_other);
+      const val = other ? `${esc(main)}${main.includes("No AI") ? "" : ", "}Other: ${esc(other)}` : esc(main);
+      out.push(render(q.num, q.label, val));
+      continue;
+    }
+    if (q.key === "assistance") {
+      const main = mapAssistanceValuesToLabels(form.assistance);
+      const other = asList(form.assistance_other);
+      const val = other ? `${esc(main)}${main.includes("No assistance") ? "" : ", "}Other: ${esc(other)}` : esc(main);
+      out.push(render(q.num, q.label, val));
+      continue;
+    }
+    out.push(render(q.num, q.label, esc(orDash(form[q.key]))));
+  }
+  return out;
+}
+
+// view: "internal" (to the whoownsthecode inbox, includes submitter details)
+// or "user" (the submitter's copy: no Submitted-by block, adds a disclaimer).
+function buildAssessmentText(form, view = "internal") {
   const site = "whoownsthecode.com";
   const name = form.name ? String(form.name).trim() : "Anonymous";
   const email = form.email ? String(form.email).trim() : "N/A";
+  const company = form.company ? String(form.company).trim() : "";
+  const role = form.role ? String(form.role).trim() : "";
   const a = computeRiskAssessment(form);
+
+  const header = view === "internal"
+    ? [
+        `Form submitted on ${site}`,
+        ``,
+        `Name: ${name}`,
+        `Email: ${email}`,
+        ...(company ? [`Company: ${company}`] : []),
+        ...(role ? [`Role: ${role}`] : []),
+        ``,
+      ]
+    : [
+        `Your AI code risk assessment from ${site}`,
+        ``,
+        `Hi ${name}, here is the assessment based on your answers.`,
+        ``,
+      ];
+
   const lines = [
-    `Form submitted on ${site}`,
-    ``,
-    `Name: ${name}`,
-    `Email: ${email}`,
-    ``,
+    ...header,
     "Assessment",
     `Inbound Risk: ${a.inbound.score}/100 (${a.inbound.level}) - what the AI ingested into your build`,
     `Outbound Risk: ${a.outbound.score}/100 (${a.outbound.level}) - whether you can own, license, and warrant what you ship`,
@@ -268,41 +359,21 @@ function buildAssessmentText(form) {
     ``,
     ...buildPersonaLines(form),
     "Details",
-    ``
+    ``,
+    ...buildDetailRows(form, (num, label, val) => `${num}. ${label} ${val}`),
   ];
 
-  const excluded = getExcluded(form);
-  for (const q of QUESTIONS) {
-    if (excluded.has(q.key)) continue;
-    if (q.key === "ai_tools") {
-      const main = asList(form.ai_tools) || "No AI tools selected";
-      const other = asList(form.ai_tools_other);
-      const val = other ? `${main}${main.includes("No AI") ? "" : ", "}Other: ${other}` : main;
-      lines.push(`${q.num}. ${q.label} ${val}`);
-      continue;
-    }
-    if (q.key === "ai_usage") {
-      const main = asList(form.ai_usage) || "No AI practices selected";
-      const other = asList(form.ai_usage_other);
-      const val = other ? `${main}${main.includes("No AI") ? "" : ", "}Other: ${other}` : main;
-      lines.push(`${q.num}. ${q.label} ${val}`);
-      continue;
-    }
-    if (q.key === "assistance") {
-      const main = mapAssistanceValuesToLabels(form.assistance);
-      const other = asList(form.assistance_other);
-      const val = other ? `${main}${main.includes("No assistance") ? "" : ", "}Other: ${other}` : main;
-      lines.push(`${q.num}. ${q.label} ${val}`);
-      continue;
-    }
-    lines.push(`${q.num}. ${q.label} ${orDash(form[q.key])}`);
+  if (view === "user") {
+    lines.push(``, `This is an educational service and not legal advice.`);
   }
   return lines.join("\n");
 }
 
-function buildAssessmentHTML(form) {
+function buildAssessmentHTML(form, view = "internal") {
   const name = form.name ? escapeHtml(String(form.name).trim()) : "Anonymous";
   const email = form.email ? escapeHtml(String(form.email).trim()) : "N/A";
+  const company = form.company ? escapeHtml(String(form.company).trim()) : "";
+  const role = form.role ? escapeHtml(String(form.role).trim()) : "";
   const baseCell = "padding:8px 8px;line-height:18px;mso-line-height-rule:exactly;vertical-align:top;border-bottom:1px solid #eee;font-family:Arial,Helvetica,sans-serif;font-size:14px;";
   const numberCell = `${baseCell} width:44px;text-align:right;color:#666;`;
   const questionCell = `${baseCell} font-weight:600;`;
@@ -316,62 +387,49 @@ function buildAssessmentHTML(form) {
       <td style="${answerCell}">${value}</td>
     </tr>`;
 
-  const excluded = getExcluded(form);
-  const rows = [];
-  for (const q of QUESTIONS) {
-    if (excluded.has(q.key)) continue;
-    if (q.key === "ai_tools") {
-      const main = asList(form.ai_tools) || "No AI tools selected";
-      const other = asList(form.ai_tools_other);
-      const val = other ? `${escapeHtml(main)}${main.includes("No AI") ? "" : ", "}<em>Other:</em> ${escapeHtml(other)}` : escapeHtml(main);
-      rows.push(rowQA(q.num, q.label, val));
-      continue;
-    }
-    if (q.key === "ai_usage") {
-      const main = asList(form.ai_usage) || "No AI practices selected";
-      const other = asList(form.ai_usage_other);
-      const val = other ? `${escapeHtml(main)}${main.includes("No AI") ? "" : ", "}<em>Other:</em> ${escapeHtml(other)}` : escapeHtml(main);
-      rows.push(rowQA(q.num, q.label, val));
-      continue;
-    }
-    if (q.key === "assistance") {
-      const main = mapAssistanceValuesToLabels(form.assistance);
-      const other = asList(form.assistance_other);
-      const val = other ? `${escapeHtml(main)}${main.includes("No assistance") ? "" : ", "}<em>Other:</em> ${escapeHtml(other)}` : escapeHtml(main);
-      rows.push(rowQA(q.num, q.label, val));
-      continue;
-    }
-    rows.push(rowQA(q.num, q.label, escapeHtml(orDash(form[q.key]))));
-  }
+  const rows = buildDetailRows(form, rowQA, escapeHtml);
+
+  const infoLine = (label, value) => `
+        <tr>
+          <td style="padding:4px 0;vertical-align:middle;
+                    font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;
+                    color:#111;">
+            ${label ? `<strong>${label}:</strong> ` : ""}${value}
+          </td>
+        </tr>`;
+
+  const submittedBy = view === "internal"
+    ? `
+    <h2>Submitted by</h2>
+    <div style="padding:0 20px;background:#f3f4f6;">
+      <table role="presentation" cellpadding="0" cellspacing="0"
+            style="width:100%;border-collapse:collapse;">
+        ${infoLine("", name || "—")}
+        ${infoLine("", email !== "N/A" ? `<a href="mailto:${email}" style="text-decoration:underline;">${email}</a>` : "N/A")}
+        ${company ? infoLine("Company", company) : ""}
+        ${role ? infoLine("Role", role) : ""}
+      </table>
+    </div>
+`
+    : `
+    <p style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;">
+      Hi ${name}, here is your AI code risk assessment from whoownsthecode.com, based on your answers.
+    </p>
+`;
+
+  const userFooter = view === "user"
+    ? `
+    <p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555;margin-top:20px;">
+      This is an educational service and not legal advice.
+      Learn more at <a href="https://whoownsthecode.com/workshops">whoownsthecode.com/workshops</a>.
+    </p>`
+    : "";
 
   return `<!doctype html>
 <html>
   <head><meta charset="utf-8"><title>WhoOwnsTheCode Assessment</title></head>
   <body>
-
-    <h2>Submitted by</h2>
-    <div style="padding:0 20px;background:#f3f4f6;">
-      <table role="presentation" cellpadding="0" cellspacing="0"
-            style="width:100%;border-collapse:collapse;">
-        <tr>
-          <td style="padding:4px 0;vertical-align:middle;
-                    font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;
-                    color:#111;">
-            ${name || "—"}
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:4px 0;vertical-align:middle;
-                    font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;
-                    color:#111;">
-            ${email !== "N/A"
-              ? `<a href="mailto:${email}" style="text-decoration:underline;">${email}</a>`
-              : "N/A"}
-          </td>
-        </tr>
-      </table>
-    </div>
-
+${submittedBy}
     <h2>Assessment</h2>
     AI Usage Maturity & Risk Posture
     <div style="margin-top:6px;">
@@ -406,8 +464,8 @@ function buildAssessmentHTML(form) {
       <strong>Your calculation details:</strong><br/>
       &nbsp;&nbsp;• Inbound: <strong>${a.inbound.score}/100</strong> (${a.inbound.flagged} risk-flagged answer${a.inbound.flagged === 1 ? "" : "s"}).<br/>
       &nbsp;&nbsp;• Outbound: <strong>${a.outbound.score}/100</strong> (${a.outbound.flagged} risk-flagged answer${a.outbound.flagged === 1 ? "" : "s"}).<br/>
-      &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong> (from ${a.toolsCount} AI tool${a.toolsCount === 1 ? "" : "s"} in use and how AI is applied).<br/>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each axis is scored over only the questions shown for your persona, then normalized to 0-100.<br/><br/>
+      &nbsp;&nbsp;• Multiplier: <strong>×${a.multiplier.toFixed(2)}</strong> (from AI tools in use, how AI is applied, account tier, and share of AI code).<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Each axis is scored over only the questions shown for your persona, then normalized to 0-100. Unanswered questions count as risk.<br/><br/>
 
       <strong>How the bands work:</strong><br/>
       &nbsp;&nbsp;Each risk axis ranges from <strong>0</strong> (lowest risk) to <strong>100</strong> (highest risk).<br/>
@@ -425,6 +483,7 @@ function buildAssessmentHTML(form) {
         ${rows.join("")}
       </tbody>
     </table>
+${userFooter}
   </body>
 </html>`;
 }
@@ -492,8 +551,8 @@ export default {
       if (formData.website) return new Response("OK", { status: 200, headers: corsHeaders });
 
       // Secret-gated test mode: with a valid X-Test-Secret header, skip
-      // reCAPTCHA and Resend and return the computed scores plus the rendered
-      // email so automated tests can assert on them. Nothing is sent. Inactive
+      // reCAPTCHA and Resend and return the computed scores plus both rendered
+      // emails so automated tests can assert on them. Nothing is sent. Inactive
       // unless the TEST_SECRET secret is set (wrangler secret put TEST_SECRET).
       const testSecret = request.headers.get("X-Test-Secret");
       if (env.TEST_SECRET && testSecret && testSecret === env.TEST_SECRET) {
@@ -501,12 +560,10 @@ export default {
         const testEmail = formData.email && String(formData.email).trim() ? String(formData.email).trim() : null;
         // Test runs may pass an explicit subject so a batch of emails is easy to
         // scan (e.g. "Test assessment from E2E Host with no policies"). Test-mode
-        // only; production always uses the default subject below.
+        // only; production always uses the default subjects below.
         const subject = formData.testSubject
           ? cleanDisplayName(formData.testSubject)
           : `New assessment from ${cleanDisplayName(testName)}`;
-        const text = buildAssessmentText(formData);
-        const html = buildAssessmentHTML(formData);
         const preview = {
           testMode: true,
           assessment: computeRiskAssessment(formData),
@@ -515,20 +572,30 @@ export default {
             stacked: formData.persona_stacked || "",
             path: formData.persona_path || "",
           },
-          email: { subject, text, html },
+          email: {
+            subject,
+            text: buildAssessmentText(formData, "internal"),
+            html: buildAssessmentHTML(formData, "internal"),
+          },
+          userEmail: {
+            subject: "Your AI code risk assessment from whoownsthecode.com",
+            text: buildAssessmentText(formData, "user"),
+            html: buildAssessmentHTML(formData, "user"),
+          },
           sent: null,
         };
-        // Opt-in real send, still secret-gated. Delivers only to the submitter
-        // address (not the production inbox) so automated runs don't pile up
-        // test data in whoownsthecode@gmail.com.
+        // Opt-in real send, still secret-gated. Delivers the USER variant only
+        // to the submitter address (not the production inbox) so automated runs
+        // don't pile up test data in whoownsthecode@gmail.com and the preview
+        // matches what a real submitter would receive.
         if (isYes(formData.testSend) && testEmail) {
           const siteName = cleanDisplayName("Who Owns The Code");
           const result = await sendWithResend(env, {
             from: `${siteName} <no-reply@buildmeasurelearn.com>`,
             to: [testEmail],
             subject,
-            text,
-            html,
+            text: preview.userEmail.text,
+            html: preview.userEmail.html,
             reply_to: testEmail,
           });
           preview.sent = { ok: result.ok, status: result.status, statusText: result.statusText };
@@ -543,7 +610,10 @@ export default {
       if (!recaptchaToken) return new Response("Missing CAPTCHA token", { status: 400, headers: corsHeaders });
 
       const clientIP = request.headers.get("CF-Connecting-IP") || "";
-      const verifyBody = `secret=${env.RECAPTCHA_SECRET}&response=${recaptchaToken}&remoteip=${clientIP}`;
+      const verifyBody =
+        `secret=${encodeURIComponent(env.RECAPTCHA_SECRET)}` +
+        `&response=${encodeURIComponent(recaptchaToken)}` +
+        `&remoteip=${encodeURIComponent(clientIP)}`;
       const verifyResponse = await fetch("https://www.google.com/recaptcha/api/siteverify", {
         method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: verifyBody,
       });
@@ -578,27 +648,39 @@ export default {
         return new Response("Message sent!", { status: 200, headers: corsHeaders });
       }
 
+      // Assessment: the submitter promised their email for the report, so
+      // require it rather than sending a broken payload to Resend.
       const siteName = cleanDisplayName("Who Owns The Code");
       const name = formData.name ? String(formData.name).trim() : "Anonymous";
       const email = formData.email && String(formData.email).trim() ? String(formData.email).trim() : null;
+      if (!email) return new Response("Email is required", { status: 400, headers: corsHeaders });
 
-      const textBody = buildAssessmentText(formData);
-      const htmlBody = buildAssessmentHTML(formData);
-
-      const payload = {
+      // Internal copy: full detail including submitter info.
+      const internalResult = await sendWithResend(env, {
         from: `${siteName} <no-reply@buildmeasurelearn.com>`,
-        to: ["whoownsthecode@gmail.com", email],  // 👈 send to both
+        to: ["whoownsthecode@gmail.com"],
         subject: `New assessment from ${cleanDisplayName(name)}`,
-        text: textBody,
-        html: htmlBody,
-      };
-      if (email) payload.reply_to = email;
-
-      const result = await sendWithResend(env, payload);
-      if (!result.ok) {
-        const bodyStr = typeof result.body === "string" ? result.body : JSON.stringify(result.body);
-        return new Response(`Failed to send email via Resend: ${result.status} ${result.statusText}\n${bodyStr}`, { status: 500, headers: corsHeaders });
+        text: buildAssessmentText(formData, "internal"),
+        html: buildAssessmentHTML(formData, "internal"),
+        reply_to: email,
+      });
+      if (!internalResult.ok) {
+        const bodyStr = typeof internalResult.body === "string" ? internalResult.body : JSON.stringify(internalResult.body);
+        return new Response(`Failed to send email via Resend: ${internalResult.status} ${internalResult.statusText}\n${bodyStr}`, { status: 500, headers: corsHeaders });
       }
+
+      // Submitter copy: their report, without the internal Submitted-by block.
+      // A failure here doesn't fail the request; the internal copy has their
+      // address for manual follow-up.
+      await sendWithResend(env, {
+        from: `${siteName} <no-reply@buildmeasurelearn.com>`,
+        to: [email],
+        subject: "Your AI code risk assessment from whoownsthecode.com",
+        text: buildAssessmentText(formData, "user"),
+        html: buildAssessmentHTML(formData, "user"),
+        reply_to: "whoownsthecode@gmail.com",
+      });
+
       return new Response("Assessment submitted successfully!", { status: 200, headers: corsHeaders });
     } catch {
       return new Response("Internal Server Error", { status: 500, headers: corsHeaders });

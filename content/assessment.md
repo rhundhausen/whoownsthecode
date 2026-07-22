@@ -1,6 +1,6 @@
 ---
 title: "Assessment"
-date: 2025-08-05
+date: 2026-07-22
 ---
 
 Answer a few questions about how your team uses AI to write code, and we’ll email you a personalized risk assessment. It shows where AI-generated code puts your ownership and compliance at risk.
@@ -24,6 +24,9 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
   }
   .info-tip:hover .info-bubble, .info-tip:focus-within .info-bubble { visibility: visible; opacity: 1; }
 
+  /* Honeypot: visually removed but present in the DOM so bots fill it. */
+  .hp-field { position: absolute; left: -9999px; top: -9999px; height: 0; width: 0; overflow: hidden; }
+
   .persona-wizard { display: flex; flex-direction: column; gap: 1.1rem; }
   .persona-q { display: flex; flex-direction: column; gap: 0.4rem; }
   .persona-q.hidden, .persona-result.hidden { display: none; }
@@ -42,15 +45,18 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
   .persona-more { margin-top: 0.75rem; font-size: 0.9em; }
 </style>
 
-  <form action="https://ai-assessment-worker.richard-dd5.workers.dev" method="POST" style="font-family: var(--sans); display: flex; flex-direction: column; gap: 1.2rem;">
+  <form style="font-family: var(--sans); display: flex; flex-direction: column; gap: 1.2rem;">
     <input type="hidden" name="form_type" value="assessment">
-    <input type="hidden" name="website" tabindex="-1" autocomplete="off">
+    <div class="hp-field" aria-hidden="true">
+      <label for="website">Website</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
     <input type="hidden" name="persona_primary" value="">
     <input type="hidden" name="persona_stacked" value="">
     <input type="hidden" name="persona_result" value="">
     <input type="hidden" name="persona_path" value="">
     <input type="hidden" name="scored_excluded" value="">
-    <h3 style="margin-top:0; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 1 : AI-Code Risk Persona</h3>
+    <h3 style="margin-top:0; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 1: AI-Code Risk Persona</h3>
     <p style="margin:0; font-size:0.95rem; color:var(--fg-muted);">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
     <div class="persona-wizard" id="personaWizard">
       <div class="persona-q" data-step="p0">
@@ -127,23 +133,33 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       </div>
     </div>
     <div class="persona-result hidden" id="personaResult" aria-live="polite"></div>
-    <h3 id="sec-tools" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 2 : AI Tools & Usage</h3>
+    <h3 id="sec-tools" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 2: AI Tools & Usage</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="ai_tools" value="GitHub Copilot"> GitHub Copilot</label><br/>
         <label><input type="checkbox" name="ai_tools" value="ChatGPT"> ChatGPT</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="OpenAI Codex"> OpenAI Codex</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Cursor"> Cursor</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Claude / Claude Code"> Claude / Claude Code</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Google Gemini / Gemini Code Assist"> Google Gemini / Gemini Code Assist</label><br/>
-        <label><input type="checkbox" name="ai_tools" value="Windsurf"> Windsurf (formerly Codeium)</label><br/>
+        <label><input type="checkbox" name="ai_tools" value="Windsurf"> Windsurf</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Amazon Q Developer"> Amazon Q Developer</label><br/>
         <label><input type="checkbox" name="ai_tools" value="Other"> Other:</label>
         <input type="text" name="ai_tools_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">2. How are you using AI?</label>
+      <label style="flex: 1 1 400px; min-width: 300px;">2. Under what kind of agreements are these tools used?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Enterprise and business plans often include IP indemnification and no-training commitments. Individual and free accounts usually do not.</span></span></label>
+      <div style="flex: 1 1 250px; min-width: 200px;">
+        <label><input type="radio" name="ai_tool_tier" value="Enterprise"> Enterprise/business agreements</label><br/>
+        <label><input type="radio" name="ai_tool_tier" value="Individual"> Individual or free accounts</label><br/>
+        <label><input type="radio" name="ai_tool_tier" value="Mixed"> Mixed</label><br/>
+        <label><input type="radio" name="ai_tool_tier" value="Don't know"> Don't know</label>
+      </div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <label style="flex: 1 1 400px; min-width: 300px;">3. How are you using AI?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="ai_usage" value="Code"> Writing or generating code</label><br/>
         <label><input type="checkbox" name="ai_usage" value="Agentic"> Agentic / autonomous coding (&quot;vibe coding&quot;)</label><br/>
@@ -156,117 +172,131 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         <input type="text" name="ai_usage_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
-    <h3 id="sec-policies" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 3 : Policies & Governance</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">3. Do you have a policy for AI prompting?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A documented standard for how your team writes prompts. For example, what information may or may not be pasted into an AI tool.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">4. Roughly what share of the codebase is AI-generated or AI-assisted?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Your best estimate. The larger the share, the more of the codebase may fall outside copyright protection.</span></span></label>
+      <div style="flex: 1 1 250px; min-width: 200px;">
+        <label><input type="radio" name="ai_code_share" value="Under 10%"> Under 10%</label><br/>
+        <label><input type="radio" name="ai_code_share" value="10-50%"> 10&ndash;50%</label><br/>
+        <label><input type="radio" name="ai_code_share" value="Over 50%"> Over 50%</label><br/>
+        <label><input type="radio" name="ai_code_share" value="Don't know"> Don't know</label>
+      </div>
+    </div>
+    <h3 id="sec-policies" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 3: Policies & Governance</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <label style="flex: 1 1 400px; min-width: 300px;">5. Do you have a policy for AI prompting?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A documented standard for how your team writes prompts. For example, what information may or may not be pasted into an AI tool.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="prompting_policy" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="prompting_policy" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">4. Do you have a policy for AI content use?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Rules for where and how AI-generated material may be used in your products and code.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">6. Do you have a policy for AI content use?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Rules for where and how AI-generated material may be used in your products and code.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="content_policy" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="content_policy" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">5. Do you review the AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether a person reviews AI-generated code before it is merged, instead of accepting it unchecked.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">7. Is AI-generated code reviewed by a person before merge?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether a person reviews AI-generated code before it is merged, instead of accepting it unchecked.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
-        <label><input type="radio" name="code_reviewed" value="Yes"> Yes</label>&nbsp;&nbsp;
-        <label><input type="radio" name="code_reviewed" value="No"> No</label>
+        <label><input type="radio" name="code_reviewed" value="Always"> Always</label>&nbsp;&nbsp;
+        <label><input type="radio" name="code_reviewed" value="Sometimes"> Sometimes</label>&nbsp;&nbsp;
+        <label><input type="radio" name="code_reviewed" value="Never"> Never</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">6. Do you label or comment the AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Marking AI-generated sections in the source (such as a comment) so they can be identified later.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">8. Do you label or comment the AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Marking AI-generated sections in the source (such as a comment) so they can be identified later.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
-        <label><input type="radio" name="code_labeled" value="Yes"> Yes</label>&nbsp;&nbsp;
-        <label><input type="radio" name="code_labeled" value="No"> No</label>
+        <label><input type="radio" name="code_labeled" value="Always"> Always</label>&nbsp;&nbsp;
+        <label><input type="radio" name="code_labeled" value="Sometimes"> Sometimes</label>&nbsp;&nbsp;
+        <label><input type="radio" name="code_labeled" value="Never"> Never</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">7. Do you mention AI-generated code in commits?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Noting in commit messages when changes were produced with AI assistance.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">9. Do you mention AI-generated code in commits?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Noting in commit messages when changes were produced with AI assistance.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="mentioned_in_commits" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="mentioned_in_commits" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">8. Do you mention AI-generated code in documentation?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Recording in your documentation that AI tools contributed to the codebase.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">10. Do you mention AI-generated code in documentation?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Recording in your documentation that AI tools contributed to the codebase.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="mentioned_in_docs" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="mentioned_in_docs" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">9. Do you push AI-generated code to production?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether AI-generated code reaches live, customer-facing systems. Shipping unreviewed AI code raises risk.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">11. Does AI-generated code reach production without human review?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether unreviewed AI-generated code can end up in live, customer-facing systems.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="ai_in_production" value="Yes"> Yes</label>&nbsp;&nbsp;
-        <label><input type="radio" name="ai_in_production" value="No"> No</label>
+        <label><input type="radio" name="ai_in_production" value="No"> No</label>&nbsp;&nbsp;
+        <label><input type="radio" name="ai_in_production" value="Don't know"> Don't know</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">10. Do you restrict AI-generated code in certain systems?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you forbid AI-generated code in sensitive areas such as security, payments, or core IP.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">12. Do you restrict AI-generated code in certain systems?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you forbid AI-generated code in sensitive areas such as security, payments, or core IP.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="ai_restricted" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="ai_restricted" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">11. Do you store AI prompts in version control?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Saving the prompts used to generate code (for example in git) as a record of how it was created.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">13. Do you store AI prompts in version control?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Saving the prompts used to generate code (for example in git) as a record of how it was created.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="store_prompts" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="store_prompts" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">12. Have you reviewed the license terms for your AI coding tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you have read your AI tools' terms covering ownership, training data, and indemnity.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">14. Have you reviewed the license terms for your AI coding tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you have read your AI tools' terms covering ownership, training data, and indemnity.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="reviewed_ai_licenses" value="Yes"> Yes</label>&nbsp;&nbsp;
-        <label><input type="radio" name="reviewed_ai_licenses" value="No"> No</label>
+        <label><input type="radio" name="reviewed_ai_licenses" value="No"> No</label>&nbsp;&nbsp;
+        <label><input type="radio" name="reviewed_ai_licenses" value="Don't know"> Don't know</label>
       </div>
     </div>
-    <h3 id="sec-people" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 4 : People & Training</h3>
+    <h3 id="sec-people" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 4: People & Training</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">13. Are developers trained on the responsible use of AI tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether developers have been taught to use AI tools responsibly and understand the IP risks.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">15. Are developers trained on the responsible use of AI tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether developers have been taught to use AI tools responsibly and understand the IP risks.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="ai_training" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="ai_training" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">14. Do contractors or vendors use AI tools on your codebase?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether outside contractors or vendors run AI tools against your code. Third-party AI use can create ownership gaps.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">16. Do contractors or vendors use AI tools on your codebase?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether outside contractors or vendors run AI tools against your code. Third-party AI use can create ownership gaps, and not knowing is itself a gap.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="vendor_ai_use" value="Yes"> Yes</label>&nbsp;&nbsp;
-        <label><input type="radio" name="vendor_ai_use" value="No"> No</label>
+        <label><input type="radio" name="vendor_ai_use" value="No"> No</label>&nbsp;&nbsp;
+        <label><input type="radio" name="vendor_ai_use" value="Don't know"> Don't know</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">15. Do your employee and contractor agreements address AI use and IP ownership?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether your employment and contractor agreements state who may use AI and who owns the resulting code.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">17. Do your employee and contractor agreements address AI use and IP ownership?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether your employment and contractor agreements state who may use AI and who owns the resulting code.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="contracts_address_ai" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="contracts_address_ai" value="No"> No</label>
       </div>
     </div>
-    <h3 id="sec-awareness" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 5 : Awareness & Ownership</h3>
+    <h3 id="sec-awareness" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 5: Awareness & Ownership</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">16. Are you aware of the risks of using AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you understand that AI-generated code may not be copyrightable or fully owned by you.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">18. Are you aware of the risks of using AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you understand that AI-generated code may not be copyrightable or fully owned by you.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="awareness" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="awareness" value="No"> No</label>
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">17. Do you assert that you own the code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you currently claim legal ownership of your code. Purely AI-generated portions may not be ownable.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">19. Do you assert that you own the code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you currently claim legal ownership of your code. Purely AI-generated portions may not be ownable.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="assert_code_ownership" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
       </div>
-    </div> 
-    <h3 id="sec-support" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 6 : Support Needed</h3>
+    </div>
+    <h3 id="sec-support" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 6: Support Needed</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">18. What kind of assistance are you looking for?</label>
+      <label style="flex: 1 1 400px; min-width: 300px;">20. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="checkbox" name="assistance" value="assistance_ip_patents"> IP & Patents</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Help protecting your code and inventions through copyrights, patents, and trade secrets.</span></span><br/>
         <label><input type="checkbox" name="assistance" value="assistance_risk"> AI Risk Assessment</label><span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A deeper review of how you use AI and the ownership and compliance risks it creates.</span></span><br/>
@@ -284,7 +314,25 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       <div style="flex: 1 1 250px; min-width: 200px;">
         <input type="text" id="name" name="name" required aria-required="true" placeholder="John Doe" style="margin-top: 0.25rem; width: 100%;">
       </div>
-    </div>    
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <label for="company" style="flex: 1 1 400px; min-width: 300px;">Company (optional)</label>
+      <div style="flex: 1 1 250px; min-width: 200px;">
+        <input type="text" id="company" name="company" placeholder="Acme Corp" style="margin-top: 0.25rem; width: 100%;">
+      </div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <label for="role" style="flex: 1 1 400px; min-width: 300px;">Your role</label>
+      <div style="flex: 1 1 250px; min-width: 200px;">
+        <select id="role" name="role" style="margin-top: 0.25rem; width: 100%;">
+          <option value="">Select one</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Legal / Compliance">Legal / Compliance</option>
+          <option value="Executive / Founder">Executive / Founder</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label for="email" style="flex: 1 1 400px; min-width: 300px;">Where should we send your personalized assessment?</label>
         <div style="flex: 1 1 250px; min-width: 200px;">
@@ -381,7 +429,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
     // the identified persona, and to tell the worker which keys to skip when
     // scoring. Order and keys mirror the form fields and the worker's SCORED array.
     var MATURITY_SECTIONS = {
-      "sec-tools":     ["ai_tools", "ai_usage"],
+      "sec-tools":     ["ai_tools", "ai_tool_tier", "ai_usage", "ai_code_share"],
       "sec-policies":  ["prompting_policy", "content_policy", "code_reviewed", "code_labeled", "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts", "reviewed_ai_licenses"],
       "sec-people":    ["ai_training", "vendor_ai_use", "contracts_address_ai"],
       "sec-awareness": ["awareness", "assert_code_ownership"],
@@ -395,7 +443,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
     //  - Civic Coder output is uncopyrightable by statute and Giver ownership is
     //    moot by choice, so a "No" to asserting ownership is correct, not a risk.
     var PERSONA_EXCLUDED = {
-      "Acquirer": ["ai_tools", "ai_usage", "prompting_policy", "content_policy", "code_reviewed", "code_labeled", "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts", "reviewed_ai_licenses", "ai_training", "assert_code_ownership"],
+      "Acquirer": ["ai_tools", "ai_tool_tier", "ai_usage", "ai_code_share", "prompting_policy", "content_policy", "code_reviewed", "code_labeled", "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts", "reviewed_ai_licenses", "ai_training", "assert_code_ownership"],
       "Civic Coder": ["assert_code_ownership"],
       "Giver": ["assert_code_ownership"]
     };
@@ -452,11 +500,12 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       show("p7", atP5 && a.authorship === "hired_shop");
       // Gate the promise check on the full active path so a stale answer from a
       // previously explored branch (e.g. switching back to "acquire") can't
-      // leave it showing.
+      // leave it showing. Bootstrapper sees it too: a bootstrapped paid product
+      // still licenses to customers and can be regulated or a fed supplier.
       var hostReached = afterCivic && a.host === "yes";
       var promiseVisible = hostReached
         || (atP5 && (a.authorship === "we_are_shop" || a.authorship === "inherited"))
-        || (atP5 && a.authorship === "employees" && (a.usage === "sell_license" || a.usage === "raise_sell"));
+        || (atP5 && a.authorship === "employees" && (a.usage === "sell_license" || a.usage === "raise_sell" || a.usage === "bootstrap"));
       show("p8", promiseVisible);
     }
 
@@ -492,7 +541,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         if (a.usage === "walled") return { primary: "Walled Garden", stacked: [] };
         if (a.usage === "sell_license") return withPromise("Licensor", a);
         if (a.usage === "raise_sell") return withPromise("Exiter", a);
-        if (a.usage === "bootstrap") return { primary: "Bootstrapper", stacked: [] };
+        if (a.usage === "bootstrap") return withPromise("Bootstrapper", a);
         return null;
       }
       return null;

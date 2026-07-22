@@ -5,12 +5,17 @@ Date: 2026-07-20
 ## Goal
 
 Show visitors that the site's IP/copyright guidance applies to code from many AI
-tools, not one vendor, via a continuously scrolling strip of AI-tool logos at the
-bottom of the homepage. Modeled on the customer-logo marquee at accentient.com.
+tools, not one vendor, via a continuously scrolling strip of AI-tool logos
+directly below the hero on the homepage. Modeled on the customer-logo marquee at
+accentient.com.
 
 ## Behavior
 
-- Infinite horizontal marquee, homepage only, placed above the footer.
+- Infinite horizontal marquee, homepage only, placed directly below the hero,
+  framed as an "import bar" card. The card header shows only the caption label
+  (`.import-caption`, from `[params.aitools].eyebrow`); an earlier
+  `import { * } from "ai-tools"` mono statement was removed and the caption now
+  sits alone, left-aligned.
 - Logos are grayscale at reduced opacity by default; hovering a logo restores its
   full native color.
 - The whole strip pauses on hover and fades out at both left/right edges.
@@ -32,11 +37,13 @@ bottom of the homepage. Modeled on the customer-logo marquee at accentient.com.
 ## Components
 
 - `layouts/partials/home/ai-tools.html` - a `$tools` slice of `{f: slug, n: name}`
-  in popularity order, an eyebrow line, and the doubled `<img>` track.
+  in popularity order, a caption label (`.import-caption`, from
+  `[params.aitools].eyebrow`), and the doubled `<img>` track.
 - `layouts/index.html` - includes the partial before the footer, guarded by
   `[params.aitools].enabled`.
 - `config.toml` - `[params.aitools]` block with `enabled` and editable `eyebrow`.
-- `static/css/custom.css` - `.ai-tools*` rules (light band, grayscale-to-color
+- `static/css/custom.css` - the `.imports` / `.import-card` / `.import-head` /
+  `.import-caption` / `.band` / `.marquee` rules (light band, grayscale-to-color
   hover, edge fades, pause-on-hover, reduced-motion fallback, mobile sizing).
 
 ## Tool list (order = rough popularity)
