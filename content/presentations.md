@@ -1,20 +1,12 @@
 ---
 title: "Presentations"
-date: 2025-11-25
+date: 2026-07-22
 ---
 
-#### Boise State University
-April 2025 | [Watch](https://www.youtube.com/watch?v=k-OyAPM53Tc)
+#### Agile Alliance Virtual Meetup
+December 2025 | [Watch (Members Only)](https://agilealliance.org/resources/sessions/who-owns-the-code-in-an-ai-world)
 
-Brad Frazer and Richard Hundhausen delivered an insightful session on the legal and business complexities surrounding AI-generated code. They examined questions of copyright ownership, emerging legal challenges, and what these issues mean for developers and organizations moving forward.
-
----
-
-#### LeSS Talks
-August 2025 | [Watch](https://www.keystepstosuccess.com/2025/08/less-talks-who-owns-the-code-in-an-ai-world-w-brad-frazer-and-ricard-hundhausen/)
-
-In this episode of the *LeSS Talks Podcast*, host Gene Gendel speaks with Brad Frazer and Richard Hundhausen about the shifting landscape of code ownership in an AI-assisted world. The conversation explores the legal, ethical, and business implications of AI-generated and AI-augmented code, raising questions about authorship, rights, and how organizations should approach intellectual property in the age of AI.
-
+Brad Frazer and Richard Hundhausen presented a one-hour virtual session for the Agile Alliance exploring the evolving question of who owns the code in an AI-driven world. Their conversation examined how AI-assisted development is reshaping intellectual property expectations, the legal uncertainties emerging around code generation, and what these shifts mean for teams striving to build software responsibly and with confidence in an increasingly automated era.
 
 ---
 
@@ -25,7 +17,14 @@ Episode 366 of the *Azure DevOps Podcast* features host Jeffrey Palermo in conve
 
 ---
 
-#### Agile Alliance Virtual Meetup
-December 2025 | [Watch (Members Only)](https://agilealliance.org/resources/sessions/who-owns-the-code-in-an-ai-world)
+#### LeSS Talks
+August 2025 | [Watch](https://www.keystepstosuccess.com/2025/08/less-talks-who-owns-the-code-in-an-ai-world-w-brad-frazer-and-ricard-hundhausen/)
 
-Brad Frazer and Richard Hundhausen present a one-hour virtual session for the Agile Alliance exploring the evolving question of who owns the code in an AI-driven world. Their conversation examines how AI-assisted development is reshaping intellectual property expectations, the legal uncertainties emerging around code generation, and what these shifts mean for teams striving to build software responsibly and with confidence in an increasingly automated era.
+In this episode of the *LeSS Talks Podcast*, host Gene Gendel speaks with Brad Frazer and Richard Hundhausen about the shifting landscape of code ownership in an AI-assisted world. The conversation explores the legal, ethical, and business implications of AI-generated and AI-augmented code, raising questions about authorship, rights, and how organizations should approach intellectual property in the age of AI.
+
+---
+
+#### Boise State University
+April 2025 | [Watch](https://www.youtube.com/watch?v=k-OyAPM53Tc)
+
+Brad Frazer and Richard Hundhausen presented a session on the legal and business complexities surrounding AI-generated code, examining copyright ownership, emerging legal challenges, and what these issues mean for developers and organizations.
