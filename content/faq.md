@@ -125,4 +125,6 @@ Reliance on AI for critical functionality can result in code that is legally uno
 Documentation is critical to establishing ownership, defensibility, and audit readiness. Teams should retain records of AI prompts, generated outputs, revisions, and the human decisions that shaped the final code. This provenance supports compliance, valuation, and enforcement, and should be maintained with the expectation that it may be discoverable in litigation or subject to subpoena, just like email, chat logs, or source control history.
 {{< /faqitem >}}
 
+---
+
 *This FAQ reflects current U.S. copyright law and general international principles. It is provided for educational purposes and does not constitute legal advice.*
