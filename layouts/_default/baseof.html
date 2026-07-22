@@ -1,20 +1,8 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" data-theme="light">
   <head>
     {{ partial "meta.html" . }}
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
-
-    {{/* Set the saved theme before first paint to avoid a flash of the wrong theme. */}}
-    <script>
-      (function () {
-        try {
-          var t = localStorage.getItem('woc-theme');
-          var dark = t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-          if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
-          document.documentElement.style.backgroundColor = dark ? '#0b0e14' : '#f6f7f9';
-        } catch (e) {}
-      })();
-    </script>
 
     {{ partial "css.html" . }}
   </head>
@@ -26,22 +14,6 @@
 
     <script>
       (function () {
-        var root = document.documentElement;
-        var KEY = 'woc-theme';
-        function current() {
-          var a = root.getAttribute('data-theme');
-          if (a === 'light' || a === 'dark') return a;
-          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
-        var toggle = document.getElementById('themeToggle');
-        if (toggle) {
-          toggle.addEventListener('click', function () {
-            var next = current() === 'dark' ? 'light' : 'dark';
-            root.setAttribute('data-theme', next);
-            root.style.backgroundColor = next === 'dark' ? '#0b0e14' : '#f6f7f9';
-            try { localStorage.setItem(KEY, next); } catch (e) {}
-          });
-        }
         var menuBtn = document.getElementById('menuBtn');
         var nav = document.getElementById('nav');
         if (menuBtn && nav) {
