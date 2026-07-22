@@ -46,7 +46,7 @@ test.describe("persona wizard (deployed page)", () => {
 
     const excluded = await hiddenValue(page, "scored_excluded");
     expect(excluded).toContain("assert_code_ownership");
-    expect(excluded.split(",").length).toBe(14);
+    expect(excluded.split(",").length).toBe(16);
   });
 
   test("promise check stacks Licensor + Fed Supplier + Regulated", async ({ page }) => {
@@ -69,6 +69,58 @@ test.describe("persona wizard (deployed page)", () => {
     const payload = JSON.parse(await hiddenValue(page, "persona_result"));
     expect(payload.primary.name).toBe("Licensor");
     expect(payload.criticalOutboundCount).toBe(3);
+  });
+
+  test("hired US shop sees the promise check and stacks Fed Supplier on Onshorer", async ({ page }) => {
+    await goToAssessment(page);
+    await radio(page, "persona_scope", "own").check();
+    await radio(page, "persona_model_maker", "no").check();
+    await radio(page, "persona_giver", "no").check();
+    await radio(page, "persona_civic", "no").check();
+    await radio(page, "persona_host", "no").check();
+    await radio(page, "persona_authorship", "hired_shop").check();
+
+    // The promise question is reachable on this branch even before US/offshore.
+    await expect(page.locator('[data-step="p8"]')).toBeVisible();
+
+    await radio(page, "persona_shop", "us").check();
+    await page.locator('input[name="persona_promise"][value="fed"]').check();
+
+    const result = page.locator("#personaResult");
+    await expect(result).toContainText("Onshorer");
+    await expect(result).toContainText("Fed Supplier");
+
+    const payload = JSON.parse(await hiddenValue(page, "persona_result"));
+    expect(payload.primary.name).toBe("Onshorer");
+    const fed = payload.stacked.find((s) => s.name === "Fed Supplier");
+    expect(fed.outbound).toBe("Critical");
+    expect(payload.criticalOutboundCount).toBe(1);
+  });
+
+  test("offshore shop with two critical promises counts both on Offshorer", async ({ page }) => {
+    await goToAssessment(page);
+    await radio(page, "persona_scope", "own").check();
+    await radio(page, "persona_model_maker", "no").check();
+    await radio(page, "persona_giver", "no").check();
+    await radio(page, "persona_civic", "no").check();
+    await radio(page, "persona_host", "no").check();
+    await radio(page, "persona_authorship", "hired_shop").check();
+    await radio(page, "persona_shop", "offshore").check();
+    await page.locator('input[name="persona_promise"][value="fed"]').check();
+    await page.locator('input[name="persona_promise"][value="regulated"]').check();
+
+    const payload = JSON.parse(await hiddenValue(page, "persona_result"));
+    expect(payload.primary.name).toBe("Offshorer");
+    // Offshorer itself is High, so exactly the two promises are critical.
+    expect(payload.criticalOutboundCount).toBe(2);
+
+    // Switching authorship away hides the promise check and drops the stack.
+    await radio(page, "persona_authorship", "employees").check();
+    await radio(page, "persona_employee_usage", "internal").check();
+    await expect(page.locator('[data-step="p8"]')).toBeHidden();
+    const after = JSON.parse(await hiddenValue(page, "persona_result"));
+    expect(after.primary.name).toBe("Internal Tooler");
+    expect(after.stacked).toEqual([]);
   });
 
   test("Renter is shown as a mitigating flag on the Host path", async ({ page }) => {

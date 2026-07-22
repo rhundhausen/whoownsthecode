@@ -502,9 +502,11 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       // previously explored branch (e.g. switching back to "acquire") can't
       // leave it showing. Bootstrapper sees it too: a bootstrapped paid product
       // still licenses to customers and can be regulated or a fed supplier.
+      // Hired-shop orgs (Onshorer/Offshorer) stack promises for the same reason:
+      // outsourcing the build does not remove title, federal, or regulatory duties.
       var hostReached = afterCivic && a.host === "yes";
       var promiseVisible = hostReached
-        || (atP5 && (a.authorship === "we_are_shop" || a.authorship === "inherited"))
+        || (atP5 && (a.authorship === "we_are_shop" || a.authorship === "inherited" || a.authorship === "hired_shop"))
         || (atP5 && a.authorship === "employees" && (a.usage === "sell_license" || a.usage === "raise_sell" || a.usage === "bootstrap"));
       show("p8", promiseVisible);
     }
@@ -532,8 +534,8 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       if (a.authorship === "we_are_shop") return withPromise("Hired Gun", a);
       if (a.authorship === "inherited") return withPromise("Inheritor", a);
       if (a.authorship === "hired_shop") {
-        if (a.shop === "us") return { primary: "Onshorer", stacked: [] };
-        if (a.shop === "offshore") return { primary: "Offshorer", stacked: [] };
+        if (a.shop === "us") return withPromise("Onshorer", a);
+        if (a.shop === "offshore") return withPromise("Offshorer", a);
         return null;
       }
       if (a.authorship === "employees") {
