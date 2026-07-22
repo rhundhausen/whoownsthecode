@@ -350,7 +350,6 @@ img { max-width: 100%; }
 .footer-nav a:hover { color: var(--fg); background: var(--panel); text-decoration: none; }
 .footer-legal { color: var(--fg-faint); font-family: var(--mono); font-size: .78rem; }
 .footer-legal .c { display: block; }
-.footer-legal .legal-short { display: none; }
 
 /* =================== INTERIOR CONTENT PAGES ================ */
 .page-main { padding: clamp(1.6rem, 4vw, 3rem) 0 1rem; }
@@ -434,13 +433,10 @@ img { max-width: 100%; }
   /* Hide the ~/whoownsthecode (and other) editor-bar paths on phones */
   .editor-bar .path { display: none; }
   /* Keep the hero title and motif each on a single line */
-  .hero h1 { font-size: 1.85rem; white-space: nowrap; }
+  .hero h1 { font-size: 1.95rem; white-space: nowrap; }
   .hero h1 .hl { display: inline; }
-  .hero-motif { flex-wrap: nowrap; font-size: .85rem; gap: .3rem; }
+  .hero-motif { flex-wrap: nowrap; font-size: .9rem; gap: .3rem; }
   .hero-motif .chip { padding: .12rem .4rem; white-space: nowrap; }
   /* Drop the primary hero CTA on phones; the FAQ button remains */
   .hero .cta-row .btn-primary { display: none; }
-  /* Shorten the footer copyright line on phones */
-  .footer-legal .legal-full { display: none; }
-  .footer-legal .legal-short { display: inline; }
 }

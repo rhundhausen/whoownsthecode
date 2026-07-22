@@ -25,7 +25,7 @@ eyebrow = "Our guidance applies to code generated from every AI tool"
 # Enable footer
 [params.footer]
 enabled = true
-content = "© 2026 Who Owns The Code, Inc. All rights reserved."
+content = "© 2026 whoownsthecode.com. All rights reserved."
 
 # Add navbar links
 

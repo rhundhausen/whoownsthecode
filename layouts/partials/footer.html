@@ -1,4 +1,4 @@
-{{- $footerText := .Site.Params.footer.content | default "(c) 2026 Who Owns The Code, Inc. All rights reserved." }}
+{{- $footerText := .Site.Params.footer.content | default "© 2026 whoownsthecode.com. All rights reserved." }}
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <a class="brand" href="{{ "/" | relURL }}" aria-label="Who Owns the Code, home">
@@ -18,7 +18,7 @@
   </div>
   <div class="wrap" style="margin-top:1.4rem;">
     <span class="footer-legal">
-      <span class="c">// <span class="legal-full">{{ $footerText }}</span><span class="legal-short">© 2026 Who Owns The Code, Inc.</span></span>
+      <span class="c">// {{ $footerText }}</span>
       <span class="c">// Educational service, not legal advice.</span>
     </span>
   </div>
