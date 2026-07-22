@@ -1,4 +1,9 @@
-<link rel="icon" type="image/png" href="{{ "images/favicon.png" | relURL }}" />
+{{/* Brand-mark favicon (same cache-buster trick as custom.css below, so a
+     redesigned icon replaces the stale cached one). SVG first for crispness;
+     PNG fallback for browsers without SVG favicon support. */}}
+{{ $iconver := readFile "static/images/favicon.svg" | crypto.MD5 }}
+<link rel="icon" type="image/svg+xml" href="{{ "images/favicon.svg" | relURL }}?v={{ $iconver }}" />
+<link rel="icon" type="image/png" href="{{ "images/favicon.png" | relURL }}?v={{ $iconver }}" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
