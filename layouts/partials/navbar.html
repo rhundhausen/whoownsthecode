@@ -13,7 +13,7 @@
 
     <nav class="nav" id="nav" aria-label="Primary">
       {{- range .Site.Params.navbar }}
-      <a href="{{ .url }}"{{ if eq $.RelPermalink .url }} aria-current="page"{{ end }}>{{ .title }}</a>
+      <a href="{{ .url }}"{{ if eq .url "/assessment/" }} class="nav-cta"{{ end }}{{ if eq $.RelPermalink .url }} aria-current="page"{{ end }}>{{ .title }}</a>
       {{- end }}
     </nav>
 

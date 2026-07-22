@@ -15,6 +15,6 @@ date: 2025-08-03
   <img src="/images/hundhausen.jpg" alt="Richard Hundhausen">
   <div>
     <h3>Richard Hundhausen</h3>
-    <p>Richard Hundhausen is president of <a href="https://accentient.com" target="_blank" rel="noopener noreferrer">Accentient</a> and a seasoned software developer, architect, and consultant with over 30 years of experience helping teams build and deliver high-quality software. Richard is the author of several technical books and has been a long-time leader in the developer community. He brings a practical, tool-agnostic approach to improving software delivery through better collaboration, automation, and intelligent tooling, recognizing the value of AI-generated code while prioritizing his clients’ long-term interests and software integrity.</p>
+    <p>Richard Hundhausen is president of <a href="https://accentient.com" target="_blank" rel="noopener noreferrer">Accentient</a> and a software developer, architect, and consultant with over 35 years of experience helping teams build and deliver high-quality software. He is the author of several books on software development, including <em>Professional Scrum Development with Azure DevOps</em> (Microsoft Press), and has been a long-time leader in the developer community. He brings a practical, tool-agnostic approach to improving software delivery through better collaboration, automation, and intelligent tooling, recognizing the value of AI-generated code while prioritizing his clients’ long-term interests and software integrity.</p>
   </div>
 </div>

@@ -13,23 +13,28 @@ This workshop is tailored for in-house legal, compliance, and risk management pr
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <a href="/images/workshop1.jpg" target="_blank">
-    <img src="/images/workshop1.jpg" alt="Workshop Photo 1"
+    <img src="/images/workshop1.jpg"
+         alt="Brad Frazer and Richard Hundhausen presenting slides to a workshop audience seated at conference tables"
          style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
   </a>
   <a href="/images/workshop2.jpg" target="_blank">
-    <img src="/images/workshop2.jpg" alt="Workshop Photo 2"
+    <img src="/images/workshop2.jpg"
+         alt="Workshop attendees seated at long tables during an AI and copyright session"
          style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
   </a>
   <a href="/images/workshop3.jpg" target="_blank">
-    <img src="/images/workshop3.jpg" alt="Workshop Photo 3"
+    <img src="/images/workshop3.jpg"
+         alt="Large lecture hall filled with attendees for a Who Owns the Code presentation"
          style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
   </a>
   <a href="/images/workshop4.jpg" target="_blank">
-    <img src="/images/workshop4.jpg" alt="Workshop Photo 4"
+    <img src="/images/workshop4.jpg"
+         alt="Presenter speaking beside a projection screen in a university auditorium"
          style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
   </a>
   <a href="/images/workshop5.jpg" target="_blank">
-    <img src="/images/workshop5.jpg" alt="Workshop Photo 5"
+    <img src="/images/workshop5.jpg"
+         alt="Brad Frazer and Richard Hundhausen together at a workshop venue"
          style="width: 128px; height: 128px; object-fit: cover; border-radius: 4px;">
   </a>
 </div>

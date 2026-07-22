@@ -3,7 +3,7 @@
      The list is rendered twice (second copy aria-hidden) so the -50%
      translate loops seamlessly. See .marquee in static/css/custom.css. */}}
 {{ $aitools := .Site.Params.aitools }}
-{{ $caption := $aitools.eyebrow | default "Our guidance applies to code generated from all major AI tools." }}
+{{ $caption := $aitools.eyebrow | default "Our guidance applies to code generated from all AI tools." }}
 {{ $tools := slice
   (dict "f" "chatgpt"           "n" "ChatGPT")
   (dict "f" "github-copilot"    "n" "GitHub Copilot")

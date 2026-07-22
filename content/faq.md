@@ -1,12 +1,12 @@
 ---
 title: "Frequently Asked Questions"
-date: 2026-01-03
+date: 2026-07-22
 ---
 
 ## AI-Generated Code & Ownership
 
 {{< faqitem q="Do I own the code an AI tool generates for me?" >}}
-Under current U.S. copyright law, output from purely generative AI lacks a human author and therefore **cannot be copyrighted**.
+Most AI vendors' terms assign you whatever rights exist in the output. The problem is what exists: under current U.S. copyright law, output from purely generative AI lacks a human author and therefore **cannot be copyrighted**. You may hold the code, but there may be no copyright in it to own.
 {{< /faqitem >}}
 
 {{< faqitem q="Does writing detailed prompts make me the author?" >}}
@@ -42,7 +42,7 @@ Possibly. Meaningful human revision, selection, restructuring, or creative judgm
 {{< /faqitem >}}
 
 {{< faqitem q="How much human input is “enough”?" >}}
-There is no bright-line rule. Courts look for creative contribution and judgment, not just the volume of edits. Importantly, the U.S. Copyright Office does not make this determination; courts do. In practice, the issue is typically resolved only if and when authorship is tested in litigation, where prompt history, revision records, and other AI usage artifacts may be examined or compelled through discovery or subpoena. Because this analysis is highly fact-specific, many teams seek guidance in advance, and [we can help evaluate](https://whoownsthecode.com/contact) authorship risk before it is tested in court.
+There is no bright-line rule. The U.S. Copyright Office makes this determination initially at registration, and its refusals can be challenged in court, which is precisely what cases like *Allen v. Perlmutter* are testing. Courts look for creative contribution and judgment, not just the volume of edits. In practice, the issue is typically resolved only if and when authorship is tested in litigation, where prompt history, revision records, and other AI usage artifacts may be examined or compelled through discovery or subpoena. Because this analysis is highly fact-specific, [our workshops](https://whoownsthecode.com/workshops) cover how to evaluate authorship risk before it is tested in court.
 {{< /faqitem >}}
 
 {{< faqitem q="Does refactoring or rewriting AI code make it mine?" >}}
@@ -60,11 +60,11 @@ Applying an open-source license requires copyright ownership. Because pure AI ou
 {{< /faqitem >}}
 
 {{< faqitem q="What if AI generates code similar to open-source material?" >}}
-Similarity can still trigger licensing obligations or infringement risk, especially with [copyleft](https://en.wikipedia.org/wiki/Copyleft) licenses, and can retroactively undermine your IP position, turning what you believed was proprietary software into an enforceable obligation to share it. Because these issues often surface late and are expensive to unwind, [we help teams](https://whoownsthecode.com/contact) identify and mitigate open-source exposure before audits or exits.
+Similarity can still trigger licensing obligations or infringement risk, especially with [copyleft](https://en.wikipedia.org/wiki/Copyleft) licenses, and can retroactively undermine your IP position, turning what you believed was proprietary software into an enforceable obligation to share it. These issues often surface late and are expensive to unwind; identifying open-source exposure before audits or exits is a core topic in [our workshops](https://whoownsthecode.com/workshops).
 {{< /faqitem >}}
 
-{{< faqitem q="Can derivative works based on public code be copyrighted?" >}}
-Yes, but only the new, human-created portions qualify for protection. This principle long predates AI, and AI does not change the rule. It only makes violations easier to create and harder to detect.
+{{< faqitem q="Can derivative works based on publicly available code be copyrighted?" >}}
+Yes, but only the new, human-created portions qualify for protection, and the underlying code's license still governs your use of it. This principle long predates AI, and AI does not change the rule. It only makes violations easier to create and harder to detect.
 {{< /faqitem >}}
 
 {{< faqitem q="Does AI usage violate open-source terms?" >}}
@@ -78,7 +78,7 @@ The company owns the human-authored portions via work-for-hire, but it cannot as
 {{< /faqitem >}}
 
 {{< faqitem q="What if a contractor uses AI to deliver code?" >}}
-Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer, issues that are often discovered only during diligence or dispute. [We can help you](https://whoownsthecode.com/contact) put the right agreements in place **before these gaps become irreversible**.
+Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer, issues that are often discovered only during diligence or dispute. [Our workshops](https://whoownsthecode.com/workshops) cover how to structure these agreements **before the gaps become irreversible**.
 {{< /faqitem >}}
 
 {{< faqitem q="Should contracts address AI usage?" >}}
@@ -96,11 +96,11 @@ It can. Unowned or unenforceable assets weaken competitive barriers and increase
 {{< /faqitem >}}
 
 {{< faqitem q="What must I disclose during due diligence?" >}}
-AI usage, code provenance, and where demonstrable human authorship exists. Undisclosed or poorly documented AI involvement often surfaces during diligence, triggering valuation reductions, indemnities, escrow holdbacks, or transaction termination, each of which can carry significant monetary consequences. In the event of a dispute, these disclosures may be examined under oath and compared against actual prompt history and other contemporaneous records, including those compelled by subpoena or warrant.
+AI usage, code provenance, and where demonstrable human authorship exists. Undisclosed or poorly documented AI involvement often surfaces during diligence, triggering valuation reductions, indemnities, escrow holdbacks, or transaction termination, each of which can carry significant monetary consequences. In the event of a dispute, these disclosures may be examined under oath and compared against actual prompt history and other contemporaneous records, including those compelled through discovery or subpoena.
 {{< /faqitem >}}
 
 {{< faqitem q="How do I prepare for an audit of AI-generated software?" >}}
-Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making. Audit preparation is often where undocumented AI usage is first uncovered. [We can help teams](https://whoownsthecode.com/contact) prepare defensible documentation before diligence begins.
+Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making. Audit preparation is often where undocumented AI usage is first uncovered. Building defensible documentation practices before diligence begins is covered in depth in [our workshops](https://whoownsthecode.com/workshops).
 {{< /faqitem >}}
 
 {{< faqitem q="If customers are paying us, why does ownership still matter?" >}}

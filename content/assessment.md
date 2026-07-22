@@ -50,7 +50,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
     <input type="hidden" name="persona_result" value="">
     <input type="hidden" name="persona_path" value="">
     <input type="hidden" name="scored_excluded" value="">
-    <h3 style="margin-top:0; font-size:1.25rem; font-weight:600; color:var(--fg);">Part 1 : AI-Code Risk Persona</h3>
+    <h3 style="margin-top:0; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 1 : AI-Code Risk Persona</h3>
     <p style="margin:0; font-size:0.95rem; color:var(--fg-muted);">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
     <div class="persona-wizard" id="personaWizard">
       <div class="persona-q" data-step="p0">
@@ -127,7 +127,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       </div>
     </div>
     <div class="persona-result hidden" id="personaResult" aria-live="polite"></div>
-    <h3 id="sec-tools" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Part 2 : AI Tools & Usage</h3>
+    <h3 id="sec-tools" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 2 : AI Tools & Usage</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">1. Which AI tools are you using?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -156,7 +156,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         <input type="text" name="ai_usage_other" placeholder="Please specify" style="margin-top: 0.25rem; width: 100%;">
       </div>
     </div>
-    <h3 id="sec-policies" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Part 3 : Policies & Governance</h3>
+    <h3 id="sec-policies" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 3 : Policies & Governance</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">3. Do you have a policy for AI prompting?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">A documented standard for how your team writes prompts. For example, what information may or may not be pasted into an AI tool.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -227,7 +227,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         <label><input type="radio" name="reviewed_ai_licenses" value="No"> No</label>
       </div>
     </div>
-    <h3 id="sec-people" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Part 4 : People & Training</h3>
+    <h3 id="sec-people" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 4 : People & Training</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">13. Are developers trained on the responsible use of AI tools?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether developers have been taught to use AI tools responsibly and understand the IP risks.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -249,7 +249,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         <label><input type="radio" name="contracts_address_ai" value="No"> No</label>
       </div>
     </div>
-    <h3 id="sec-awareness" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Part 5 : Awareness & Ownership</h3>
+    <h3 id="sec-awareness" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 5 : Awareness & Ownership</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">16. Are you aware of the risks of using AI-generated code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you understand that AI-generated code may not be copyrightable or fully owned by you.</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
@@ -264,7 +264,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
       </div>
     </div> 
-    <h3 id="sec-support" style="margin-top:2rem; font-size:1.25rem; font-weight:600; color:var(--fg);">Part 6 : Support Needed</h3>
+    <h3 id="sec-support" style="margin-top:1.1rem; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem;">Part 6 : Support Needed</h3>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
       <label style="flex: 1 1 400px; min-width: 300px;">18. What kind of assistance are you looking for?</label>
       <div style="flex: 1 1 250px; min-width: 200px;">
