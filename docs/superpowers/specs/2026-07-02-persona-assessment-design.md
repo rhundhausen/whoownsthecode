@@ -10,7 +10,7 @@ Assessment. A short branching wizard identifies which of 18 organizational
 personas a respondent falls into, using the minimum number of questions, and
 correctly handles organizations that match more than one persona at once. The
 result is shown on the page immediately, then the respondent continues to the
-existing 18 maturity questions and submits as today. The emailed report gains a
+existing maturity questions and submits as today. The emailed report gains a
 persona section.
 
 ## Source of truth
@@ -50,7 +50,7 @@ Persona ratings (verbatim from the blog table):
   framework or dependency. Progressive disclosure: persona questions reveal or
   collapse based on prior answers. The persona result renders on the page live.
 - The wizard sits **above** the existing "AI Tools & Usage" section as a new
-  first section. The existing 18 maturity questions, name/email, reCAPTCHA, and
+  first section. The existing maturity questions, name/email, reCAPTCHA, and
   POST-to-worker flow are preserved unchanged in behavior.
 - On submit, the serialized JSON gains the persona answers plus the computed
   `persona_primary` and `persona_stacked` fields. The worker
