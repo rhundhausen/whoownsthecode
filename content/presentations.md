@@ -1,6 +1,20 @@
 ---
 title: "Presentations"
-date: 2026-07-22
+date: 2026-08-20
+---
+
+#### Interface Boise
+August 2026
+
+Brad Frazer presented *Best Practices for Protecting Your Code in the Age of AI*, the follow-on to the previous evening's dinner talk. The session walked through how copyright actually works for software (authorship, fixation, creativity, and registration), why a software company still needs copyright even when AI can regenerate code on demand (a lawful monopoly, statutory damages and attorney's fees, DMCA takedowns, and protection in every Berne Convention country), and what a buyer's lawyer asks first in due diligence: "Do you own the code?" It closed with the current state of *Thaler v. Perlmutter* and *Allen v. Perlmutter* and a short list of what companies can do now to own more of what they ship.
+
+---
+
+#### Syringa Networks Dinner
+August 2026
+
+Richard Hundhausen and Brad Frazer presented *Who Owns the Code?* to an audience of Boise-area technology and business leaders. Richard opened by building a working Battleship game live with Claude Code in about two and a half minutes, then asked the room what he actually owned. Brad followed with his AI issue-spotting guide (warranties of title and accuracy, indemnification, NDAs, insurance exclusions, loans secured by IP, and the new disclosure laws), the fundamentals of copyright and work-for-hire, and the cases that now govern AI authorship, including *Thaler v. Perlmutter*, *Thaler v. Vidal*, and the pending *Allen v. Perlmutter*.
+
 ---
 
 #### Agile Alliance Virtual Meetup

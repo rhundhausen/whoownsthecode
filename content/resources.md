@@ -1,6 +1,6 @@
 ---
 title: "Resources"
-date: 2025-08-03
+date: 2026-08-20
 ---
 
 #### Copyright 101
@@ -12,11 +12,17 @@ Under copyright law, source code is treated as a literary work, just like a nove
 #### Ownership of Copyright
 By default, the person who writes the code owns the copyright. For W2 employees, the employer usually owns the code under "work made for hire." In contract work, ownership depends on the agreement. Unless it clearly assigns rights, the developer may keep them. Clear contracts are key to avoiding confusion.
 
+#### Copyright Registration
+A copyright exists the moment a human fixes original code in a tangible medium, but in the United States you cannot sue for infringement until the Copyright Office has issued a [registration](https://www.copyright.gov/registration/). The Supreme Court confirmed in [*Fourth Estate v. Wall-Street.com*](https://www.supremecourt.gov/opinions/18pdf/17-571_e29f.pdf) (2019) that a pending application is not enough. Timing also matters: statutory damages and attorney's fees are available only if the work was registered before the infringement began or within three months of first publication. Registration costs about $65 per work, and the application asks who the author is, which is where AI-generated code runs into trouble. A © notice is optional and is not a substitute for registration.
+
 #### Open Source != "No Copyright"
 Open source software is still protected by copyright. The difference is that the author grants permission to use, modify, and share it under specific license terms. Copyright ownership remains with the creator or project maintainers. Using open source doesn’t mean the code is free of legal restrictions; it just comes with a different set of rights and obligations.
 
 #### The Copyright Office Report
 The U.S. Copyright Office’s [guidance and reports on AI and copyright](https://www.copyright.gov/ai/) reaffirm that copyright protection requires human authorship. Its 2023 registration guidance, followed by its 2025 report on the copyrightability of AI outputs, clarified that while AI-assisted works may qualify, only the portions with meaningful human creative input are eligible. These serve as guidance for creators and companies navigating copyright in the era of generative AI, especially in fields like software development, where human-AI collaboration is increasingly common.
+
+#### Naruto v. Slater (the "monkey selfie" case)
+Long before generative AI, the courts addressed whether a non-human can own a copyright. In [*Naruto v. Slater*](https://cdn.ca9.uscourts.gov/datastore/opinions/2018/04/23/16-15469.pdf), PETA sued on behalf of a crested macaque that had taken a selfie with a wildlife photographer's camera, asking the court to declare the monkey the copyright owner. The Ninth Circuit held in 2018 that animals have no standing under the Copyright Act, and the Copyright Office's own rules exclude works produced by animals or machines without human authorship. The principle is the same one now applied to AI: the author must be a human, no matter who owns the camera or the computer.
 
 #### Thaler v. Perlmutter
 In [*Thaler v. Perlmutter*](https://media.cadc.uscourts.gov/opinions/docs/2025/03/23-5233.pdf), the D.C. Circuit ruled that works created entirely by AI aren't eligible for copyright and that only humans can hold copyright protection. Thaler tried to register AI-generated art, but was denied, reinforcing that meaningful human authorship is required. This principle also applies to software code: AI-generated code without human creative input may not be protected by copyright.
@@ -26,6 +32,9 @@ On March 2, 2026, the U.S. Supreme Court denied certiorari in [*Thaler v. Perlmu
 
 #### Allen v. Perlmutter
 The open question is how much human input is enough, and that line applies directly to heavily prompted code. In [*Allen v. Perlmutter*](https://www.courtlistener.com/docket/69198079/allen-v-perlmutter/), an artist who used more than 600 iterative prompts to produce an image was denied registration by the Copyright Office and is now challenging that refusal in the U.S. District Court for the District of Colorado.
+
+#### Thaler v. Vidal
+Patent law reached the same answer as copyright. In [*Thaler v. Vidal*](https://cafc.uscourts.gov/opinions-orders/21-2347.OPINION.8-5-2022_1988142.pdf), the Federal Circuit held in 2022 that an "inventor" under the Patent Act must be a natural person, so an AI system cannot be named as the inventor of a patent, and the Supreme Court declined to review the decision in 2023. USPTO guidance permits patents on AI-assisted inventions only where a human made a significant inventive contribution. For companies hoping patents might protect what copyright cannot, the result is the same: a purely AI-conceived invention is not patentable, and naming a human who did not actually invent it risks invalidating the patent later.
 
 #### Thomson Reuters v. Ross
 In [*Thomson Reuters v. Ross*](https://www.ded.uscourts.gov/sites/ded/files/opinions/20-613_5.pdf), the legal publisher sued Ross Intelligence for allegedly scraping and using its copyrighted legal content to train an AI legal research tool. Ross argued that its use was “intermediate” and transformative, not a direct republishing of Westlaw materials. The case highlights the legal tension between data scraping and fair use in AI training, raising important questions about whether using copyrighted text to train models constitutes infringement or innovation. In February 2025, the district court rejected Ross’s fair use defense and found infringement, the first decision to deny fair use for AI training. The [Third Circuit](https://www.courtlistener.com/docket/70622297/thomson-reuters-enterprise-centre-gmbh-v-ross-intelligence-inc/) heard oral argument on the appeal (No. 25-2153) in June 2026, and its ruling will be the first federal appellate word on the question.

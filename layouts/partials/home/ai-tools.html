@@ -1,4 +1,4 @@
-{{/* AI-tools marquee, framed as an import bar. Full-color SVGs in
+{{/* AI-tools logo strip with a plain caption. Full-color SVGs in
      static/images/ai-tools/<slug>.svg shown grayscale, color on hover.
      The list is rendered twice (second copy aria-hidden) so the -50%
      translate loops seamlessly. See .marquee in static/css/custom.css. */}}
@@ -30,12 +30,10 @@
   (dict "f" "cline"             "n" "Cline")
   (dict "f" "qodo"              "n" "Qodo")
 }}
-<section class="imports" aria-labelledby="tools-heading">
+<section class="tools-strip" aria-labelledby="tools-heading">
   <div class="wrap">
-    <div class="import-card">
-      <div class="import-head">
-        <span class="import-caption" id="tools-heading">{{ $caption }}</span>
-      </div>
+    <p class="strip-caption" id="tools-heading">{{ $caption }}</p>
+    <div class="strip-card">
       <div class="band">
         <div class="marquee">
           <ul>
