@@ -18,7 +18,7 @@ Only the portions created or significantly modified by a human author qualify. P
 {{< /faqitem >}}
 
 {{< faqitem q="But I paid for it. Doesn't that make it mine?" >}}
-No. Payment is irrelevant to copyright ownership. Ownership follows authorship: work created by an employee within the scope of employment belongs to the employer as a work made for hire, and anyone else who writes code keeps the copyright unless they sign a written assignment. The photographer you pay $10,000 to shoot a wedding still owns the photos unless the contract says otherwise. AI-generated code adds a second problem: there is no author at all, so there is no copyright for anyone to assign to you, no matter what you paid.
+No. Payment is irrelevant to copyright ownership. Ownership follows authorship: work created by an employee within the scope of employment belongs to the employer as a work made for hire, and anyone else who writes code keeps the copyright unless they sign a written assignment. The development shop you pay $250,000 to build your application still owns the copyright in that code unless the contract assigns it to you in writing, and the same is true of a freelancer you pay by the hour. AI-generated code adds a second problem: there is no author at all, so there is no copyright for anyone to assign to you, no matter what you paid for the tool or the prompts.
 {{< /faqitem >}}
 
 {{< faqitem q="Can I monetize AI-generated code even if I don't own it?" >}}
