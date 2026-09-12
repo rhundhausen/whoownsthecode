@@ -1,5 +1,5 @@
 baseURL = 'https://whoownsthecode.com'
-languageCode = 'en-us'
+locale = 'en-us'
 title = 'Who Owns the Code'
 
 # Match the Accentient site: load Inter (feeds the Google Fonts link in layouts/partials/css.html)
