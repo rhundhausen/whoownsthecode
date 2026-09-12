@@ -1,6 +1,6 @@
 ---
 title: "Resources"
-date: 2026-08-20
+date: 2026-09-12
 ---
 
 #### Copyright 101
@@ -34,7 +34,7 @@ On March 2, 2026, the U.S. Supreme Court denied certiorari in [*Thaler v. Perlmu
 The open question is how much human input is enough, and that line applies directly to heavily prompted code. In [*Allen v. Perlmutter*](https://www.courtlistener.com/docket/69198079/allen-v-perlmutter/), an artist who used more than 600 iterative prompts to produce an image was denied registration by the Copyright Office and is now challenging that refusal in the U.S. District Court for the District of Colorado.
 
 #### Thaler v. Vidal
-Patent law reached the same answer as copyright. In [*Thaler v. Vidal*](https://cafc.uscourts.gov/opinions-orders/21-2347.OPINION.8-5-2022_1988142.pdf), the Federal Circuit held in 2022 that an "inventor" under the Patent Act must be a natural person, so an AI system cannot be named as the inventor of a patent, and the Supreme Court declined to review the decision in 2023. USPTO guidance permits patents on AI-assisted inventions only where a human made a significant inventive contribution. For companies hoping patents might protect what copyright cannot, the result is the same: a purely AI-conceived invention is not patentable, and naming a human who did not actually invent it risks invalidating the patent later.
+Patent law reached the same answer as copyright. In [*Thaler v. Vidal*](https://cafc.uscourts.gov/opinions-orders/21-2347.OPINION.8-5-2022_1988142.pdf), the Federal Circuit held in 2022 that an "inventor" under the Patent Act must be a natural person, so an AI system cannot be named as the inventor of a patent, and the Supreme Court declined to review the decision in 2023. USPTO guidance permits patents on AI-assisted inventions where a natural person contributed to the conception of the invention; an invention with no human inventive contribution is not patentable. For companies hoping patents might protect what copyright cannot, the result is the same: a purely AI-conceived invention is not patentable, and naming a human who did not actually invent it risks invalidating the patent later.
 
 #### Thomson Reuters v. Ross
 In [*Thomson Reuters v. Ross*](https://www.ded.uscourts.gov/sites/ded/files/opinions/20-613_5.pdf), the legal publisher sued Ross Intelligence for allegedly scraping and using its copyrighted legal content to train an AI legal research tool. Ross argued that its use was “intermediate” and transformative, not a direct republishing of Westlaw materials. The case highlights the legal tension between data scraping and fair use in AI training, raising important questions about whether using copyrighted text to train models constitutes infringement or innovation. In February 2025, the district court rejected Ross’s fair use defense and found infringement, the first decision to deny fair use for AI training. The [Third Circuit](https://www.courtlistener.com/docket/70622297/thomson-reuters-enterprise-centre-gmbh-v-ross-intelligence-inc/) heard oral argument on the appeal (No. 25-2153) in June 2026, and its ruling will be the first federal appellate word on the question.

@@ -1,6 +1,7 @@
 ---
 title: "Frequently Asked Questions"
-date: 2026-08-20
+date: 2026-09-12
+description: "Plain-English answers on AI-generated code and ownership: copyright, human authorship, contracts, open source, diligence, and how to protect what your humans write."
 ---
 
 ## AI-Generated Code & Ownership
@@ -36,7 +37,7 @@ Because the AI, not the human, is doing the expressive work. Under current law, 
 {{< /faqitem >}}
 
 {{< faqitem q="Is an AI prompt processed by a large language model equivalent to source code compiled by a traditional compiler?" >}}
-No. Compilers deterministically preserve human authorship by transforming source code into another form. Generative AI systems are non-deterministic and generate new expression, severing the one-to-one link required for copyright protection.
+No. Compilers deterministically preserve human authorship by transforming source code into another form. Generative AI systems are non-deterministic and generate new expression, breaking the chain of human authorship that copyright protection requires.
 {{< /faqitem >}}
 
 ## Human Authorship & Mixed Codebases
@@ -46,7 +47,7 @@ Possibly. Meaningful human revision, selection, restructuring, or creative judgm
 {{< /faqitem >}}
 
 {{< faqitem q="How much human input is “enough”?" >}}
-There is no bright-line rule. The U.S. Copyright Office makes this determination initially at registration, and its refusals can be challenged in court, which is precisely what cases like *Allen v. Perlmutter* are testing. Courts look for creative contribution and judgment, not just the volume of edits. In practice, the issue is typically resolved only if and when authorship is tested in litigation, where prompt history, revision records, and other AI usage artifacts may be examined or compelled through discovery or subpoena. Because this analysis is highly fact-specific, [our workshops](https://whoownsthecode.com/workshops) cover how to evaluate authorship risk before it is tested in court.
+There is no bright-line rule. The U.S. Copyright Office makes this determination initially at registration, and its refusals can be challenged in court, which is precisely what cases like *Allen v. Perlmutter* are testing. Courts look for creative contribution and judgment, not just the volume of edits. In practice, the issue is typically resolved only if and when authorship is tested in litigation, where prompt history, revision records, and other AI usage artifacts may be examined or compelled through discovery or subpoena. Because this analysis is highly fact-specific, [our workshops](/workshops/) cover how to evaluate authorship risk before it is tested in court.
 {{< /faqitem >}}
 
 {{< faqitem q="Does refactoring or rewriting AI code make it mine?" >}}
@@ -64,11 +65,11 @@ You own what *you* create. AI-generated portions remain unowned unless replaced 
 ## Open Source, Licensing & Compliance
 
 {{< faqitem q="Can I apply MIT, GPL, or other licenses to AI-generated code?" >}}
-Applying an open-source license requires copyright ownership. Because pure AI output has no copyright holder, any open-source license applied to that portion would be legally ineffective and unenforceable.
+Applying an open-source license requires copyright ownership. Because pure AI output has no copyright holder, any open-source license applied to that portion would be unenforceable as a copyright license, because there is no copyright to license; at most its terms might operate as a contract with those who accept it.
 {{< /faqitem >}}
 
 {{< faqitem q="What if AI generates code similar to open-source material?" >}}
-Similarity can still trigger licensing obligations or infringement risk, especially with [copyleft](https://en.wikipedia.org/wiki/Copyleft) licenses, and can retroactively undermine your IP position, turning what you believed was proprietary software into an enforceable obligation to share it. These issues often surface late and are expensive to unwind; identifying open-source exposure before audits or exits is a core topic in [our workshops](https://whoownsthecode.com/workshops).
+Similarity can still trigger licensing obligations or infringement risk, especially with [copyleft](https://en.wikipedia.org/wiki/Copyleft) licenses, and can retroactively undermine your IP position, turning what you believed was proprietary software into an enforceable obligation to share it. These issues often surface late and are expensive to unwind; identifying open-source exposure before audits or exits is a core topic in [our workshops](/workshops/).
 {{< /faqitem >}}
 
 {{< faqitem q="Can derivative works based on publicly available code be copyrighted?" >}}
@@ -86,7 +87,7 @@ The company owns the human-authored portions via work-for-hire, but it cannot as
 {{< /faqitem >}}
 
 {{< faqitem q="What if a contractor uses AI to deliver code?" >}}
-Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer, issues that are often discovered only during diligence or dispute. [Our workshops](https://whoownsthecode.com/workshops) cover how to structure these agreements **before the gaps become irreversible**.
+Ownership of AI-generated portions may not transfer unless contracts explicitly address AI usage, authorship, and IP allocation. This can leave critical components of your software legally outside the company’s control, with no clear right to enforce, license, or transfer, issues that are often discovered only during diligence or dispute. [Our workshops](/workshops/) cover how to structure these agreements **before the gaps become irreversible**.
 {{< /faqitem >}}
 
 {{< faqitem q="Should contracts address AI usage?" >}}
@@ -104,11 +105,11 @@ Sophisticated customers will not license software without **indemnification**: i
 {{< /faqitem >}}
 
 {{< faqitem q="Will my AI vendor indemnify me if I get sued over its output?" >}}
-Read the terms. Consumer and individual plans generally disclaim liability for what the model produces. Some enterprise and business tiers now offer limited copyright indemnities, usually conditioned on using the paid plan, leaving the vendor's safety filters on, not modifying the output, and other requirements. Even where it exists, vendor indemnity covers a lawsuit; it does not make the output yours, and it does not satisfy a customer's warranty of title. The [assessment](https://whoownsthecode.com/assessment) asks about your tool tier for this reason.
+Read the terms. Consumer and individual plans generally disclaim liability for what the model produces. Some enterprise and business tiers now offer limited copyright indemnities, usually conditioned on using the paid plan, leaving the vendor's safety filters on, not modifying the output, and other requirements. Even where it exists, vendor indemnity covers a lawsuit; it does not make the output yours, and it does not satisfy a customer's warranty of title. The [assessment](/assessment/) asks about your tool tier for this reason.
 {{< /faqitem >}}
 
 {{< faqitem q="Could prompting an AI tool violate my NDAs?" >}}
-Yes. Most companies are party to far more confidentiality agreements than anyone can keep in their head, and pasting a counterparty's confidential information, or your own trade secrets, into an AI tool can breach those agreements and can jeopardize trade-secret status. Consumer tools may also use inputs for training. A written prompting policy that says what may and may not go into an AI tool is a basic control, and the [assessment](https://whoownsthecode.com/assessment) asks whether you have one.
+Yes. Most companies are party to far more confidentiality agreements than anyone can keep in their head, and pasting a counterparty's confidential information, or your own trade secrets, into an AI tool can breach those agreements and can jeopardize trade-secret status. Consumer tools may also use inputs for training. A written prompting policy that says what may and may not go into an AI tool is a basic control, and the [assessment](/assessment/) asks whether you have one.
 {{< /faqitem >}}
 
 {{< faqitem q="Does my liability insurance cover AI-related claims?" >}}
@@ -122,7 +123,7 @@ Lenders routinely take a security interest in all of a borrower's assets, includ
 ## Patents, Disclosure & Other Law
 
 {{< faqitem q="If copyright won't protect AI output, can I patent it instead?" >}}
-Not if the AI did the inventing. In *Thaler v. Vidal*, the Federal Circuit held that an inventor under the Patent Act must be a natural person, and the Supreme Court declined to review that decision. USPTO guidance allows patents on AI-assisted inventions, but only where a human made a significant inventive contribution to each claim. Submitting an invention that an AI conceived, and naming a human as the inventor, risks invalidating the patent later. So for purely AI-generated work, copyright says no and patent says no. See the [Resources](https://whoownsthecode.com/resources) page.
+Not if the AI did the inventing. In *Thaler v. Vidal*, the Federal Circuit held that an inventor under the Patent Act must be a natural person, and the Supreme Court declined to review that decision. USPTO guidance allows patents on AI-assisted inventions where a natural person contributed to the conception of the invention; an invention with no human inventive contribution is not patentable. Submitting an invention that an AI conceived, and naming a human as the inventor, risks invalidating the patent later. So for purely AI-generated work, copyright says no and patent says no. See the [Resources](/resources/) page.
 {{< /faqitem >}}
 
 {{< faqitem q="Can putting an invention into an AI prompt hurt my patent or trade-secret rights?" >}}
@@ -148,7 +149,7 @@ AI usage, code provenance, and where demonstrable human authorship exists. Undis
 {{< /faqitem >}}
 
 {{< faqitem q="How do I prepare for an audit of AI-generated software?" >}}
-Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making. Audit preparation is often where undocumented AI usage is first uncovered. Building defensible documentation practices before diligence begins is covered in depth in [our workshops](https://whoownsthecode.com/workshops).
+Maintain prompts, revision history, commit logs, design documents, and evidence of human decision-making. Audit preparation is often where undocumented AI usage is first uncovered. Building defensible documentation practices before diligence begins is covered in depth in [our workshops](/workshops/).
 {{< /faqitem >}}
 
 {{< faqitem q="If customers are paying us, why does ownership still matter?" >}}
@@ -162,7 +163,7 @@ No. Copyright still gives a software company four things nothing else does. A **
 {{< /faqitem >}}
 
 {{< faqitem q="How do I actually protect the code my humans write?" >}}
-Copyright exists the moment a human fixes the code in a tangible medium, but since 2019 you cannot file an infringement suit in the U.S. without a **registration** from the Copyright Office, and you only get statutory damages and attorney's fees if you registered before the infringement began or within three months of first publication. Registration costs about $65 per work. The practical rule: register human-authored code early, well before it ships, and keep the records (commit history, design documents, who wrote what) that prove a human authored it. A © notice is fine to include, but it is not registration and it confers nothing by itself.
+Copyright exists the moment a human fixes the code in a tangible medium, but you cannot file an infringement suit in the U.S. for a U.S. work until the Copyright Office has actually issued a **registration** (the Supreme Court's 2019 Fourth Estate decision confirmed an application alone is not enough), and you only get statutory damages and attorney's fees if you registered before the infringement began or within three months of first publication. Registration costs about $65 per work. The practical rule: register human-authored code early, well before it ships, and keep the records (commit history, design documents, who wrote what) that prove a human authored it. A © notice is fine to include, but it is not registration; its main legal effect is to defeat an infringer's claim of innocent infringement.
 {{< /faqitem >}}
 
 {{< faqitem q="Can engineers still use AI safely?" >}}

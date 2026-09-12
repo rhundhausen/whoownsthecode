@@ -11,9 +11,11 @@
       <div class="page-inner">
         {{ if not .Params.hidetitle }}<h1 class="page-title">{{ .Title }}</h1>{{ end }}
         {{ with .Params.subtitle }}<p class="page-subtitle">{{ . }}</p>{{ end }}
+        {{ if eq .Section "developments" }}<p class="post-meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ with .Params.displaydate }}{{ . }}{{ else }}{{ .Date.Format "January 2, 2006" }}{{ end }}</time></p>{{ end }}
         <div class="content">
           {{ .Content }}
         </div>
+        {{ if eq .Section "developments" }}<p class="post-back"><a href="{{ "/developments/" | relURL }}">All developments</a></p>{{ end }}
       </div>
     </article>
   </div>

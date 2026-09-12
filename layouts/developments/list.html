@@ -1,0 +1,37 @@
+{{ define "main" }}
+{{ partial "navbar.html" . }}
+{{/* Developments section: a running blotter of posts, newest first, inside
+     the same editor-panel shell as the other interior pages. Each entry shows
+     its date (front matter `displaydate` overrides the formatted `date` when
+     only a month is known), title, and the `summary` blurb. */}}
+<main class="page-main">
+  <div class="wrap">
+    <article class="editor page-editor">
+      <div class="editor-bar">
+        <span class="dots"><i class="r"></i><i class="y"></i><i class="g"></i></span>
+        <span class="tabs"><span class="tab active">{{ .Section }}.md</span></span>
+        <span class="path"><a href="{{ "/" | relURL }}">~/whoownsthecode</a></span>
+      </div>
+      <div class="page-inner">
+        <h1 class="page-title">{{ .Title }}</h1>
+        {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
+        {{ with .Pages.ByDate.Reverse }}
+        <ol class="dev-list">
+          {{ range . }}
+          <li class="dev-item">
+            <time class="dev-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ with .Params.displaydate }}{{ . }}{{ else }}{{ .Date.Format "Jan 2, 2006" }}{{ end }}</time>
+            <div class="dev-body">
+              <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+              {{ with .Params.summary }}<p>{{ . }}</p>{{ end }}
+            </div>
+          </li>
+          {{ end }}
+        </ol>
+        {{ else }}
+        <p class="dev-empty">Nothing posted yet.</p>
+        {{ end }}
+      </div>
+    </article>
+  </div>
+</main>
+{{ end }}
