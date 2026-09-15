@@ -1,7 +1,7 @@
 ---
 title: "Frequently Asked Questions"
-date: 2026-09-12
-description: "Plain-English answers on AI-generated code and ownership: copyright, human authorship, contracts, open source, diligence, and how to protect what your humans write."
+date: 2026-09-15
+description: "Plain-English answers on AI-generated code and ownership: copyright, human authorship, contracts, open source, diligence, and protecting what humans write."
 ---
 
 ## AI-Generated Code & Ownership

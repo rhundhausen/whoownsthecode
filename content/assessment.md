@@ -1,6 +1,7 @@
 ---
 title: "Assessment"
-date: 2026-07-22
+date: 2026-09-15
+description: "Answer a few questions about how your team uses AI to write code and get an emailed risk assessment of your ownership and compliance exposure."
 ---
 
 Answer a few questions about how your team uses AI to write code, and we’ll email you a personalized risk assessment. It shows where AI-generated code puts your ownership and compliance at risk.

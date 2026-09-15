@@ -1,6 +1,7 @@
 ---
 title: "Resources"
-date: 2026-09-12
+date: 2026-09-15
+description: "Copyright basics for software, the key cases on AI authorship and AI training, and what is settled and what is not when AI writes your code."
 ---
 
 #### Copyright 101

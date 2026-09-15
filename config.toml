@@ -2,6 +2,10 @@ baseURL = 'https://whoownsthecode.com'
 locale = 'en-us'
 title = 'Who Owns the Code'
 
+# Site-wide meta description, used only when a page sets no description of its own (layouts/partials/meta.html)
+[params]
+description = "Who owns AI-generated code? Plain answers on copyright, human authorship, and the risks hiding in your codebase."
+
 # Match the Accentient site: load Inter (feeds the Google Fonts link in layouts/partials/css.html)
 [params.font]
 name = "Inter"

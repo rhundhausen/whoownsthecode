@@ -1,6 +1,7 @@
 ---
 title: "Contact Us"
-date: 2025-06-29
+date: 2026-09-15
+description: "Questions, feedback, or interest in a workshop on AI-generated code and ownership? Send us a message and we will reply."
 ---
 
 We’re passionate about the intersection of AI, code, and the law, and we built this site to help others navigate the complexities of AI-generated software and code ownership.

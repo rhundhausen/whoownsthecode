@@ -1,6 +1,7 @@
 ---
 title: "Workshops"
-date: 2026-07-22
+date: 2026-09-15
+description: "Half-day and full-day workshops for leaders, developers, and counsel on AI-generated code, copyright ownership, open source obligations, and risk."
 ---
 
 ### Executive Workshop: AI, Copyright & IP (half day)

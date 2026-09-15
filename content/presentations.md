@@ -1,6 +1,7 @@
 ---
 title: "Presentations"
-date: 2026-09-12
+date: 2026-09-15
+description: "Talks and transcripts from Bradlee Frazer and Richard Hundhausen on protecting your code and owning what AI writes."
 ---
 
 #### Interface Boise

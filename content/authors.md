@@ -1,6 +1,7 @@
 ---
 title: "Authors"
-date: 2025-08-03
+date: 2026-09-15
+description: "Bradlee Frazer, an intellectual property attorney, and Richard Hundhausen, a software consultant and author, on who owns AI-generated code."
 ---
 
 <div class="author-block">
