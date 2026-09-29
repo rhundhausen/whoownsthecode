@@ -1,6 +1,6 @@
 ---
 title: "Frequently Asked Questions"
-date: 2026-09-28
+date: 2026-09-29
 description: "Plain-English answers on AI-generated code and ownership: copyright, human authorship, contracts, open source, diligence, and protecting what humans write."
 ---
 
@@ -74,6 +74,10 @@ Similarity can still trigger licensing obligations or infringement risk, especia
 
 {{< faqitem q="Can derivative works based on publicly available code be copyrighted?" >}}
 Yes, but only the new, human-created portions qualify for protection, and the underlying code's license still governs your use of it. This principle long predates AI, and AI does not change the rule. It only makes violations easier to create and harder to detect.
+{{< /faqitem >}}
+
+{{< faqitem q="Can I use an AI agent to recreate someone else's software?" >}}
+Not without permission. Pointing an AI agent at another company's product and telling it to recreate that product is copying, and the person who directs the agent is responsible for the result. The agent is a tool, not a defendant. What the agent was given matters. If it worked from decompiled or leaked source, the output is a derivative of that code, and the reverse engineering exceptions in *Sega v. Accolade* and *Sony v. Connectix* cover interoperability, not building a substitute. If it worked only from the running product, the underlying mechanics and ideas are not protected, but the specific expression is, including code structure, artwork, audio, characters, and look and feel, as *Tetris Holding v. Xio Interactive* illustrates. The result is a **double bind**: the AI-written portions have no human author, so you cannot own them, while any portion that reproduces the original's expression exposes you to an infringement claim. You end up holding code you cannot protect and may not be allowed to ship. "It was only an experiment" and "I will never monetize it" may affect a fair use analysis or damages, but they do not make the claim go away.
 {{< /faqitem >}}
 
 {{< faqitem q="Does AI usage violate open-source terms?" >}}
