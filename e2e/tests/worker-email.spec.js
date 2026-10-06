@@ -10,19 +10,15 @@ const { test, expect, request } = require("@playwright/test");
 const WORKER_URL = process.env.WORKER_URL || "https://ai-assessment-worker.richard-dd5.workers.dev";
 const TEST_SECRET = process.env.WOTC_TEST_SECRET;
 
-// Every scored answer set to its risky value (max base on both axes).
+// Every scored answer set to its risky value (max base on both axes). Ownership
+// "Yes" with no authorship record is an unsupported assertion and scores full
+// weight; "No" would score half.
 const MAX_RISK = {
-  assert_code_ownership: "No", prompting_policy: "No", content_policy: "No", code_reviewed: "No",
+  assert_code_ownership: "Yes", prompting_policy: "No", content_policy: "No", code_reviewed: "Never",
   ai_restricted: "No", reviewed_ai_licenses: "No", ai_training: "No", awareness: "No",
-  contracts_address_ai: "No", code_labeled: "No", mentioned_in_commits: "No", mentioned_in_docs: "No",
+  contracts_address_ai: "No", code_labeled: "Never", mentioned_in_commits: "No", mentioned_in_docs: "No",
   store_prompts: "No", ai_in_production: "Yes", vendor_ai_use: "Yes",
 };
-
-const ACQUIRER_EXCLUDED = [
-  "ai_tools", "ai_usage", "prompting_policy", "content_policy", "code_reviewed", "code_labeled",
-  "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts",
-  "reviewed_ai_licenses", "ai_training", "assert_code_ownership",
-];
 
 test.describe("worker scoring + email (test mode)", () => {
   test.skip(!TEST_SECRET, "Set WOTC_TEST_SECRET (and `wrangler secret put TEST_SECRET`) to run these.");
@@ -50,6 +46,7 @@ test.describe("worker scoring + email (test mode)", () => {
     expect(p.email.text).toContain("Outbound Risk: 100/100 (Critical)");
     expect(p.email.html).toContain("Inbound risk");
     expect(p.email.html).toContain("Outbound risk");
+    expect(p.email.text).toContain("ownership is asserted but the authorship record does not yet support it");
   });
 
   test("Acquirer: build-process hidden, inbound falls to 0, ownership Q omitted", async () => {
@@ -57,7 +54,6 @@ test.describe("worker scoring + email (test mode)", () => {
       name: "E2E Acquirer",
       email: "acquirer@example.com",
       ...MAX_RISK,
-      scored_excluded: ACQUIRER_EXCLUDED.join(","),
       persona_primary: "Acquirer",
       persona_path: "Evaluating code to acquire",
       persona_result: JSON.stringify({
@@ -68,6 +64,8 @@ test.describe("worker scoring + email (test mode)", () => {
     expect(p.assessment.inbound.score).toBe(0);
     expect(p.assessment.inbound.level).toBe("Low");
     expect(p.assessment.inbound.possible).toBe(0);
+    expect(p.assessment.outbound.possible).toBe(25); // awareness, contracts_address_ai, vendor_ai_use
+    expect(p.assessment.ownershipAsserted).toBe(false);
     expect(p.persona.primary).toBe("Acquirer");
     expect(p.email.text).toContain("Persona Profile");
     expect(p.email.text).toContain("Acquirer");
@@ -98,17 +96,14 @@ test.describe("worker scoring + email (test mode)", () => {
 
   test("ownership-assertion exclusion keeps Civic Coder outbound from being penalized", async () => {
     const clean = {
-      assert_code_ownership: "No", prompting_policy: "Yes", content_policy: "Yes", code_reviewed: "Yes",
+      assert_code_ownership: "No", prompting_policy: "Yes", content_policy: "Yes", code_reviewed: "Always",
       ai_restricted: "Yes", reviewed_ai_licenses: "Yes", ai_training: "Yes", awareness: "Yes",
-      contracts_address_ai: "Yes", code_labeled: "Yes", mentioned_in_commits: "Yes", mentioned_in_docs: "Yes",
+      contracts_address_ai: "Yes", code_labeled: "Always", mentioned_in_commits: "Yes", mentioned_in_docs: "Yes",
       store_prompts: "Yes", ai_in_production: "No", vendor_ai_use: "No",
     };
     const withoutFix = await preview({ name: "Civic A", email: "civic-a@example.com", ...clean });
     expect(withoutFix.assessment.outbound.score).toBeGreaterThan(0);
-    const withFix = await preview({
-      name: "Civic B", email: "civic-b@example.com", ...clean,
-      scored_excluded: "assert_code_ownership", persona_primary: "Civic Coder",
-    });
+    const withFix = await preview({ name: "Civic B", email: "civic-b@example.com", ...clean, persona_primary: "Civic Coder" });
     expect(withFix.assessment.outbound.score).toBe(0);
   });
 });

@@ -2,7 +2,8 @@ const { defineConfig } = require("@playwright/test");
 
 // Three named test groups (Playwright projects):
 //   UI      - the assessment page / persona wizard (no secrets, no submission)
-//   Results - the worker's scoring and rendered email via test mode (no send)
+//   Results - the worker's scoring and rendered email via test mode (no send),
+//             plus the form <-> worker key-sync diff (reads source, no network)
 //   Emails  - actually sends real emails for ~20 scenarios (opt-in)
 //
 // Env vars:
@@ -24,7 +25,7 @@ module.exports = defineConfig({
   },
   projects: [
     { name: "UI", testMatch: ["**/wizard.spec.js", "**/persona-matrix.spec.js"] },
-    { name: "Results", testMatch: ["**/worker-email.spec.js", "**/scoring-matrix.spec.js", "**/results-matrix.spec.js"] },
+    { name: "Results", testMatch: ["**/key-sync.spec.js", "**/worker-email.spec.js", "**/scoring-matrix.spec.js", "**/results-matrix.spec.js"] },
     { name: "Emails", testMatch: ["**/live-email.spec.js"] },
   ],
 });

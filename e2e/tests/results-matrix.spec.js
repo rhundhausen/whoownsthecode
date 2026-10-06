@@ -4,7 +4,9 @@
 // levels, and the rendered persona profile. Maturity answers are fixed at
 // all-risky so the expected scores are deterministic; the notable per-persona
 // difference is Acquirer, whose inbound questions are all excluded (-> 0/Low).
-// Per-question scoring detail lives in scoring-matrix.spec.js.
+// Exclusions are resolved by the worker from persona_primary; the lists below
+// only predict which axes end up empty. Per-question scoring detail lives in
+// scoring-matrix.spec.js.
 const { test, expect, request } = require("@playwright/test");
 
 const WORKER_URL = process.env.WORKER_URL || "https://ai-assessment-worker.richard-dd5.workers.dev";
@@ -20,21 +22,22 @@ const RATINGS = {
   "Regulated": ["Moderate", "Critical"], "Two-Tier": ["Moderate", "Critical"], "Renter": ["Moderate", "Moderate"],
 };
 
-const INBOUND_KEYS = ["prompting_policy", "code_reviewed", "ai_restricted", "reviewed_ai_licenses", "code_labeled", "store_prompts"];
+const INBOUND_KEYS = ["prompting_policy", "code_reviewed", "ai_restricted", "code_labeled"];
 const ACQUIRER_EXCLUDED = [
-  "ai_tools", "ai_usage", "prompting_policy", "content_policy", "code_reviewed", "code_labeled",
-  "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts",
-  "reviewed_ai_licenses", "ai_training", "assert_code_ownership",
+  "ai_tools", "ai_tool_tier", "ai_usage", "ai_code_share", "prompting_policy", "content_policy",
+  "code_reviewed", "code_labeled", "mentioned_in_commits", "mentioned_in_docs", "ai_in_production",
+  "ai_restricted", "store_prompts", "reviewed_ai_licenses", "ai_training", "assert_code_ownership",
 ];
 const OWNERSHIP_EXCLUDED = ["assert_code_ownership"];
 const EXCLUSIONS = { "Acquirer": ACQUIRER_EXCLUDED, "Civic Coder": OWNERSHIP_EXCLUDED, "Giver": OWNERSHIP_EXCLUDED };
 
-// All scored answers at their risky value.
+// All scored answers at their risky value. Ownership "Yes" with no authorship
+// record is an unsupported assertion and scores full weight ("No" scores half).
 const POOR = {
-  prompting_policy: "No", content_policy: "No", code_reviewed: "No", ai_restricted: "No",
+  prompting_policy: "No", content_policy: "No", code_reviewed: "Never", ai_restricted: "No",
   reviewed_ai_licenses: "No", ai_training: "No", awareness: "No", contracts_address_ai: "No",
-  code_labeled: "No", mentioned_in_commits: "No", mentioned_in_docs: "No", store_prompts: "No",
-  assert_code_ownership: "No", ai_in_production: "Yes", vendor_ai_use: "Yes",
+  code_labeled: "Never", mentioned_in_commits: "No", mentioned_in_docs: "No", store_prompts: "No",
+  assert_code_ownership: "Yes", ai_in_production: "Yes", vendor_ai_use: "Yes",
   ai_tools: ["GitHub Copilot", "ChatGPT", "Cursor"], ai_usage: ["Code", "Agentic"],
 };
 
@@ -67,9 +70,9 @@ function personaFields(primary, stacked) {
   };
 }
 
-function buildPayload(primary, stacked, excluded) {
+function buildPayload(primary, stacked) {
   const { fields } = personaFields(primary, stacked);
-  return { name: `Results ${primary}`, email: "results@example.com", ...POOR, ...(excluded ? { scored_excluded: excluded.join(",") } : {}), ...fields };
+  return { name: `Results ${primary}`, email: "results@example.com", ...POOR, ...fields };
 }
 
 test.describe("results matrix: worker output for every persona scenario", () => {
@@ -112,7 +115,7 @@ test.describe("results matrix: worker output for every persona scenario", () => 
       test(`${persona} -> ${inb}/${out}`, async () => {
         const excluded = EXCLUSIONS[persona] || null;
         const { crit } = personaFields(persona, []);
-        const j = await preview(buildPayload(persona, [], excluded));
+        const j = await preview(buildPayload(persona, []));
         assertProfile(j, persona, [], crit);
         assertScores(j, excluded);
       });
@@ -123,7 +126,7 @@ test.describe("results matrix: worker output for every persona scenario", () => 
     for (const [box, persona] of Object.entries(PROMISE_PERSONA)) {
       test(`${box} -> ${persona}`, async () => {
         const { crit } = personaFields("Host", [persona]);
-        const j = await preview(buildPayload("Host", [persona], null));
+        const j = await preview(buildPayload("Host", [persona]));
         assertProfile(j, "Host", [persona], crit);
         assertScores(j, null);
       });
@@ -138,7 +141,7 @@ test.describe("results matrix: worker output for every persona scenario", () => 
       const crit = ["Host", ...triggers].filter((n) => RATINGS[n][1] === "Critical").length;
       const label = checked.length ? checked.join("+") : "(none)";
       test(`Host + [${label}] -> ${crit} critical-outbound`, async () => {
-        const j = await preview(buildPayload("Host", stacked, null));
+        const j = await preview(buildPayload("Host", stacked));
         expect(j.persona.primary).toBe("Host");
         for (const n of stacked) expect(j.email.text).toContain(n);
         if (crit >= 2) expect(j.email.text).toContain(`${crit} critical-outbound triggers on one codebase`);

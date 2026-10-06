@@ -34,11 +34,17 @@ npm run test:ui
 Verifies the worker's scoring and the rendered email through its secret-gated
 test mode. The worker returns the computed scores and email but **sends nothing**.
 
+- `tests/key-sync.spec.js` - diffs the lists that `content/assessment.md` and
+  `ai-assessment-worker/src/index.js` each keep a copy of (`PERSONA_EXCLUDED`,
+  the scored and reported question keys, the assistance values, the graded
+  answer values). Reads the two source files from disk; no network, no secret,
+  so it runs even when the rest of the group skips.
 - `tests/worker-email.spec.js` - scoring and email content for representative
   personas.
 - `tests/scoring-matrix.spec.js` - each of the 15 scored questions moves the
   correct axis by the correct amount and leaves the other at 0, plus band
-  thresholds and the outbound cap.
+  thresholds, the ownership-assertion rule (a "Yes" counts as safe only with
+  two authorship records behind it; "No" scores half), and the multiplier.
 - `tests/results-matrix.spec.js` - backend parity with the UI persona matrix:
   the same persona and stacking scenarios run through the worker, asserting the
   returned persona, the inbound/outbound scores and levels, and the rendered
@@ -54,7 +60,12 @@ npm run test:results
 
 `WOTC_TEST_SECRET` must match what you set with `wrangler secret put TEST_SECRET`
 (or `TEST_SECRET` in `ai-assessment-worker/.dev.vars` for local dev). Without it,
-this group skips itself.
+the worker-backed specs skip themselves (`key-sync.spec.js` still runs).
+
+The default `WORKER_URL` is the deployed worker, so these specs exercise whatever
+is live, not your working tree. Before deploying a scoring change, run them
+against `wrangler dev` as shown above so the expectations and the code move
+together.
 
 ## Emails (sends real email)
 

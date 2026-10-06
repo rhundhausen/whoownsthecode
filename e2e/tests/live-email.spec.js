@@ -24,34 +24,30 @@ const RATINGS = {
   "Regulated": ["Moderate", "Critical"], "Two-Tier": ["Moderate", "Critical"], "Renter": ["Moderate", "Moderate"],
 };
 
-const ACQUIRER_EXCLUDED = [
-  "ai_tools", "ai_usage", "prompting_policy", "content_policy", "code_reviewed", "code_labeled",
-  "mentioned_in_commits", "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts",
-  "reviewed_ai_licenses", "ai_training", "assert_code_ownership",
-];
-const OWNERSHIP_EXCLUDED = ["assert_code_ownership"];
-
-// Maturity-answer presets so the emailed scores span a realistic range.
+// Maturity-answer presets so the emailed scores span a realistic range. The
+// worker resolves persona exclusions itself from persona_primary. "poor" asserts
+// ownership with no record behind it, which scores full weight and adds the
+// unsupported-assertion note to the report; "mixed" asserts it with one record.
 const MATURITY = {
   poor: {
-    prompting_policy: "No", content_policy: "No", code_reviewed: "No", ai_restricted: "No",
+    prompting_policy: "No", content_policy: "No", code_reviewed: "Never", ai_restricted: "No",
     reviewed_ai_licenses: "No", ai_training: "No", awareness: "No", contracts_address_ai: "No",
-    code_labeled: "No", mentioned_in_commits: "No", mentioned_in_docs: "No", store_prompts: "No",
-    assert_code_ownership: "No", ai_in_production: "Yes", vendor_ai_use: "Yes",
+    code_labeled: "Never", mentioned_in_commits: "No", mentioned_in_docs: "No", store_prompts: "No",
+    assert_code_ownership: "Yes", ai_in_production: "Yes", vendor_ai_use: "Yes",
     ai_tools: ["GitHub Copilot", "ChatGPT", "Cursor"], ai_usage: ["Code", "Agentic"],
   },
   good: {
-    prompting_policy: "Yes", content_policy: "Yes", code_reviewed: "Yes", ai_restricted: "Yes",
+    prompting_policy: "Yes", content_policy: "Yes", code_reviewed: "Always", ai_restricted: "Yes",
     reviewed_ai_licenses: "Yes", ai_training: "Yes", awareness: "Yes", contracts_address_ai: "Yes",
-    code_labeled: "Yes", mentioned_in_commits: "Yes", mentioned_in_docs: "Yes", store_prompts: "Yes",
+    code_labeled: "Always", mentioned_in_commits: "Yes", mentioned_in_docs: "Yes", store_prompts: "Yes",
     assert_code_ownership: "Yes", ai_in_production: "No", vendor_ai_use: "No",
     ai_tools: ["GitHub Copilot"], ai_usage: ["Tests"],
   },
   mixed: {
-    prompting_policy: "Yes", content_policy: "No", code_reviewed: "Yes", ai_restricted: "No",
+    prompting_policy: "Yes", content_policy: "No", code_reviewed: "Sometimes", ai_restricted: "No",
     reviewed_ai_licenses: "No", ai_training: "Yes", awareness: "Yes", contracts_address_ai: "No",
-    code_labeled: "No", mentioned_in_commits: "Yes", mentioned_in_docs: "No", store_prompts: "No",
-    assert_code_ownership: "No", ai_in_production: "Yes", vendor_ai_use: "No",
+    code_labeled: "Sometimes", mentioned_in_commits: "Yes", mentioned_in_docs: "No", store_prompts: "No",
+    assert_code_ownership: "Yes", ai_in_production: "Yes", vendor_ai_use: "No",
     ai_tools: ["GitHub Copilot", "Claude / Claude Code"], ai_usage: ["Code", "Refactoring"],
   },
 };
@@ -87,7 +83,6 @@ function payloadFor(s) {
     testSend: true,
     testSubject: subjectFor(s),
     ...MATURITY[s.maturity],
-    ...(s.excluded ? { scored_excluded: s.excluded.join(",") } : {}),
     ...personaFields(s.primary, s.stacked || []),
   };
 }
@@ -95,9 +90,9 @@ function payloadFor(s) {
 // 20 choice scenarios: every persona, the key stacks, and a score range.
 const SCENARIOS = [
   { name: "Model Maker", primary: "Model Maker", maturity: "mixed" },
-  { name: "Giver", primary: "Giver", maturity: "good", excluded: OWNERSHIP_EXCLUDED },
-  { name: "Civic Coder", primary: "Civic Coder", maturity: "mixed", excluded: OWNERSHIP_EXCLUDED },
-  { name: "Acquirer", primary: "Acquirer", maturity: "mixed", excluded: ACQUIRER_EXCLUDED },
+  { name: "Giver", primary: "Giver", maturity: "good" },
+  { name: "Civic Coder", primary: "Civic Coder", maturity: "mixed" },
+  { name: "Acquirer", primary: "Acquirer", maturity: "mixed" },
   { name: "Host", primary: "Host", maturity: "mixed" },
   { name: "Host + Renter (mitigating)", primary: "Host", stacked: ["Renter"], maturity: "mixed" },
   { name: "Hired Gun", primary: "Hired Gun", maturity: "poor" },

@@ -43,10 +43,7 @@ test.describe("persona wizard (deployed page)", () => {
     await expect(page.locator('input[name="vendor_ai_use"]').first()).toBeVisible();
     await expect(page.locator('input[name="awareness"]').first()).toBeVisible();
     await expect(page.locator("#sec-support")).toBeVisible();
-
-    const excluded = await hiddenValue(page, "scored_excluded");
-    expect(excluded).toContain("assert_code_ownership");
-    expect(excluded.split(",").length).toBe(16);
+    expect(await hiddenValue(page, "persona_primary")).toBe("Acquirer");
   });
 
   test("promise check stacks Licensor + Fed Supplier + Regulated", async ({ page }) => {
@@ -146,7 +143,6 @@ test.describe("persona wizard (deployed page)", () => {
     await page.locator("#personaResult a#personaReset").click();
     await expect(page.locator("#personaResult")).toBeHidden();
     expect(await hiddenValue(page, "persona_primary")).toBe("");
-    expect(await hiddenValue(page, "scored_excluded")).toBe("");
     await expect(page.locator("#sec-tools")).toBeVisible();
     await expect(page.locator('input[name="assert_code_ownership"]').first()).toBeVisible();
   });

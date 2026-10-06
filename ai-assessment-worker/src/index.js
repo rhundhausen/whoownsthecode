@@ -40,12 +40,20 @@ function orDash(value) {
   return v ? v : "—";
 }
 
-/** Normalize various yes/no shapes to boolean */
+/** Normalize various yes/no shapes to boolean true */
 function isYes(v) {
   if (v == null) return false;
   if (typeof v === "boolean") return v;
   const s = String(v).trim().toLowerCase();
   return s === "yes" || s === "y" || s === "true" || s === "on" || s === "1";
+}
+
+/** Mirror of isYes: true only for an explicit "no" shape */
+function isNo(v) {
+  if (v == null) return false;
+  if (typeof v === "boolean") return !v;
+  const s = String(v).trim().toLowerCase();
+  return s === "no" || s === "n" || s === "false" || s === "off" || s === "0";
 }
 
 /** Lowercased single string from a possibly-array form value */
@@ -66,13 +74,36 @@ function hasCodeLikeUsage(form) {
   return ["code", "agentic", "refactoring"].some(v => usage.includes(v));
 }
 
-/** Keys the client hid for the identified persona; excluded from scoring and
- * the emailed survey detail. Mirrors PERSONA_EXCLUDED in content/assessment.md. */
+// Server-side copy of PERSONA_EXCLUDED in content/assessment.md. Exclusions
+// are resolved here from persona_primary rather than taken from a client-posted
+// key list, so a request cannot exclude arbitrary questions. The persona itself
+// is still self-declared (posting "Acquirer" hides the build-process questions
+// for anyone), so this narrows the hole rather than closing it. Keep this map
+// in sync with the markdown: e2e/tests/key-sync.spec.js diffs the two.
+const PERSONA_EXCLUDED = {
+  "Acquirer": [
+    "ai_tools", "ai_tool_tier", "ai_usage", "ai_code_share", "prompting_policy",
+    "content_policy", "code_reviewed", "code_labeled", "mentioned_in_commits",
+    "mentioned_in_docs", "ai_in_production", "ai_restricted", "store_prompts",
+    "reviewed_ai_licenses", "ai_training", "assert_code_ownership",
+  ],
+  "Civic Coder": ["assert_code_ownership"],
+  "Giver": ["assert_code_ownership"],
+};
+
+/** Keys hidden for the identified persona; excluded from scoring and the
+ * emailed survey detail. Resolved server-side from persona_primary. An
+ * unknown or missing persona excludes nothing. */
 function getExcluded(form) {
-  const raw = form.scored_excluded;
-  if (!raw) return new Set();
-  return new Set(String(raw).split(",").map(s => s.trim()).filter(Boolean));
+  const persona = form.persona_primary ? String(form.persona_primary).trim() : "";
+  // hasOwn, not a bare lookup: "constructor" or "__proto__" would otherwise
+  // resolve to a non-iterable inherited value and throw.
+  const keys = Object.hasOwn(PERSONA_EXCLUDED, persona) ? PERSONA_EXCLUDED[persona] : [];
+  return new Set(keys);
 }
+
+// Record-keeping questions that substantiate an ownership assertion.
+const AUTHORSHIP_RECORD_KEYS = ["mentioned_in_commits", "mentioned_in_docs", "store_prompts", "code_labeled"];
 
 /** Compute inbound and outbound risk (each 0-100) + band/color per axis */
 function computeRiskAssessment(form) {
@@ -80,6 +111,7 @@ function computeRiskAssessment(form) {
   // riskWhen "no": good-practice questions where the safe answer is "Yes".
   // riskWhen "yes": questions where the safe answer is "No" (inverted).
   // graded: Always/Sometimes/Never questions; Sometimes scores half weight.
+  // ownership: the assertion question; see riskFraction for its rule.
   //
   // Answer scoring rule (consistent in both directions): only the safe answer
   // scores zero. "Don't know" and unanswered both score full risk, because not
@@ -87,44 +119,72 @@ function computeRiskAssessment(form) {
   // reward skipping questions.
   //
   // axis: which of the two risk directions the question speaks to.
-  //   inbound  = what the AI ingested into your build (infringing/copyleft
-  //              fragments, tool training data): catching and tracing it.
-  //   outbound = what you ship (can you own, license, warrant, and sell it).
+  //   inbound  = what the AI put into your build (infringing/copyleft
+  //              fragments, retrieved code) and whether you catch and trace it:
+  //              what you ask for, who reviews it, where it is allowed, and
+  //              whether AI-written code is marked so it can be found later.
+  //   outbound = what you ship: whether you can own, license, warrant, and
+  //              sell it. The authorship record (commits, docs, prompts), the
+  //              tool terms you accepted, your contracts, and your policies
+  //              all go here because they are what you would produce to prove
+  //              human authorship and clean title.
   const SCORED = [
     // Outbound: ownership, title, authorship record, what reaches customers.
-    { key: "assert_code_ownership", weight: 20, riskWhen: "no",  axis: "outbound" },
+    { key: "assert_code_ownership", weight: 10, ownership: true, axis: "outbound" },
     { key: "content_policy",        weight: 10, riskWhen: "no",  axis: "outbound" },
     { key: "awareness",             weight: 10, riskWhen: "no",  axis: "outbound" },
     { key: "contracts_address_ai",  weight: 10, riskWhen: "no",  axis: "outbound" },
     { key: "ai_training",           weight: 10, riskWhen: "no",  axis: "outbound" },
+    { key: "reviewed_ai_licenses",  weight: 10, riskWhen: "no",  axis: "outbound" }, // indemnity and training-on-your-code terms are a title question
     { key: "mentioned_in_commits",  weight: 5,  riskWhen: "no",  axis: "outbound" },
     { key: "mentioned_in_docs",     weight: 5,  riskWhen: "no",  axis: "outbound" },
+    { key: "store_prompts",         weight: 5,  riskWhen: "no",  axis: "outbound" }, // prompts are the record of human direction
     { key: "ai_in_production",      weight: 10, riskWhen: "yes", axis: "outbound" }, // UNREVIEWED AI code reaching production is the risk
     { key: "vendor_ai_use",         weight: 5,  riskWhen: "yes", axis: "outbound" }, // third-party AI use is the exposure; "Don't know" is too
     // Inbound: vetting and tracing what the model put into the codebase.
     { key: "prompting_policy",      weight: 10, riskWhen: "no",  axis: "inbound" },
     { key: "code_reviewed",         weight: 10, riskWhen: "no",  axis: "inbound", graded: true },
     { key: "ai_restricted",         weight: 10, riskWhen: "no",  axis: "inbound" },
-    { key: "reviewed_ai_licenses",  weight: 10, riskWhen: "no",  axis: "inbound" },
     { key: "code_labeled",          weight: 5,  riskWhen: "no",  axis: "inbound", graded: true },
-    { key: "store_prompts",         weight: 5,  riskWhen: "no",  axis: "inbound" },
   ];
+
+  const excluded = getExcluded(form);
+
+  // How many authorship-record questions (that this persona was shown) have a
+  // safe answer. Used to decide whether an ownership assertion is substantiated.
+  function authorshipRecordCount() {
+    let n = 0;
+    for (const key of AUTHORSHIP_RECORD_KEYS) {
+      if (excluded.has(key)) continue;
+      const s = normVal(form[key]);
+      if (key === "code_labeled" ? s === "always" : isYes(s)) n += 1;
+    }
+    return n;
+  }
 
   // Fraction of the question's weight that counts as risk for the given answer.
   function riskFraction(q, value) {
     const s = normVal(value);
+    if (q.ownership) {
+      // "Yes" is safe only when backed by a record. An unsubstantiated
+      // assertion is a warranty the company cannot support, so it scores
+      // full risk. "No" is an honest answer and scores half. "Don't know"
+      // and unanswered score full risk as everywhere else.
+      if (isYes(s)) return authorshipRecordCount() >= 2 ? 0 : 1;
+      if (isNo(s)) return 0.5;
+      return 1;
+    }
     if (q.graded) {
       if (s === "always") return 0;
       if (s === "sometimes") return 0.5;
       return 1; // "never", "don't know", unanswered
     }
     if (q.riskWhen === "yes") {
-      return s === "no" ? 0 : 1; // "yes", "don't know", unanswered all risky
+      return isNo(s) ? 0 : 1; // "yes", "don't know", unanswered all risky
     }
     return isYes(s) ? 0 : 1; // "no", "don't know", unanswered all risky
   }
 
-  const excluded = getExcluded(form);
   const axes = {
     inbound:  { possible: 0, risky: 0, flagged: 0 },
     outbound: { possible: 0, risky: 0, flagged: 0 },
@@ -151,7 +211,9 @@ function computeRiskAssessment(form) {
   else if (share.startsWith("don")) multiplier += 0.05;
   if (multiplier > 1.25) multiplier = 1.25;
 
-  const ownershipAsserted = !excluded.has("assert_code_ownership") && isYes(form.assert_code_ownership);
+  // Same normalization as riskFraction so the score and the email note agree.
+  const ownershipAsserted = !excluded.has("assert_code_ownership") && isYes(normVal(form.assert_code_ownership));
+  const ownershipSubstantiated = ownershipAsserted && authorshipRecordCount() >= 2;
 
   function band(score) {
     if (score >= 81) return { level: "Critical", color: "#dc2626" };
@@ -162,22 +224,19 @@ function computeRiskAssessment(form) {
 
   // Normalize each axis to 0-100 over the questions actually shown, so the two
   // scores are comparable and persona exclusions do not skew the scale.
-  function finalize(ax, capWhenOwned) {
+  function finalize(ax) {
     let score = ax.possible > 0 ? Math.round((ax.risky / ax.possible) * 100 * multiplier) : 0;
     if (score > 100) score = 100;
-    // NOTE: asserting ownership currently reduces outbound risk (20-pt question
-    // plus this cap). Open design question: an unsubstantiated assertion may
-    // itself be the exposure. Revisit with Brad before treating this as final.
-    if (capWhenOwned && ownershipAsserted) score = Math.min(score, 80);
     return { score, ...band(score), flagged: ax.flagged, possible: ax.possible, risky: ax.risky };
   }
 
   return {
-    inbound: finalize(axes.inbound, false),
-    outbound: finalize(axes.outbound, true),
+    inbound: finalize(axes.inbound),
+    outbound: finalize(axes.outbound),
     multiplier,
     toolsCount,
     ownershipAsserted,
+    ownershipSubstantiated,
   };
 }
 
@@ -230,7 +289,13 @@ function parsePersonaResult(form) {
   if (!form.persona_result) return null;
   try {
     const r = JSON.parse(form.persona_result);
-    return r && r.primary && r.primary.name ? r : null;
+    if (!(r && r.primary && r.primary.name)) return null;
+    // Normalize the untrusted shape: only named stacked entries, and a finite
+    // non-negative integer count (it is interpolated into the HTML unescaped).
+    r.stacked = Array.isArray(r.stacked) ? r.stacked.filter(s => s && typeof s === "object" && s.name) : [];
+    const n = Number(r.criticalOutboundCount);
+    r.criticalOutboundCount = Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+    return r;
   } catch (_) {
     return null;
   }
@@ -353,9 +418,12 @@ function buildAssessmentText(form, view = "internal") {
   const lines = [
     ...header,
     "Assessment",
-    `Inbound Risk: ${a.inbound.score}/100 (${a.inbound.level}) - what the AI ingested into your build`,
+    `Inbound Risk: ${a.inbound.score}/100 (${a.inbound.level}) - what the AI put into your build`,
     `Outbound Risk: ${a.outbound.score}/100 (${a.outbound.level}) - whether you can own, license, and warrant what you ship`,
     `Multiplier: x${a.multiplier.toFixed(2)}  Tools: ${a.toolsCount}`,
+    ...(a.ownershipAsserted && !a.ownershipSubstantiated
+      ? [`Note: ownership is asserted but the authorship record does not yet support it.`]
+      : []),
     ``,
     ...buildPersonaLines(form),
     "Details",
@@ -417,6 +485,13 @@ function buildAssessmentHTML(form, view = "internal") {
     </p>
 `;
 
+  const ownershipNote = a.ownershipAsserted && !a.ownershipSubstantiated
+    ? `
+    <div style="margin-top:10px;padding:6px 10px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-family:Arial,Helvetica,sans-serif;font-size:12px;border-radius:4px;">
+      Ownership is asserted, but the authorship record (commits, documentation, prompts, labeling) does not yet support it. An unsupported assertion is scored as risk.
+    </div>`
+    : "";
+
   const userFooter = view === "user"
     ? `
     <p style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#555;margin-top:20px;">
@@ -456,10 +531,11 @@ ${submittedBy}
         </tr>
       </table>
     </div>
+${ownershipNote}
     <div style="margin-top:10px;font-size:12px;color:#555;line-height:1.4;">
       <strong>What these two scores mean:</strong><br/>
-      &nbsp;&nbsp;• <strong>Inbound risk</strong> is about what the AI ingested into your build: infringing or copyleft fragments from training data, and whether you catch and trace them.<br/>
-      &nbsp;&nbsp;• <strong>Outbound risk</strong> is about what you ship: whether you can actually own, license, warrant, and sell the result.<br/><br/>
+      &nbsp;&nbsp;• <strong>Inbound risk</strong> is about what the AI put into your build: infringing or copyleft fragments from training data or retrieved code, and whether you catch and trace them.<br/>
+      &nbsp;&nbsp;• <strong>Outbound risk</strong> is about what you ship: whether you can actually own, license, warrant, and sell the result, and whether you have the record to prove it.<br/><br/>
 
       <strong>Your calculation details:</strong><br/>
       &nbsp;&nbsp;• Inbound: <strong>${a.inbound.score}/100</strong> (${a.inbound.flagged} risk-flagged answer${a.inbound.flagged === 1 ? "" : "s"}).<br/>
@@ -682,7 +758,8 @@ export default {
       });
 
       return new Response("Assessment submitted successfully!", { status: 200, headers: corsHeaders });
-    } catch {
+    } catch (err) {
+      console.error("Worker error:", err && err.stack ? err.stack : err);
       return new Response("Internal Server Error", { status: 500, headers: corsHeaders });
     }
   },
@@ -690,4 +767,4 @@ export default {
 
 // Named exports for unit testing. The Worker runtime only uses the default
 // export above; these do not affect deployment.
-export { computeRiskAssessment, getExcluded, buildAssessmentText, buildAssessmentHTML };
+export { computeRiskAssessment, getExcluded, buildAssessmentText, buildAssessmentHTML, PERSONA_EXCLUDED, QUESTIONS, ASSISTANCE_VALUE_TO_LABEL };

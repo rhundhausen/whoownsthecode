@@ -1,6 +1,6 @@
 ---
 title: "Assessment"
-date: 2026-09-15
+date: 2026-10-05
 description: "Answer a few questions about how your team uses AI to write code and get an emailed risk assessment of your ownership and compliance exposure."
 ---
 
@@ -56,7 +56,6 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
     <input type="hidden" name="persona_stacked" value="">
     <input type="hidden" name="persona_result" value="">
     <input type="hidden" name="persona_path" value="">
-    <input type="hidden" name="scored_excluded" value="">
     <h3 style="margin-top:0; font-size:1.25rem; font-weight:600; color:var(--fg); border-bottom:1px solid var(--border); padding-bottom:0.4rem; margin-bottom:0;">Part 1: AI-Code Risk Persona</h3>
     <p style="margin:0; font-size:0.95rem; color:var(--fg-muted);">First, let's identify your organization's AI-code risk persona. Answer a few questions. Your persona appears below and updates as you go, then continue to the questions that follow.</p>
     <div class="persona-wizard" id="personaWizard">
@@ -289,7 +288,7 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       </div>
     </div>
     <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-      <label style="flex: 1 1 400px; min-width: 300px;">19. Do you assert that you own the code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you currently claim legal ownership of your code. Purely AI-generated portions may not be ownable.</span></span></label>
+      <label style="flex: 1 1 400px; min-width: 300px;">19. Do you assert that you own the code?<span class="info-tip" tabindex="0"><span class="info-icon">i</span><span class="info-bubble">Whether you currently claim legal ownership of your code. Purely AI-generated portions may not be ownable, so a "Yes" counts in your favor only when your records (commits, documentation, prompts, labeling) can back it up. An honest "No" scores lower than an unsupported "Yes".</span></span></label>
       <div style="flex: 1 1 250px; min-width: 200px;">
         <label><input type="radio" name="assert_code_ownership" value="Yes"> Yes</label>&nbsp;&nbsp;
         <label><input type="radio" name="assert_code_ownership" value="No"> No</label>
@@ -574,8 +573,9 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
       return parts.join(" > ");
     }
 
-    // Show or hide the follow-on maturity questions based on the primary persona,
-    // and record the excluded keys so the worker scores only what is shown.
+    // Show or hide the follow-on maturity questions based on the primary persona.
+    // The worker resolves the same exclusions itself from persona_primary (its
+    // own copy of PERSONA_EXCLUDED), so nothing about them is posted.
     function applyMaturity(primary) {
       var excluded = (primary && PERSONA_EXCLUDED[primary]) ? PERSONA_EXCLUDED[primary] : [];
       for (var sec in MATURITY_SECTIONS) {
@@ -596,7 +596,6 @@ Answer a few questions about how your team uses AI to write code, and we’ll em
         var header = document.getElementById(sec);
         if (header) header.style.display = anyShown ? "" : "none";
       }
-      setHidden("scored_excluded", excluded.join(","));
     }
 
     function render() {
