@@ -1,6 +1,6 @@
 ---
 title: "Frequently Asked Questions"
-date: 2026-09-29
+date: 2026-10-27
 description: "Plain-English answers on AI-generated code and ownership: copyright, human authorship, contracts, open source, diligence, and protecting what humans write."
 ---
 
@@ -11,7 +11,7 @@ Most AI vendors' terms assign you whatever rights exist in the output. The probl
 {{< /faqitem >}}
 
 {{< faqitem q="Does writing detailed prompts make me the author?" >}}
-Prompts guide the system, but typically lack the **determinism and creative specificity** required to establish human authorship under copyright law.
+Prompts are instructions, and the model decides how to carry them out. The Copyright Office has said that a prompt alone does not give the user enough **control over the resulting expression** to make them the author, however detailed the prompt is.
 {{< /faqitem >}}
 
 {{< faqitem q="Can I copyright AI-generated code?" >}}
@@ -37,7 +37,11 @@ Because the AI, not the human, is doing the expressive work. Under current law, 
 {{< /faqitem >}}
 
 {{< faqitem q="Is an AI prompt processed by a large language model equivalent to source code compiled by a traditional compiler?" >}}
-No. Compilers deterministically preserve human authorship by transforming source code into another form. Generative AI systems are non-deterministic and generate new expression, breaking the chain of human authorship that copyright protection requires.
+No. A compiler transforms source code a human wrote into another form without adding expression of its own, so the chain of human authorship is preserved. A language model generates new expression in response to a prompt. Whether or not that output is repeatable, the expressive choices were the model's, which breaks the chain of human authorship that copyright protection requires.
+{{< /faqitem >}}
+
+{{< faqitem q="What if we set the temperature to zero? Does deterministic output mean we can own the code?" >}}
+No. Temperature is a sampling setting that controls how much randomness the model uses when it picks each next token. At zero, the model takes (or nearly takes) its highest-probability choice every time, so repeated runs of the same prompt produce the same or nearly the same output. It does not change what the model knows or how it decides what is probable. Even zero is not truly deterministic in practice: floating-point differences across GPUs, request batching, infrastructure changes, and model updates mean identical prompts can still drift, and vendors do not guarantee bit-identical output. Most coding assistants, including Copilot, Cursor, and Claude Code, do not expose temperature at all; the vendor sets it internally and can change it at any time. The real answer is that **repeatability is not the legal test**. Copyright requires a human author, meaning a human who made the expressive choices in the work. *Thaler v. Perlmutter* confirms that a human author is required, and the Copyright Office's January 2025 report on copyrightability frames the question as whether the human controlled the expression, not whether the machine's output can be reproduced. A model at temperature zero still decides every variable name, structure, algorithm, and line of code. The human supplied a request, and the model supplied the expression. Making the model's choices repeatable does not make them the human's choices. The compiler comparison makes the same point. A compiler is deterministic, and it preserves human expression: the developer wrote the source, and the compiler transforms it without adding expression of its own. A language model at temperature zero is (mostly) repeatable, but it generates new expression the human did not write. Determinism was never what made compiled code ownable; human-authored source was. In fact, determinism cuts the wrong way. If the same prompt at temperature zero yields the same code for anyone who types it, that is evidence the prompt is an idea or instruction and the code is the model's standard answer to it, not anyone's original expression. Two developers at two companies could hold identical code, and neither would have authored it. The tool setting is irrelevant to ownership. What matters is documented human design, selection, and revision of the code, and the provenance records that prove it (see “How much human input is ‘enough’?” below).
 {{< /faqitem >}}
 
 ## Human Authorship & Mixed Codebases
