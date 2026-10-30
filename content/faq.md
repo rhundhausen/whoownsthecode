@@ -26,6 +26,10 @@ No. Payment is irrelevant to copyright ownership. Ownership follows authorship: 
 Yes, but ownership uncertainty significantly increases risk in licensing, fundraising, enforcement, and exits. Without clear ownership, you cannot create or defend a **lawful monopoly** over your software, allowing competitors to copy it with impunity and leaving the company with revenue but no defensible asset to protect or sell.
 {{< /faqitem >}}
 
+{{< faqitem q="If I don't own the AI-generated code, could someone else?" >}}
+Possibly. AI models occasionally reproduce code from their training data, sometimes verbatim, sometimes with the license notice stripped. If that code lands in your product, the original author still owns it, and your product infringes as to that portion. If the source was under a copyleft license such as the GPL, the author may demand that you release your own code to comply. So the ownership question cuts both ways: you cannot claim what the model wrote, and you cannot be sure nobody else can. The same missing provenance causes both problems. Vendor indemnities (Microsoft, Google, OpenAI, Anthropic) cover some of this risk, but typically only on paid or enterprise tiers with duplicate-detection filters turned on. Scan AI output the way you already scan open-source dependencies.
+{{< /faqitem >}}
+
 ## Vibe Coding & AI Assistance
 
 {{< faqitem q="What is “vibe coding”?" >}}
