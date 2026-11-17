@@ -1,4 +1,11 @@
 {{- $footerText := .Site.Params.footer.content | default "© 2026 whoownsthecode.com. All rights reserved." }}
+{{- /* List pages (home, sections) show the newest date among themselves and every page under them */}}
+{{- $updated := .Lastmod }}
+{{- if .IsNode }}
+  {{- range first 1 .RegularPagesRecursive.ByLastmod.Reverse }}
+    {{- if .Lastmod.After $updated }}{{ $updated = .Lastmod }}{{ end }}
+  {{- end }}
+{{- end }}
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <a class="brand" href="{{ "/" | relURL }}" aria-label="Who Owns the Code, home">
@@ -18,9 +25,7 @@
   </div>
   <div class="wrap" style="margin-top:1.4rem;">
     <span class="footer-legal">
-      <span class="c">// {{ $footerText }}</span>
-      <span class="c">// Educational service, not legal advice.</span>
-      <span class="c">// Updated: {{ .Lastmod.Format "2 January 2006" }}</span>
+      <span class="c">// {{ $footerText }} Educational service, not legal advice. Updated: {{ $updated.Format "2 January 2006" }}</span>
     </span>
   </div>
 </footer>

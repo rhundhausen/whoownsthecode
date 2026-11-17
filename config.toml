@@ -2,6 +2,15 @@ baseURL = 'https://whoownsthecode.com'
 locale = 'en-us'
 title = 'Who Owns the Code'
 
+# Footer "Updated" date comes from each file's last git commit, so it changes on
+# every push without hand-editing front matter. Needs full history in CI
+# (fetch-depth: 0 in deploy-to-cloudflare.yml). Uncommitted files fall back to
+# front-matter lastmod, then date.
+enableGitInfo = true
+
+[frontmatter]
+lastmod = [':git', 'lastmod', 'date']
+
 # Site-wide meta description, used only when a page sets no description of its own (layouts/partials/meta.html)
 [params]
 description = "Who owns AI-generated code? Plain answers on copyright, human authorship, and the risks hiding in your codebase."

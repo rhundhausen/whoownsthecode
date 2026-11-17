@@ -1,6 +1,6 @@
 ---
 title: "Frequently Asked Questions"
-date: 2026-10-27
+date: 2026-11-17
 description: "Plain-English answers on AI-generated code and ownership: copyright, human authorship, contracts, open source, diligence, and protecting what humans write."
 ---
 
@@ -78,6 +78,10 @@ You own what *you* create. AI-generated portions remain unowned unless replaced 
 
 {{< faqitem q="Can I apply MIT, GPL, or other licenses to AI-generated code?" >}}
 Applying an open-source license requires copyright ownership. Because pure AI output has no copyright holder, any open-source license applied to that portion would be unenforceable as a copyright license, because there is no copyright to license; at most its terms might operate as a contract with those who accept it.
+{{< /faqitem >}}
+
+{{< faqitem q="If nobody owns it, is AI-generated code public domain? Open source? What do we call it?" >}}
+Call it unowned, or if you want the legal term, uncopyrightable. It is not open source, because open source is a license and a license needs an owner to grant it. "Public domain" is technically defensible, since the public domain includes material that was never eligible for copyright, but the phrase misleads: people hear "free and clear," and AI output is neither. It may still contain someone else's copyrighted code, it can still be a trade secret, and a contract can still restrict it. Dedications like CC0 or the Unlicense do not help either; they are tools for waiving rights you hold, and here you hold none. Human code is copyrighted, then licensed. Pure AI code is just unowned.
 {{< /faqitem >}}
 
 {{< faqitem q="What if AI generates code similar to open-source material?" >}}
