@@ -67,7 +67,7 @@ Not automatically. Deterministic or mechanical changes (such as simple transcrip
 {{< /faqitem >}}
 
 {{< faqitem q="Can I fix it by having a human retype the AI output, or by publishing it?" >}}
-No. Retyping, re-entering, reformatting, or running AI output through another tool is mechanical work, not creative judgment, so the result is still the AI's expression with no human author. Publishing it does not help either: posting code to GitHub, a website, or social media fixes it in a tangible medium, but fixation only creates a copyright when a human authored what was fixed. Laundering the output through a person or a platform does not solve the authorship problem.
+No. Retyping, re-entering, reformatting, or running AI output through another tool is mechanical work, not creative judgment, so the result is still the AI's expression with no human author. Publishing it does not help either: posting code to GitHub, a website, or social media fixes it in a tangible medium, but fixation only creates a copyright when a human authored what was fixed. Laundering the output through a person or a platform does not solve the authorship problem. Publishing it does not make it open source or public domain in the usual sense either; see "If nobody owns it, is AI-generated code public domain? Open source? What do we call it?" below.
 {{< /faqitem >}}
 
 {{< faqitem q="Can I combine AI-generated and human-written code and own all of it?" >}}
